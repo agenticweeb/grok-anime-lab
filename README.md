@@ -1,61 +1,39 @@
-# AGENTICWEEB — COMPLETE PLAYBOOK
-## The Grok Anime Lab System
-### For: Thierry (@agenticweeb) | Nairobi, Kenya 🇰🇪
+<h1 align="center">agenticweeb</h1>
+<p align="center">Building open-source AI tools for anime, donghua & the fictional worlds I love — powered by @grok</p>
+
+<p align="center">
+  <a href="https://x.com/agenticweeb">X (Twitter)</a> •
+  <a href="https://github.com/agenticweeb/grok-anime-lab">Grok Anime Lab</a>
+</p>
 
 ---
 
-## What This Is
+## 🧪 What I Do
 
-A complete, replicable operational system for dominating X and GitHub using @grok, xAI APIs, Vercel, and open-source anime/donghua tools.
+I vibe-code open-source web tools at the intersection of AI and fictional universes. Every tool is:
+- Built live with @grok (multi-agent research + code generation)
+- Deployed on Vercel (instant live demos)
+- Documented on X (build logs, research threads, community challenges)
+- Licensed MIT (free to fork, modify, ship)
 
-**Not tips. Not advice. A literal manual.**
-
-Every section has exact commands, exact prompts, exact copy-paste text. Hand this to anyone with your setup and they can replicate your entire system.
-
----
-
-## Sections
-
-| # | Section | What It Covers | File |
-|---|---------|----------------|------|
-| 1 | **Setup** | Project folder, GitHub repo, Vercel, agents, dependencies | `01-SETUP/01-SETUP.md` |
-| 2 | **Daily Ops** | Hour-by-hour schedule (8 AM — 7 PM EAT), exact prompts, git workflow | `02-DAILY-OPS/02-DAILY-OPS.md` |
-| 3 | **Content Types** | 7 content types with exact workflows, prompts, posting templates | `03-CONTENT-TYPES/03-CONTENT-TYPES.md` |
-| 4 | **API Scripts** | Python scripts for automation, cron jobs, GitHub Actions | `04-API-SCRIPTS/04-API-SCRIPTS.md` |
-| 5 | **Profile & Branding** | Exact bio text, profile images, GitHub README, brand positioning | `05-PROFILE-BRANDING/05-PROFILE-BRANDING.md` |
-| 6 | **30-Day Calendar** | Day-by-day tasks, weekly targets, milestone checklist | `06-30DAY-CALENDAR/06-30DAY-CALENDAR.md` |
-| 7 | **Quick Reference** | Cheat sheets, rate limits, emergency troubleshooting | `07-QUICK-REFERENCE/07-QUICK-REFERENCE.md` |
+**Current focus:** Lord of the Mysteries, Mushoku Tensei, Ling Cage, and emerging donghua.
 
 ---
 
-## Your Setup
+## 🛠️ Tech Stack
 
-- **X:** @agenticweeb (Blue tick)
-- **GitHub:** github.com/agenticweeb
-- **Project:** /home/thierry/grok-anime-lab
-- **Niche:** AI-powered anime & donghua worlds
-- **Tools:** @grok, xAI API, Grok CLI, Vercel, GitHub
-- **Timezone:** EAT (UTC+3)
+- **AI:** xAI Grok (multi-agent, real-time X search, image generation)
+- **Frontend:** HTML5, Tailwind CSS, Vanilla JavaScript
+- **Deploy:** Vercel
+- **Content:** X / Twitter
 
 ---
 
-## Start Here
+## 🤝 For Brands & Collaborators
 
-1. Open `01-SETUP/01-SETUP.md`
-2. Follow every step in order
-3. Do not skip anything
-4. When setup is complete, move to `02-DAILY-OPS/02-DAILY-OPS.md`
-5. Execute daily
+I partner with AI tools, anime platforms, and dev tool companies to create authentic, built-in-public content. 
 
----
-
-## The One Rule
-
-```
-SHIP DAILY.
-```
-
-Even if small. Even if imperfect. The compound effect wins.
+**Contact:** angazadesk@zohomail.com
 
 ---
 
