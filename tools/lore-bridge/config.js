@@ -7,10 +7,11 @@ export const siteConfig = {
   // 1. YOUR PERSONAL INFO & LINKS
   personal: {
     name: "agenticweeb",
-    github: "https://github.com/agenticweeb",
+    siteUrl: "https://lore-bridge.vercel.app",
+    github: "https://github.com/agenticweeb/grok-anime-lab",
     twitter: "https://x.com/agenticweeb",
     paymentMethods: {
-      buyMeACoffee: "https://www.buymeacoffee.com/YOUR_LINK", // Add your link here
+      buyMeACoffee: "https://github.com/agenticweeb/grok-anime-lab",
       kofi: "",
       paypal: ""
     }
@@ -18,7 +19,7 @@ export const siteConfig = {
 
   // 2. LORD OF THE MYSTERIES CONFIG
   lom: {
-    backgroundImage: "/images/lom-bg.jpg", // Put your 4K image in public/images/ and name it this
+    backgroundImage: "/public/images/lom-bg.jpg",
     watcher: {
       welcomeMessage: "Hey! Got a question about the watch order, the Beyonder system, or what the anime skipped? Ask me anything. I've read the source material, but I promise I won't spoil what you haven't seen yet. 🃏",
       modeStatus: "🌫️ Mode: LoM Watcher • Locked to Vol 1 • No Spoilers",
@@ -49,7 +50,7 @@ export const siteConfig = {
 
   // 3. MUSHOKU TENSEI CONFIG
   mt: {
-    backgroundImage: "/images/mt-bg.jpg", // Put your 4K image in public/images/ and name it this
+    backgroundImage: "/public/images/mt-bg.jpg",
     watcher: {
       welcomeMessage: "Get hyped for Season 3! Ask me about what the anime skipped, world-building, or magic systems. No S3 spoilers, I promise! 🗡️",
       modeStatus: "🌿 Mode: MT Watcher • Pre-Season 3 • No Spoilers",
