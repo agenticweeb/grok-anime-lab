@@ -137,9 +137,9 @@ deleted:    tools/lore-bridge/public/images/ltm.jpg
 untracked:  lom1-bg.jpg, mt1-bg.jpg (local backups)
 ```
 
-**Fix in progress:** Stage images, add `?v=2` cache-bust to `config.js` image URLs, commit + push.
+**Fix applied (commit `b029b2b`):** Images staged, `?v=2` cache-bust added, pushed to GitHub.
 
-**After this commit:** Hard refresh production. Backgrounds should update. Bump `?v=N` in `config.js` whenever images change again.
+**Verify:** Wait ~1 min for Vercel deploy → hard refresh production. Bump `?v=N` in `config.js` whenever images change again.
 
 ---
 
@@ -224,7 +224,7 @@ No npm dependencies installed. Vercel provides Node 20 runtime.
 | Issue | Status | Notes |
 |---|---|---|
 | **Firefox chat** | Mitigated | Buffered JSON path; user retesting later |
-| **Background images not updating** | Fixing now | Must commit + push binary JPGs to GitHub |
+| **Background images not updating** | Fixed `b029b2b` | Must always `git add` + push JPGs after local edits |
 | **Vercel/CDN image cache** | Mitigated | `?v=2` query param on image URLs in config |
 | **No cross-device memory** | By design | No login; sessionStorage is per-tab |
 | **API abuse / rate limiting** | Open | No throttle yet — risk before viral launch |
