@@ -876,7 +876,7 @@
                 <div class="chat-messages" id="chat-messages">
                     <div class="message oracle-msg">
                         <div class="chat-bubble" id="welcome-message">
-                            Welcome, seeker. The gray fog swirls with your questions. What lore shall we unravel today without spoiling your journey?
+                            <p class="text-sm leading-relaxed">Hey! Ask me anything about the lore.</p>
                         </div>
                     </div>
                 </div>
@@ -989,6 +989,7 @@
         // =========================================
         let currentUniverse = 'lom';
         let currentAudience = 'watcher';
+        let isGenerating = false;
 
         // =========================================
         // MAKE CONFIG GLOBALLY ACCESSIBLE
@@ -1244,7 +1245,115 @@
         };
 
         // =========================================
-        // 7. EVENT LISTENERS
+        // 7. CHAT LOGIC & API INTEGRATION
+        // =========================================
+        async function sendMessage(e) {
+            if (e) e.preventDefault();
+            if (isGenerating) return;
+            
+            const input = document.getElementById('user-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            isGenerating = true;
+            input.value = '';
+            
+            const messagesContainer = document.getElementById('chat-messages');
+            
+            // Append User Message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user-msg';
+            userDiv.innerHTML = `<div class="chat-bubble"><p class="text-sm leading-relaxed">${msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p></div>`;
+            messagesContainer.appendChild(userDiv);
+            
+            // Append AI Placeholder
+            const aiId = 'msg-' + Date.now();
+            const aiDiv = document.createElement('div');
+            aiDiv.id = aiId;
+            aiDiv.className = 'message oracle-msg';
+            aiDiv.innerHTML = `
+                <div class="chat-bubble">
+                    <div class="typing-indicator flex gap-1 text-[#C5A059]">
+                        <span class="w-2 h-2 bg-[#C5A059] rounded-full inline-block"></span>
+                        <span class="w-2 h-2 bg-[#C5A059] rounded-full inline-block"></span>
+                        <span class="w-2 h-2 bg-[#C5A059] rounded-full inline-block"></span>
+                    </div>
+                </div>`;
+            messagesContainer.appendChild(aiDiv);
+            scrollToBottom();
+
+            // Get audience mode safely (fallback to watcher if toggle is missing)
+            const audienceToggle = document.getElementById('audience-toggle');
+            const currentAudienceMode = (audienceToggle && audienceToggle.querySelector('.active')?.dataset.audience === 'reader') ? 'reader' : 'watcher';
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        message: msg, 
+                        series: currentUniverse, 
+                        audience: currentAudienceMode 
+                    })
+                });
+
+                if (!res.ok) throw new Error('API request failed');
+
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder();
+                let aiResponse = '';
+                let isFirstChunk = true;
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n').filter(l => l.startsWith('data: '));
+
+                    for (const line of lines) {
+                        const data = line.slice(6).trim();
+                        if (data === '[DONE]') continue;
+                        
+                        try {
+                            const parsed = JSON.parse(data);
+                            aiResponse += parsed.content;
+                            
+                            const currentAiDiv = document.getElementById(aiId);
+                            if (currentAiDiv) {
+                                const bubble = currentAiDiv.querySelector('.chat-bubble');
+                                if (isFirstChunk) {
+                                    bubble.innerHTML = `<p class="text-sm leading-relaxed whitespace-pre-wrap">${formatText(aiResponse)}</p>`;
+                                    isFirstChunk = false;
+                                } else {
+                                    bubble.querySelector('p').innerHTML = formatText(aiResponse);
+                                }
+                                scrollToBottom();
+                            }
+                        } catch (e) {}
+                    }
+                }
+            } catch (err) {
+                const currentAiDiv = document.getElementById(aiId);
+                if(currentAiDiv) {
+                    currentAiDiv.querySelector('.chat-bubble').innerHTML = `<p class="text-sm text-red-400">Connection lost or API limit hit. Try again in a few seconds.</p>`;
+                }
+            }
+
+            isGenerating = false;
+        }
+
+        function formatText(text) {
+            return text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#C5A059]">$1</strong>');
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('chat-messages');
+            if(container) container.scrollTop = container.scrollHeight;
+        }
+
+        // =========================================
+        // 8. EVENT LISTENERS
         // =========================================
         // Universe Toggle
         document.querySelectorAll('#universe-toggle .toggle-btn').forEach(btn => {
@@ -1269,36 +1378,10 @@
         document.getElementById('tip-jar-btn').addEventListener('click', openPaymentModal);
 
         // Chat Logic
-        document.getElementById('send-btn').addEventListener('click', sendMessage);
+        document.getElementById('send-btn').addEventListener('click', (e) => sendMessage(e));
         document.getElementById('user-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage();
+            if (e.key === 'Enter') sendMessage(e);
         });
-
-        function sendMessage() {
-            const input = document.getElementById('user-input');
-            const msg = input.value.trim();
-            if (!msg) return;
-
-            const messagesContainer = document.getElementById('chat-messages');
-            
-            // Add User Message
-            const userDiv = document.createElement('div');
-            userDiv.className = 'message user-msg';
-            userDiv.innerHTML = `<div class="chat-bubble">${msg}</div>`;
-            messagesContainer.appendChild(userDiv);
-            input.value = '';
-
-            // Mock Oracle Response (Replace with fetch to your chat.js API)
-            setTimeout(() => {
-                const oracleDiv = document.createElement('div');
-                oracleDiv.className = 'message oracle-msg';
-                oracleDiv.innerHTML = `<div class="chat-bubble">The fog clears... (Connect this to your /api/chat.js endpoint for real Grok responses!)</div>`;
-                messagesContainer.appendChild(oracleDiv);
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }, 1000);
-
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
-        }
 
         // Close modals on outside click
         document.querySelectorAll('.modal').forEach(modal => {
