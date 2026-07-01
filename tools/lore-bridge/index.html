@@ -689,6 +689,107 @@
             return text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--menu-accent);">$1</strong>');
         }
 
+        function getApiUrl() {
+            if (window.location.protocol === 'file:') {
+                throw new Error('Open https://lore-bridge.vercel.app instead of the local HTML file.');
+            }
+            return `${window.location.origin}/api/chat`;
+        }
+
+        function prefersBufferedChat() {
+            const ua = navigator.userAgent;
+            const isFirefox = /Firefox\//i.test(ua);
+            const isDesktop = !/Android|iPhone|iPad|iPod|Mobile/i.test(ua);
+            return isFirefox && isDesktop;
+        }
+
+        function updateAiMessage(aiId, text) {
+            const currentAiDiv = document.getElementById(aiId);
+            if (!currentAiDiv) return;
+            currentAiDiv.innerHTML = `<p style="white-space: pre-wrap;">${formatText(text)}</p>`;
+            scrollToBottom();
+        }
+
+        function parseSseLines(buffer, onChunk) {
+            const lines = buffer.split('\n');
+            const remainder = lines.pop() || '';
+
+            for (const line of lines) {
+                if (!line.startsWith('data: ')) continue;
+                const data = line.slice(6).trim();
+                if (!data || data === '[DONE]') continue;
+
+                try {
+                    const parsed = JSON.parse(data);
+                    if (parsed.content) onChunk(parsed.content);
+                    if (parsed.error) throw new Error(parsed.error);
+                } catch (err) {
+                    if (err.message && err.message !== 'Unexpected end of JSON input') throw err;
+                }
+            }
+
+            return remainder;
+        }
+
+        async function streamChat(apiUrl, payload, aiId) {
+            const res = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'text/event-stream' },
+                body: JSON.stringify({ ...payload, stream: true })
+            });
+
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.error || `API request failed (${res.status})`);
+            }
+
+            if (!res.body || typeof res.body.getReader !== 'function') {
+                const text = await res.text();
+                let aiResponse = '';
+                parseSseLines(text + '\n', (chunk) => { aiResponse += chunk; });
+                updateAiMessage(aiId, aiResponse || 'No response received.');
+                return;
+            }
+
+            const reader = res.body.getReader();
+            const decoder = new TextDecoder();
+            let aiResponse = '';
+            let buffer = '';
+
+            while (true) {
+                const { done, value } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                buffer = parseSseLines(buffer, (chunk) => {
+                    aiResponse += chunk;
+                    updateAiMessage(aiId, aiResponse);
+                });
+            }
+
+            if (buffer.trim()) {
+                parseSseLines(buffer + '\n', (chunk) => {
+                    aiResponse += chunk;
+                    updateAiMessage(aiId, aiResponse);
+                });
+            }
+        }
+
+        async function bufferedChat(apiUrl, payload, aiId) {
+            const res = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ ...payload, stream: false })
+            });
+
+            const data = await res.json().catch(() => ({}));
+            if (!res.ok) {
+                throw new Error(data.error || `API request failed (${res.status})`);
+            }
+
+            updateAiMessage(aiId, data.content || 'No response received.');
+        }
+
         async function handleSend(e) {
             e.preventDefault();
             if (isGenerating) return;
@@ -728,56 +829,29 @@
             chatContainer.appendChild(aiDiv);
             scrollToBottom();
 
+            const payload = {
+                message: msg,
+                series: currentUniverse,
+                audience: currentAudience
+            };
+
             try {
-                const res = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        message: msg, 
-                        series: currentUniverse, 
-                        audience: currentAudience 
-                    })
-                });
+                const apiUrl = getApiUrl();
 
-                if (!res.ok) throw new Error('API request failed');
-
-                const reader = res.body.getReader();
-                const decoder = new TextDecoder();
-                let aiResponse = '';
-                let isFirstChunk = true;
-
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    
-                    const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n').filter(l => l.startsWith('data: '));
-
-                    for (const line of lines) {
-                        const data = line.slice(6).trim();
-                        if (data === '[DONE]') continue;
-                        
-                        try {
-                            const parsed = JSON.parse(data);
-                            aiResponse += parsed.content;
-                            
-                            const currentAiDiv = document.getElementById(aiId);
-                            if (currentAiDiv) {
-                                if (isFirstChunk) {
-                                    currentAiDiv.innerHTML = `<p style="white-space: pre-wrap;">${formatText(aiResponse)}</p>`;
-                                    isFirstChunk = false;
-                                } else {
-                                    currentAiDiv.querySelector('p').innerHTML = formatText(aiResponse);
-                                }
-                                scrollToBottom();
-                            }
-                        } catch (e) {}
+                if (prefersBufferedChat()) {
+                    await bufferedChat(apiUrl, payload, aiId);
+                } else {
+                    try {
+                        await streamChat(apiUrl, payload, aiId);
+                    } catch (streamErr) {
+                        console.warn('Streaming failed, retrying without stream:', streamErr);
+                        await bufferedChat(apiUrl, payload, aiId);
                     }
                 }
             } catch (err) {
                 const currentAiDiv = document.getElementById(aiId);
-                if(currentAiDiv) {
-                    currentAiDiv.innerHTML = `<p style="color: #ff6b6b;">Error: ${err.message}. Try a hard refresh (Ctrl+Shift+R).</p>`;
+                if (currentAiDiv) {
+                    currentAiDiv.innerHTML = `<p style="color: #ff6b6b;">Error: ${err.message}</p>`;
                 }
             }
 

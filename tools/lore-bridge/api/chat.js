@@ -1,9 +1,18 @@
 export const config = { maxDuration: 30 };
 
-export default async function handler(req, res) {
-    if (req.method !== 'POST') return res.status(405).end();
-    const { message, series, audience } = req.body;
-    
+function parseRequestBody(req) {
+    if (!req.body) return {};
+    if (typeof req.body === 'string') {
+        try {
+            return JSON.parse(req.body);
+        } catch {
+            return {};
+        }
+    }
+    return req.body;
+}
+
+function buildMessages({ message, series, audience }) {
     const isReader = audience === 'reader';
     const systemPrompts = {
         lom: `You are a hardcore Lord of the Mysteries scholar. 
@@ -19,66 +28,140 @@ RULES: If anime-only, NEVER spoil S3. If asked about the future, say "Keep your 
 Keep answers concise (2-4 paragraphs). NEVER say "As an AI". Stay in character.`
     };
 
-    const messages = [
+    return [
         { role: 'system', content: systemPrompts[series] || systemPrompts.lom },
         { role: 'user', content: message }
     ];
+}
 
-    let response;
-    let usedFallback = false;
+async function callAiProvider(messages, stream) {
+    const payload = JSON.stringify({
+        model: 'grok-3-mini',
+        messages,
+        stream
+    });
 
-    // 1. TRY XAI (GROK)
     try {
-        response = await fetch('https://api.x.ai/v1/chat/completions', {
+        const response = await fetch('https://api.x.ai/v1/chat/completions', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.XAI_API_KEY}` },
-            body: JSON.stringify({ model: 'grok-3-mini', messages, stream: true })
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.XAI_API_KEY}`
+            },
+            body: payload
         });
-        if (!response.ok) throw new Error('xAI failed');
-    } catch (e) {
-        // 2. FALLBACK TO GROQ (FREE TIER - LLAMA 8B)
-        if (!process.env.GROQ_API_KEY) return res.status(500).json({ error: 'Both API keys missing/failed.' });
-        
-        try {
-            response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${process.env.GROQ_API_KEY}` },
-                body: JSON.stringify({ model: 'llama-3.1-8b-instant', messages, stream: true })
-            });
-            if (!response.ok) throw new Error('Groq failed');
-            usedFallback = true;
-        } catch (err) {
-            return res.status(500).json({ error: 'All AI providers failed.' });
-        }
+        if (response.ok) return response;
+    } catch {
+        // fall through to Groq
     }
 
-    // 3. STREAM THE SUCCESSFUL RESPONSE
-    res.setHeader('Content-Type', 'text/event-stream');
-    res.setHeader('Cache-Control', 'no-cache');
-    res.setHeader('Connection', 'keep-alive');
+    if (!process.env.GROQ_API_KEY) {
+        throw new Error('Both API keys missing/failed.');
+    }
 
-    const reader = response.body.getReader();
+    const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+        },
+        body: JSON.stringify({
+            model: 'llama-3.1-8b-instant',
+            messages,
+            stream
+        })
+    });
+
+    if (!groqResponse.ok) {
+        throw new Error('All AI providers failed.');
+    }
+
+    return groqResponse;
+}
+
+function extractDeltaContent(data) {
+    try {
+        const parsed = JSON.parse(data);
+        return parsed.choices?.[0]?.delta?.content || '';
+    } catch {
+        return '';
+    }
+}
+
+async function pipeStreamToClient(upstream, res) {
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+
+    const reader = upstream.body.getReader();
     const decoder = new TextDecoder();
 
     try {
         while (true) {
             const { done, value } = await reader.read();
             if (done) break;
+
             const chunk = decoder.decode(value, { stream: true });
-            const lines = chunk.split('\n').filter(line => line.startsWith('data: '));
+            const lines = chunk.split('\n').filter((line) => line.startsWith('data: '));
+
             for (const line of lines) {
-                const data = line.slice(6);
-                if (data === '[DONE]') { res.write('data: [DONE]\n\n'); continue; }
-                try {
-                    const parsed = JSON.parse(data);
-                    const content = parsed.choices?.[0]?.delta?.content;
-                    if (content) res.write(`data: ${JSON.stringify({ content })}\n\n`);
-                } catch (e) {}
+                const data = line.slice(6).trim();
+                if (!data) continue;
+                if (data === '[DONE]') {
+                    res.write('data: [DONE]\n\n');
+                    continue;
+                }
+
+                const content = extractDeltaContent(data);
+                if (content) {
+                    res.write(`data: ${JSON.stringify({ content })}\n\n`);
+                }
             }
         }
     } catch (streamErr) {
         console.error('Stream error:', streamErr);
+        res.write(`data: ${JSON.stringify({ error: 'Stream interrupted.' })}\n\n`);
     } finally {
         res.end();
+    }
+}
+
+export default async function handler(req, res) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(204).end();
+    }
+
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    const body = parseRequestBody(req);
+    const { message, series, audience, stream = true } = body;
+
+    if (!message || typeof message !== 'string') {
+        return res.status(400).json({ error: 'Message is required.' });
+    }
+
+    const messages = buildMessages({ message, series, audience });
+
+    try {
+        const wantsStream = stream !== false;
+        const upstream = await callAiProvider(messages, wantsStream);
+
+        if (wantsStream) {
+            return pipeStreamToClient(upstream, res);
+        }
+
+        const parsed = await upstream.json();
+        const content = parsed.choices?.[0]?.message?.content || '';
+
+        return res.status(200).json({ content: content || 'The oracle fell silent. Try again.' });
+    } catch (err) {
+        return res.status(500).json({ error: err.message || 'All AI providers failed.' });
     }
 }
