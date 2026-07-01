@@ -777,7 +777,7 @@
             } catch (err) {
                 const currentAiDiv = document.getElementById(aiId);
                 if(currentAiDiv) {
-                    currentAiDiv.innerHTML = `<p style="color: #ff6b6b;">Connection lost or API limit hit. Try again in a few seconds.</p>`;
+                    currentAiDiv.innerHTML = `<p style="color: #ff6b6b;">Error: ${err.message}. Try a hard refresh (Ctrl+Shift+R).</p>`;
                 }
             }
 
