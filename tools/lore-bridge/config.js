@@ -31,7 +31,7 @@ export const siteConfig = {
   },
 
   lom: {
-    backgroundImage: "/public/images/lom-bg.jpg",
+    backgroundImage: "/public/images/lom-bg.jpg?v=2",
     persona: {
       watcher: { name: "Daly", title: "Nighthawk Regular", icon: "🃏" },
       reader: { name: "The Archivist", title: "Tarot Club Scholar", icon: "🔮" }
@@ -88,7 +88,7 @@ export const siteConfig = {
   },
 
   mt: {
-    backgroundImage: "/public/images/mt-bg.jpg",
+    backgroundImage: "/public/images/mt-bg.jpg?v=2",
     persona: {
       watcher: { name: "Rui", title: "Guild Counter Clerk", icon: "🗡️" },
       reader: { name: "Elinalise", title: "Veteran Adventurer", icon: "🐉" }
