@@ -649,6 +649,7 @@
         .footer-links {
             display: flex;
             gap: 20px;
+            align-items: center;
         }
 
         .footer-links a {
@@ -897,6 +898,8 @@
                 <div class="footer-links">
                     <a href="#" onclick="showPage('about'); return false;">About</a>
                     <a href="#" onclick="openFeedbackModal(); return false;">Feedback</a>
+                    <span>Built with @grok</span>
+                    <a href="mailto:angazadesk@zohomail.com?subject=Lore Bridge Feedback" class="text-xs hover:text-white/80 ml-4 border-l border-white/20 pl-4">Report Bug / Suggest</a>
                 </div>
                 <button class="diegetic-btn" id="tip-jar-btn">
                     <span class="icon">🃏</span>
@@ -995,6 +998,17 @@
         // =========================================
         // APPLY BACKGROUNDS FROM CONFIG
         // =========================================
+        function applyBackground(series) {
+            if (!window.siteConfig) return;
+            const bg = window.siteConfig[series]?.backgroundImage;
+            if (bg) {
+                document.body.style.backgroundImage = `url('${bg}')`;
+                document.body.style.backgroundSize = 'cover';
+                document.body.style.backgroundPosition = 'center';
+                document.body.style.backgroundAttachment = 'fixed';
+            }
+        }
+
         function applyBackgrounds() {
             if (window.siteConfig) {
                 const lomBg = window.siteConfig.lom.backgroundImage || (window.siteConfig.lom.images && window.siteConfig.lom.images.background);
@@ -1014,6 +1028,7 @@
         // 1. DIMENSIONAL SHIFT (PORTAL TRANSITION)
         // =========================================
         function switchUniverse(newUniverse) {
+            applyBackground(newUniverse);
             if (newUniverse === currentUniverse) return;
             
             const portal = document.getElementById('portal-overlay');
@@ -1298,6 +1313,7 @@
         generateParticles();
         updateAllUI();
         applyBackgrounds();
+        applyBackground('lom');
     </script>
 </body>
 </html>
