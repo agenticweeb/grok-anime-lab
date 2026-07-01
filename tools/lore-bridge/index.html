@@ -2,20 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lore Bridge • Immersive Fandom Hub</title>
-    
-    <!-- Premium Typography -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Lore Bridge</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Abril+Fatface&display=swap" rel="stylesheet">
     
     <style>
-        /* =========================================
-           1. CORE VARIABLES & THEMES (ORIGINAL)
-           ========================================= */
         :root {
             --px: 0px;
             --py: 0px;
-            --transition-speed: 0.3s;
         }
 
         * {
@@ -28,13 +22,12 @@
             font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #0a0a0a;
             color: #fff;
-            overflow-x: hidden;
-            min-height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
         }
 
-        /* Lord of the Mysteries (LoM) Theme */
         .theme-lom {
             --bg-color: #0d0812;
             --surface: #1a1124;
@@ -47,9 +40,9 @@
             --font-body: ui-serif, Georgia, 'Times New Roman', serif;
             --portal-bg: #1a0b2e;
             --particle-color: rgba(138, 43, 226, 0.6);
+            --menu-accent: #C5A059;
         }
 
-        /* Mushoku Tensei (MT) Theme */
         .theme-mt {
             --bg-color: #08120a;
             --surface: #112415;
@@ -62,6 +55,7 @@
             --font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             --portal-bg: #0b2e1a;
             --particle-color: rgba(50, 205, 50, 0.6);
+            --menu-accent: #50C878;
         }
 
         body {
@@ -69,108 +63,293 @@
             color: var(--text-main);
             font-family: var(--font-body);
             transition: background-color 0.5s ease, color 0.5s ease;
-        }
-
-        h1, h2, h3, .oracle-name, .chip, .diegetic-btn, .nav-link, .about-title {
-            font-family: var(--font-heading);
-        }
-
-        /* 4K Background Images */
-        body {
             background-size: cover !important;
             background-position: center center !important;
             background-repeat: no-repeat !important;
             background-attachment: fixed !important;
         }
 
-        /* Dark overlay */
         body::before {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: rgba(0, 0, 0, 0.6);
             z-index: 0;
             pointer-events: none;
         }
 
-        /* Content above background */
-        header, main, footer, #chat-container, .suggestion-chips, .page, .main-nav {
+        /* Top Bar */
+        .top-bar {
+            position: relative;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .toggle-group {
+            display: flex;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3px;
+            gap: 4px;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .toggle-btn.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .menu-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn:hover {
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: scale(1.05);
+        }
+
+        /* Chat Container */
+        .chat-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
             position: relative;
             z-index: 1;
         }
 
-        /* =========================================
-           2. NAVIGATION (ORIGINAL + MOBILE TWEAKS)
-           ========================================= */
-        .main-nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-            padding: 15px 0;
+        .msg-user {
+            align-self: flex-end;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 18px;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 2px 8px var(--primary-glow);
         }
 
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .msg-ai {
+            align-self: flex-start;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
         }
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-shadow: 0 0 10px var(--primary-glow);
-            letter-spacing: 2px;
-            text-decoration: none;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 25px;
-            align-items: center;
-        }
-
-        .nav-link {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.3s ease;
+        .msg-user p, .msg-ai p {
+            padding: 12px 16px;
+            line-height: 1.6;
             font-size: 0.95rem;
         }
 
-        .nav-link:hover {
-            color: var(--primary);
+        .typing-indicator span {
+            animation: bounce 1.4s infinite ease-in-out;
         }
 
-        .social-links {
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+
+        /* Input Area */
+        .input-area {
+            position: relative;
+            z-index: 100;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .suggestions {
             display: flex;
-            gap: 15px;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
+            scrollbar-width: none;
         }
 
-        .social-link {
-            color: var(--text-muted);
-            font-size: 1.3rem;
+        .suggestions::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chip {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            flex-shrink: 0;
             transition: all 0.3s ease;
         }
 
-        .social-link:hover {
-            color: var(--primary);
-            transform: translateY(-2px);
+        .chip:hover {
+            border-color: var(--primary);
+            background: rgba(138, 43, 226, 0.1);
         }
 
-        /* =========================================
-           3. ATMOSPHERIC BACKGROUNDS & PARALLAX (ORIGINAL)
-           ========================================= */
+        .input-row {
+            display: flex;
+            gap: 8px;
+        }
+
+        .input-row input {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 12px 16px;
+            border-radius: 24px;
+            font-family: var(--font-body);
+            font-size: 16px;
+            outline: none;
+        }
+
+        .input-row input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .send-btn {
+            background: var(--primary);
+            border: none;
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 24px;
+            cursor: pointer;
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            box-shadow: 0 0 15px var(--primary-glow);
+            transition: transform 0.2s ease;
+        }
+
+        .send-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Side Menu */
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .menu-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .side-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100dvh;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(20px);
+            border-right: 2px solid var(--menu-accent);
+            z-index: 1000;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .side-menu.active {
+            transform: translateX(0);
+        }
+
+        .menu-header {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--menu-accent);
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .menu-link {
+            color: var(--text-main);
+            text-decoration: none;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            font-family: var(--font-body);
+            cursor: pointer;
+        }
+
+        .menu-link:hover {
+            border-color: var(--menu-accent);
+            background: rgba(0, 0, 0, 0.5);
+            transform: translateX(4px);
+        }
+
+        .menu-footer {
+            margin-top: auto;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+        }
+
+        /* Parallax & Particles */
         .parallax-container {
             position: fixed;
             inset: 0;
@@ -183,15 +362,13 @@
             position: absolute;
             inset: -50px;
             transform: translate3d(var(--px), var(--py), 0);
-            transition: transform 0.2s ease-out;
+            transition: transform 0.2s ease-out, opacity 0.5s ease;
             opacity: 0;
-            transition: opacity 0.5s ease, transform 0.2s ease-out;
         }
 
         .theme-lom .lom-bg { opacity: 1; }
         .theme-mt .mt-bg { opacity: 1; }
 
-        /* Floating Particles */
         .particles-container {
             position: fixed;
             inset: 0;
@@ -215,37 +392,6 @@
             100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
         }
 
-        /* =========================================
-           4. THE "WOW" FACTOR OVERLAYS (ORIGINAL)
-           ========================================= */
-        .theme-lom::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(255, 255, 255, 0.02) 0px,
-                rgba(255, 255, 255, 0.02) 1px,
-                transparent 1px,
-                transparent 2px
-            );
-            pointer-events: none;
-            z-index: 9998;
-            mix-blend-mode: overlay;
-        }
-
-        .theme-mt::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 9998;
-        }
-
-        /* =========================================
-           5. DIMENSIONAL SHIFT (PORTAL TRANSITION) (ORIGINAL)
-           ========================================= */
         #portal-overlay {
             position: fixed;
             inset: 0;
@@ -260,817 +406,91 @@
             clip-path: circle(150% at 50% 50%);
         }
 
-        /* =========================================
-           6. PAGE SECTIONS (ORIGINAL + MOBILE IMPROVEMENTS)
-           ========================================= */
-        .page {
-            display: none;
-            position: relative;
-            z-index: 10;
-            min-height: 100vh;
-            padding-top: 80px;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        .app-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            width: 100%;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-
-        /* About Page Styles (kept original) */
-        .about-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .about-header {
-            text-align: center;
-            margin-bottom: 50px;
-        }
-
-        .about-title {
-            font-size: 3rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-            text-shadow: 0 0 20px var(--primary-glow);
-        }
-
-        .about-description {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            max-width: 700px;
-            margin: 0 auto;
-            line-height: 1.8;
-        }
-
-        .about-section {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 30px;
-            margin-bottom: 30px;
-        }
-
-        .about-section h2 {
-            color: var(--primary);
-            margin-bottom: 20px;
-            font-size: 1.8rem;
-        }
-
-        .feature-list, .tech-list {
-            list-style: none;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 15px;
-        }
-
-        .feature-list li, .tech-list li {
-            padding: 12px 18px;
-            background: var(--bg-color);
-            border-radius: 8px;
-            border-left: 3px solid var(--primary);
-            font-size: 1rem;
-            color: var(--text-main);
-        }
-
-        .payment-section {
-            text-align: center;
-            padding: 40px;
-        }
-
-        .payment-buttons {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 20px;
-        }
-
-        .payment-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px 25px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            color: var(--text-main);
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .payment-btn:hover {
-            background: var(--primary);
-            color: #fff;
-            transform: translateY(-3px);
-            box-shadow: 0 5px 20px var(--primary-glow);
-        }
-
-        /* =========================================
-           7. CHAT INTERFACE COMPONENTS (ORIGINAL + NEW MOBILE SHELL)
-           ========================================= */
-
-        /* NEW: Native Mobile App Shell */
-        body {
-            height: 100dvh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .chat-page {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* Slim Glassmorphism Top Bar */
-        .top-bar {
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border);
-            padding: 10px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-shrink: 0;
-        }
-
-        .universe-pills {
-            display: flex;
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 9999px;
-            padding: 3px;
-            border: 1px solid var(--border);
-        }
-
-        .universe-pill {
-            padding: 6px 14px;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            border: none;
-            background: transparent;
-            color: var(--text-muted);
-            cursor: pointer;
-        }
-
-        .universe-pill.active {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 0 12px var(--primary-glow);
-        }
-
-        .menu-btn {
-            width: 42px;
-            height: 42px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            border-radius: 9999px;
-            transition: all 0.2s ease;
-        }
-
-        .menu-btn:hover {
-            background: rgba(255,255,255,0.1);
-        }
-
-        /* Status Bar */
-        .status-bar {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 10px 16px;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin: 12px 16px;
-            flex-shrink: 0;
-        }
-
-        /* Chat Container - Takes remaining space */
-        .chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            margin: 0 16px 12px;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .oracle-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 16px 20px;
-            border-bottom: 1px solid var(--border);
-            flex-shrink: 0;
-        }
-
-        .oracle-avatar {
-            width: 48px;
-            height: 48px;
-            background: var(--surface);
-            border: 2px solid var(--primary);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
-
-        .oracle-name {
-            margin: 0;
-            font-size: 1.2rem;
-            color: var(--primary);
-        }
-
-        .oracle-status {
-            margin: 0;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-        }
-
-        /* Messages Area */
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .chat-bubble {
-            max-width: 85%;
-            padding: 14px 18px;
-            border-radius: 18px;
-            position: relative;
-            line-height: 1.6;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-        }
-
-        .oracle-msg .chat-bubble {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            align-self: flex-start;
-            border-bottom-left-radius: 6px;
-        }
-
-        .theme-lom .oracle-msg .chat-bubble::before { content: '🃏'; position: absolute; bottom: -10px; left: 18px; font-size: 16px; }
-        .theme-mt .oracle-msg .chat-bubble::before { content: '✨'; position: absolute; bottom: -10px; left: 18px; font-size: 16px; }
-
-        .user-msg .chat-bubble {
-            background: var(--primary);
-            color: #fff;
-            align-self: flex-end;
-            border-bottom-right-radius: 6px;
-            box-shadow: 0 4px 15px var(--primary-glow);
-        }
-
-        /* Smart Suggestion Chips - Horizontal Scroll */
-        .suggestions {
-            display: flex;
-            gap: 8px;
-            padding: 0 16px 12px;
-            overflow-x: auto;
-            flex-shrink: 0;
-            scrollbar-width: none;
-        }
-
-        .suggestions::-webkit-scrollbar {
-            display: none;
-        }
-
-        .chip {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 9px 16px;
-            border-radius: 9999px;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            flex-shrink: 0;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .theme-lom .chip:hover {
-            text-shadow: 0 0 8px var(--primary);
-            border-color: var(--primary);
-        }
-
-        .theme-mt .chip:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 12px var(--primary-glow);
-            transform: translateY(-1px);
-        }
-
-        /* Input Area - Sticky Bottom */
-        .input-area {
-            padding: 14px 16px;
-            background: rgba(0,0,0,0.5);
-            border-top: 1px solid var(--border);
-            flex-shrink: 0;
-        }
-
-        .input-row {
-            display: flex;
-            gap: 10px;
-        }
-
-        .input-row input {
-            flex: 1;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 14px 20px;
-            border-radius: 9999px;
-            font-size: 16px;
-            outline: none;
-        }
-
-        .input-row input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 10px var(--primary-glow);
-        }
-
-        .send-btn {
-            background: var(--primary);
-            border: none;
-            color: #fff;
-            padding: 0 26px;
-            border-radius: 9999px;
-            font-family: var(--font-heading);
-            font-size: 1rem;
-            box-shadow: 0 0 15px var(--primary-glow);
-            cursor: pointer;
-            transition: transform 0.15s ease;
-        }
-
-        .send-btn:active {
-            transform: scale(0.96);
-        }
-
-        /* Footer (kept original) */
-        footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 20px;
-            border-top: 1px solid var(--border);
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            flex-wrap: wrap;
-            gap: 12px;
-            flex-shrink: 0;
-        }
-
-        .footer-links {
-            display: flex;
-            gap: 18px;
-            align-items: center;
-        }
-
-        .footer-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: var(--primary);
-        }
-
-        .diegetic-btn {
-            background: transparent;
-            border: 1px dashed var(--primary);
-            color: var(--primary);
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            font-size: 0.85rem;
-        }
-
-        .diegetic-btn:hover {
-            background: var(--surface);
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
-
-        /* Modals (kept original) */
-        .modal {
-            display: none;
+        .theme-lom::after {
+            content: '';
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .modal.active { display: flex; }
-
-        .modal-content {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 30px;
-            border-radius: 16px;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 0 30px var(--primary-glow);
-        }
-
-        .modal-title {
-            margin-top: 0;
-            color: var(--primary);
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
-        .modal-description {
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        .payment-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .payment-option {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px;
-            background: var(--bg-color);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: var(--text-main);
-        }
-
-        .payment-option:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
-            transform: translateX(5px);
-        }
-
-        .payment-icon {
-            font-size: 1.5rem;
-        }
-
-        textarea {
-            width: 100%;
-            background: var(--bg-color);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            padding: 15px;
-            border-radius: 8px;
-            font-family: var(--font-body);
-            margin-bottom: 20px;
-            resize: vertical;
-            min-height: 100px;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .btn-cancel, .btn-submit {
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: var(--font-body);
-            border: 1px solid var(--border);
-        }
-
-        .btn-cancel { background: transparent; color: var(--text-muted); }
-        .btn-submit { background: var(--primary); color: #fff; border: none; }
-
-        /* =========================================
-           8. SLIDE-OUT DIEGETIC MENU (NEW)
-           ========================================= */
-        .side-menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100dvh;
-            width: 280px;
-            background: rgba(15, 10, 25, 0.96);
-            backdrop-filter: blur(20px);
-            z-index: 10001;
-            transform: translateX(-100%);
-            transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .theme-mt .side-menu {
-            background: rgba(10, 25, 15, 0.96);
-        }
-
-        .side-menu.open {
-            transform: translateX(0);
-        }
-
-        .menu-header {
-            padding: 24px 20px 16px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .menu-title {
-            font-size: 1.35rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .menu-content {
-            padding: 16px 20px;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        .menu-link {
-            display: block;
-            padding: 14px 0;
-            color: var(--text-main);
-            text-decoration: none;
-            font-size: 0.95rem;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            transition: color 0.2s ease;
-        }
-
-        .menu-link:last-child {
-            border-bottom: none;
-        }
-
-        .menu-link:hover {
-            color: var(--primary);
-        }
-
-        .menu-footer {
-            padding: 20px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border);
-        }
-
-        .menu-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.6);
-            z-index: 10000;
-            opacity: 0;
+            background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 2px);
             pointer-events: none;
-            transition: opacity 0.3s ease;
+            z-index: 9998;
+            mix-blend-mode: overlay;
         }
 
-        .menu-overlay.open {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* Mobile improvements */
-        @media (max-width: 768px) {
-            .chat-bubble {
-                max-width: 92% !important;
-            }
-            .chat-container {
-                margin: 0 12px 8px;
-                border-radius: 12px;
-            }
+        .theme-mt::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 9998;
         }
     </style>
 </head>
 <body class="theme-lom">
-
-    <!-- Portal Overlay for Dimensional Shift -->
     <div id="portal-overlay"></div>
 
-    <!-- Navigation (kept original structure) -->
-    <nav class="main-nav">
-        <div class="nav-container">
-            <a href="#" class="logo" onclick="showPage('chat'); return false;">LORE BRIDGE</a>
-            <div class="nav-links">
-                <a href="#" class="nav-link" onclick="showPage('chat'); return false;">Chat</a>
-                <a href="#" class="nav-link" onclick="showPage('about'); return false;">About</a>
-                <div class="social-links">
-                    <a href="#" class="social-link" id="github-link" target="_blank" title="GitHub">📦</a>
-                    <a href="#" class="social-link" id="twitter-link" target="_blank" title="X/Twitter">🐦</a>
-                </div>
-            </div>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="toggle-group" id="universe-toggle">
+            <button class="toggle-btn active" data-universe="lom">🃏 LoM</button>
+            <button class="toggle-btn" data-universe="mt">🗡️ MT</button>
         </div>
-    </nav>
+        <div class="toggle-group" id="audience-toggle">
+            <button class="toggle-btn active" data-audience="watcher">👁️ Watcher</button>
+            <button class="toggle-btn" data-audience="reader">📖 Reader</button>
+        </div>
+        <button class="menu-btn" id="menu-toggle">🃏</button>
+    </div>
 
-    <!-- Parallax Backgrounds (original) -->
+    <!-- Parallax & Particles -->
     <div class="parallax-container">
         <svg class="parallax-layer lom-bg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMax slice">
             <path d="M450,1000 L450,600 L400,550 L400,400 L480,200 L500,100 L520,200 L600,400 L600,550 L550,600 L550,1000 Z" fill="rgba(138, 43, 226, 0.05)" />
             <circle cx="500" cy="350" r="40" fill="none" stroke="rgba(138, 43, 226, 0.1)" stroke-width="2" />
-            <path d="M500,310 L500,350 L530,350" fill="none" stroke="rgba(138, 43, 226, 0.1)" stroke-width="2" />
         </svg>
-        
         <svg class="parallax-layer mt-bg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMax slice">
             <path d="M0,1000 L200,700 L300,850 L500,500 L700,800 L800,650 L1000,1000 Z" fill="rgba(50, 205, 50, 0.05)" />
             <circle cx="500" cy="400" r="150" fill="none" stroke="rgba(50, 205, 50, 0.08)" stroke-width="2" stroke-dasharray="10 5" />
-            <circle cx="500" cy="400" r="100" fill="none" stroke="rgba(50, 205, 50, 0.05)" stroke-width="1" />
         </svg>
     </div>
-
-    <!-- Floating Particles -->
     <div class="particles-container" id="particles"></div>
 
-    <!-- CHAT PAGE - NEW MOBILE SHELL -->
-    <div id="chat-page" class="page active chat-page">
-        <div class="app-container" style="max-width: 100%; padding: 0; height: 100%; display: flex; flex-direction: column;">
-            
-            <!-- NEW: Slim Top Bar -->
-            <div class="top-bar">
-                <div class="universe-pills" id="universe-toggle">
-                    <button class="universe-pill active" data-universe="lom">🃏 LoM</button>
-                    <button class="universe-pill" data-universe="mt">🗡️ MT</button>
-                </div>
-                
-                <button id="menu-btn" class="menu-btn">🃏</button>
-            </div>
-
-            <!-- Status Bar -->
-            <div class="status-bar">
-                <div class="status-dot"></div>
-                <span id="status-text">Mode: LoM Watcher • Locked to end of Vol 1 • No Spoilers</span>
-            </div>
-
-            <!-- Chat Interface -->
-            <div class="chat-container">
-                <div class="oracle-header">
-                    <div class="oracle-avatar" id="oracle-icon">🃏</div>
-                    <div>
-                        <h3 class="oracle-name" id="oracle-name">The Gray Fog Oracle</h3>
-                        <p class="oracle-status" id="oracle-status">Spoiler-free • Up to current anime</p>
-                    </div>
-                </div>
-
-                <div class="chat-messages" id="chat-messages">
-                    <!-- Messages populated by your original JS -->
-                </div>
-
-                <!-- Suggestion Chips - Horizontal Scroll -->
-                <div class="suggestions" id="suggestions">
-                    <!-- Populated by your original JS -->
-                </div>
-
-                <div class="input-area">
-                    <div class="input-row">
-                        <input type="text" id="user-input" placeholder="Consult the Oracle..." />
-                        <button class="send-btn" id="send-btn">Send</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Footer (kept original) -->
-            <footer>
-                <div class="footer-links">
-                    <a href="#" onclick="showPage('about'); return false;">About</a>
-                    <a href="#" onclick="openFeedbackModal(); return false;">Feedback</a>
-                    <span>Built with @grok</span>
-                    <a href="mailto:angazadesk@zohomail.com?subject=Lore Bridge Feedback" class="text-xs hover:text-white/80 ml-4 border-l border-white/20 pl-4">Report Bug / Suggest</a>
-                </div>
-                <button class="diegetic-btn" id="tip-jar-btn">
-                    <span class="icon">🃏</span>
-                    <span class="text">Offer a Sacrifice to The Fool</span>
-                </button>
-            </footer>
+    <!-- Chat Area -->
+    <div class="chat-container" id="chat-container">
+        <div class="msg-ai" style="max-width: 95%; width: 95%;">
+            <p>Hey! Ask me anything about the lore.</p>
         </div>
     </div>
 
-    <!-- ABOUT PAGE (kept original full structure) -->
-    <div id="about-page" class="page">
-        <div class="about-container">
-            <div class="about-header">
-                <h1 class="about-title" id="about-title">About Lore Bridge</h1>
-                <p class="about-description" id="about-description">
-                    Lore Bridge is an AI-powered companion for fans of Lord of the Mysteries and Mushoku Tensei.
-                </p>
-            </div>
-
-            <div class="about-section">
-                <h2>✨ Features</h2>
-                <ul class="feature-list" id="feature-list">
-                    <li>🎭 Spoiler-Free Mode: Safe for anime-only viewers</li>
-                    <li>📚 Full Lore Mode: Deep dive for novel readers</li>
-                    <li>🤖 AI-Powered: Powered by Grok for accurate lore</li>
-                    <li>🌉 Two Universes: Switch between LoM and MT instantly</li>
-                    <li>💬 Smart Suggestions: Get answers to common questions</li>
-                </ul>
-            </div>
-
-            <div class="about-section">
-                <h2>🛠️ Built With</h2>
-                <ul class="tech-list" id="tech-list">
-                    <li>Built with Next.js</li>
-                    <li>Hosted on Vercel</li>
-                    <li>AI by xAI Grok</li>
-                    <li>Styled with pure CSS</li>
-                </ul>
-            </div>
-
-            <div class="about-section payment-section">
-                <h2>☕ Support the Project</h2>
-                <p style="color: var(--text-muted); margin-bottom: 20px;">
-                    If Lore Bridge has helped you on your journey, consider supporting its maintenance!
-                </p>
-                <div class="payment-buttons" id="payment-buttons">
-                    <!-- Populated by JS -->
-                </div>
-            </div>
+    <!-- Input Area -->
+    <div class="input-area">
+        <div class="suggestions" id="suggestions">
+            <button class="chip">Who is The Fool?</button>
+            <button class="chip">Explain the Pathways</button>
+            <button class="chip">Mystery of the Gray Fog</button>
         </div>
+        <form class="input-row" id="chat-form">
+            <input type="text" id="user-input" placeholder="Ask the Oracle..." autocomplete="off" />
+            <button type="submit" class="send-btn">Send</button>
+        </form>
     </div>
 
-    <!-- Payment/Support Modal (kept original) -->
-    <div id="payment-modal" class="modal">
-        <div class="modal-content">
-            <h3 class="modal-title" id="modal-title">Support the Bridge</h3>
-            <p class="modal-description" id="modal-description">
-                Your offering strengthens the veil between worlds.
-            </p>
-            <div class="payment-options" id="payment-options">
-                <!-- Populated by JS -->
-            </div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal('payment-modal')">Close</button>
-            </div>
-        </div>
-    </div>
+    <!-- Side Menu Overlay -->
+    <div class="menu-overlay" id="menu-overlay"></div>
 
-    <!-- Feedback Modal (kept original) -->
-    <div id="feedback-modal" class="modal">
-        <div class="modal-content">
-            <h3 class="modal-title">What would make Lore Bridge better?</h3>
-            <textarea placeholder="Share your thoughts..."></textarea>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal('feedback-modal')">Cancel</button>
-                <button class="btn-submit" onclick="submitFeedback()">Submit Feedback</button>
-            </div>
+    <!-- Side Menu -->
+    <div class="side-menu" id="side-menu">
+        <div class="menu-header" id="menu-header">The Gray Fog</div>
+        <div class="menu-links">
+            <a href="#" class="menu-link" onclick="showAbout(); return false;">About the Oracle</a>
+            <a href="#" class="menu-link" id="github-link" target="_blank">View the Source Code</a>
+            <a href="#" class="menu-link" id="support-link" target="_blank">Offer a Sacrifice</a>
+            <a href="mailto:angazadesk@zohomail.com?subject=Lore Bridge Feedback" class="menu-link">Report an Anomaly</a>
         </div>
+        <div class="menu-footer">Built with @grok</div>
     </div>
-
-    <!-- NEW: Slide-out Diegetic Menu -->
-    <div id="side-menu" class="side-menu">
-        <div class="menu-header">
-            <div id="menu-title" class="menu-title">The Gray Fog</div>
-        </div>
-        <div class="menu-content">
-            <a href="#" onclick="showPage('about'); closeMenu();" class="menu-link">About the Oracle</a>
-            <a href="https://github.com/yourusername/lore-bridge" target="_blank" class="menu-link">View the Source Code</a>
-            <a href="https://www.buymeacoffee.com/yourusername" target="_blank" class="menu-link">Offer a Sacrifice / Buy a Potion</a>
-            <a href="mailto:angazadesk@zohomail.com?subject=Lore Bridge Feedback" class="menu-link">Report an Anomaly / Suggest a Quest</a>
-        </div>
-        <div class="menu-footer">
-            Built with <span style="color:#C5A059">@grok</span>
-        </div>
-    </div>
-    <div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
 
     <script type="module">
-        // =========================================
-        // YOUR ORIGINAL SCRIPT - KEPT EXACTLY AS YOU PROVIDED
-        // (All core logic untouched)
-        // =========================================
         import { siteConfig } from './config.js';
 
         let currentUniverse = 'lom';
@@ -1090,23 +510,7 @@
             }
         }
 
-        function applyBackgrounds() {
-            if (window.siteConfig) {
-                const lomBg = window.siteConfig.lom.backgroundImage || (window.siteConfig.lom.images && window.siteConfig.lom.images.background);
-                const mtBg = window.siteConfig.mt.backgroundImage || (window.siteConfig.mt.images && window.siteConfig.mt.images.background);
-                
-                if (currentUniverse === 'lom' && lomBg) {
-                    document.body.style.backgroundImage = `url(${lomBg})`;
-                } else if (currentUniverse === 'mt' && mtBg) {
-                    document.body.style.backgroundImage = `url(${mtBg})`;
-                } else {
-                    document.body.style.backgroundImage = 'none';
-                }
-            }
-        }
-
         function switchUniverse(newUniverse) {
-            applyBackground(newUniverse);
             if (newUniverse === currentUniverse) return;
             
             const portal = document.getElementById('portal-overlay');
@@ -1120,7 +524,7 @@
                 currentUniverse = newUniverse;
                 updateAllUI();
                 generateParticles();
-                applyBackgrounds();
+                applyBackground(newUniverse);
             }, 400);
             
             setTimeout(() => {
@@ -1132,12 +536,17 @@
             const config = siteConfig[currentUniverse];
             const modeConfig = config[currentAudience];
             
-            document.getElementById('oracle-name').textContent = config.oracleName;
-            document.getElementById('oracle-icon').textContent = config.oracleIcon;
-            document.getElementById('oracle-status').textContent = modeConfig.oracleStatus;
-            document.getElementById('welcome-message').textContent = modeConfig.welcomeMessage;
-            document.getElementById('status-text').textContent = modeConfig.modeStatus;
-            document.getElementById('user-input').placeholder = modeConfig.inputPlaceholder;
+            const menuBtn = document.getElementById('menu-toggle');
+            menuBtn.textContent = currentUniverse === 'lom' ? '🃏' : '🗡️';
+            
+            const menuHeader = document.getElementById('menu-header');
+            menuHeader.textContent = currentUniverse === 'lom' ? 'The Gray Fog' : 'The Adventurer\'s Guild';
+            
+            const supportLink = document.getElementById('support-link');
+            supportLink.textContent = currentUniverse === 'lom' ? 'Offer a Sacrifice' : 'Buy a Potion';
+            supportLink.href = siteConfig.personal.paymentMethods.buyMeACoffee || '#';
+            
+            document.getElementById('github-link').href = siteConfig.personal.github || '#';
             
             const suggestionsContainer = document.getElementById('suggestions');
             suggestionsContainer.innerHTML = '';
@@ -1147,17 +556,10 @@
                 chip.textContent = suggestion;
                 chip.onclick = () => {
                     document.getElementById('user-input').value = suggestion;
-                    sendMessage();
+                    document.getElementById('chat-form').dispatchEvent(new Event('submit'));
                 };
                 suggestionsContainer.appendChild(chip);
             });
-            
-            const tipBtn = document.getElementById('tip-jar-btn');
-            tipBtn.querySelector('.icon').textContent = config.diegeticText.buttonIcon;
-            tipBtn.querySelector('.text').textContent = config.diegeticText.buttonText;
-            
-            document.getElementById('modal-title').textContent = config.diegeticText.modalTitle;
-            document.getElementById('modal-description').textContent = config.diegeticText.modalDescription;
         }
 
         document.addEventListener('mousemove', (e) => {
@@ -1170,7 +572,7 @@
         function generateParticles() {
             const container = document.getElementById('particles');
             container.innerHTML = '';
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 15; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
                 p.style.left = `${Math.random() * 100}%`;
@@ -1181,122 +583,48 @@
             }
         }
 
-        window.showPage = function(pageName) {
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
+        document.querySelectorAll('#universe-toggle .toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#universe-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                switchUniverse(btn.dataset.universe);
             });
-            document.getElementById(`${pageName}-page`).classList.add('active');
-            
-            if (pageName === 'about') {
-                loadAboutPage();
-            }
-        };
+        });
 
-        function loadAboutPage() {
-            const about = siteConfig.about;
-            const personal = siteConfig.personal;
-            
-            document.getElementById('about-title').textContent = about.title;
-            document.getElementById('about-description').textContent = about.description;
-            
-            const featureList = document.getElementById('feature-list');
-            featureList.innerHTML = '';
-            about.features.forEach(feature => {
-                const li = document.createElement('li');
-                li.textContent = feature;
-                featureList.appendChild(li);
+        document.querySelectorAll('#audience-toggle .toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#audience-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentAudience = btn.dataset.audience;
+                updateAllUI();
             });
-            
-            const techList = document.getElementById('tech-list');
-            techList.innerHTML = '';
-            about.techStack.forEach(tech => {
-                const li = document.createElement('li');
-                li.textContent = tech;
-                techList.appendChild(li);
-            });
-            
-            const paymentButtons = document.getElementById('payment-buttons');
-            paymentButtons.innerHTML = '';
-            
-            if (personal.paymentMethods.buyMeACoffee) {
-                paymentButtons.appendChild(createPaymentBtn('☕', 'Buy Me a Coffee', personal.paymentMethods.buyMeACoffee));
-            }
-            if (personal.paymentMethods.kofi) {
-                paymentButtons.appendChild(createPaymentBtn('💜', 'Ko-fi', personal.paymentMethods.kofi));
-            }
-            if (personal.paymentMethods.paypal) {
-                paymentButtons.appendChild(createPaymentBtn('💳', 'PayPal', personal.paymentMethods.paypal));
-            }
-            if (personal.paymentMethods.patreon) {
-                paymentButtons.appendChild(createPaymentBtn('🎭', 'Patreon', personal.paymentMethods.patreon));
-            }
-            
-            document.getElementById('github-link').href = personal.github;
-            document.getElementById('twitter-link').href = personal.twitter;
+        });
+
+        const menuToggle = document.getElementById('menu-toggle');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const sideMenu = document.getElementById('side-menu');
+
+        menuToggle.addEventListener('click', () => {
+            menuOverlay.classList.add('active');
+            sideMenu.classList.add('active');
+        });
+
+        menuOverlay.addEventListener('click', () => {
+            menuOverlay.classList.remove('active');
+            sideMenu.classList.remove('active');
+        });
+
+        function scrollToBottom() {
+            const container = document.getElementById('chat-container');
+            if(container) container.scrollTop = container.scrollHeight;
         }
 
-        function createPaymentBtn(icon, text, url) {
-            const a = document.createElement('a');
-            a.href = url;
-            a.target = '_blank';
-            a.className = 'payment-btn';
-            a.innerHTML = `<span>${icon}</span><span>${text}</span>`;
-            return a;
+        function formatText(text) {
+            return text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--menu-accent);">$1</strong>');
         }
 
-        window.openPaymentModal = function() {
-            const config = siteConfig[currentUniverse];
-            const personal = siteConfig.personal;
-            
-            const paymentOptions = document.getElementById('payment-options');
-            paymentOptions.innerHTML = '';
-            
-            if (personal.paymentMethods.buyMeACoffee) {
-                paymentOptions.appendChild(createPaymentOption('☕', 'Buy Me a Coffee', personal.paymentMethods.buyMeACoffee));
-            }
-            if (personal.paymentMethods.kofi) {
-                paymentOptions.appendChild(createPaymentOption('💜', 'Ko-fi', personal.paymentMethods.kofi));
-            }
-            if (personal.paymentMethods.paypal) {
-                paymentOptions.appendChild(createPaymentOption('💳', 'PayPal', personal.paymentMethods.paypal));
-            }
-            if (personal.paymentMethods.patreon) {
-                paymentOptions.appendChild(createPaymentOption('🎭', 'Patreon', personal.paymentMethods.patreon));
-            }
-            
-            document.getElementById('payment-modal').classList.add('active');
-        };
-
-        function createPaymentOption(icon, text, url) {
-            const a = document.createElement('a');
-            a.href = url;
-            a.target = '_blank';
-            a.className = 'payment-option';
-            a.innerHTML = `
-                <span class="payment-icon">${icon}</span>
-                <div>
-                    <div style="font-weight: 600;">${text}</div>
-                    <div style="font-size: 0.85rem; color: var(--text-muted);">Click to support</div>
-                </div>
-            `;
-            return a;
-        }
-
-        window.openFeedbackModal = function() {
-            document.getElementById('feedback-modal').classList.add('active');
-        };
-
-        window.closeModal = function(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        };
-
-        window.submitFeedback = function() {
-            alert('Thank you for your feedback! (Implement actual submission here)');
-            closeModal('feedback-modal');
-        };
-
-        async function sendMessage(e) {
-            if (e) e.preventDefault();
+        async function handleSend(e) {
+            e.preventDefault();
             if (isGenerating) return;
             
             const input = document.getElementById('user-input');
@@ -1306,30 +634,31 @@
             isGenerating = true;
             input.value = '';
             
-            const messagesContainer = document.getElementById('chat-messages');
+            const chatContainer = document.getElementById('chat-container');
             
             const userDiv = document.createElement('div');
-            userDiv.className = 'message user-msg';
-            userDiv.innerHTML = `<div class="chat-bubble"><p class="text-sm leading-relaxed">${msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p></div>`;
-            messagesContainer.appendChild(userDiv);
+            userDiv.className = 'msg-user';
+            userDiv.style.maxWidth = '90%';
+            userDiv.style.width = '90%';
+            userDiv.innerHTML = `<p>${msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>`;
+            chatContainer.appendChild(userDiv);
             
             const aiId = 'msg-' + Date.now();
             const aiDiv = document.createElement('div');
             aiDiv.id = aiId;
-            aiDiv.className = 'message oracle-msg';
+            aiDiv.className = 'msg-ai';
+            aiDiv.style.maxWidth = '95%';
+            aiDiv.style.width = '95%';
             aiDiv.innerHTML = `
-                <div class="chat-bubble">
-                    <div class="typing-indicator flex gap-1 text-[#C5A059]">
-                        <span class="w-2 h-2 bg-[#C5A059] rounded-full inline-block"></span>
-                        <span class="w-2 h-2 bg-[#C5A059] rounded-full inline-block"></span>
-                        <span class="w-2 h-2 bg-[#C5A059] rounded-full inline-block"></span>
+                <p>
+                    <div class="typing-indicator" style="display: flex; gap: 4px;">
+                        <span style="width: 8px; height: 8px; background: var(--menu-accent); border-radius: 50%; display: inline-block;"></span>
+                        <span style="width: 8px; height: 8px; background: var(--menu-accent); border-radius: 50%; display: inline-block;"></span>
+                        <span style="width: 8px; height: 8px; background: var(--menu-accent); border-radius: 50%; display: inline-block;"></span>
                     </div>
-                </div>`;
-            messagesContainer.appendChild(aiDiv);
+                </p>`;
+            chatContainer.appendChild(aiDiv);
             scrollToBottom();
-
-            const audienceToggle = document.getElementById('audience-toggle');
-            const currentAudienceMode = (audienceToggle && audienceToggle.querySelector('.active')?.dataset.audience === 'reader') ? 'reader' : 'watcher';
 
             try {
                 const res = await fetch('/api/chat', {
@@ -1338,7 +667,7 @@
                     body: JSON.stringify({ 
                         message: msg, 
                         series: currentUniverse, 
-                        audience: currentAudienceMode 
+                        audience: currentAudience 
                     })
                 });
 
@@ -1366,12 +695,11 @@
                             
                             const currentAiDiv = document.getElementById(aiId);
                             if (currentAiDiv) {
-                                const bubble = currentAiDiv.querySelector('.chat-bubble');
                                 if (isFirstChunk) {
-                                    bubble.innerHTML = `<p class="text-sm leading-relaxed whitespace-pre-wrap">${formatText(aiResponse)}</p>`;
+                                    currentAiDiv.innerHTML = `<p style="white-space: pre-wrap;">${formatText(aiResponse)}</p>`;
                                     isFirstChunk = false;
                                 } else {
-                                    bubble.querySelector('p').innerHTML = formatText(aiResponse);
+                                    currentAiDiv.querySelector('p').innerHTML = formatText(aiResponse);
                                 }
                                 scrollToBottom();
                             }
@@ -1381,99 +709,24 @@
             } catch (err) {
                 const currentAiDiv = document.getElementById(aiId);
                 if(currentAiDiv) {
-                    currentAiDiv.querySelector('.chat-bubble').innerHTML = `<p class="text-sm text-red-400">Connection lost or API limit hit. Try again in a few seconds.</p>`;
+                    currentAiDiv.innerHTML = `<p style="color: #ff6b6b;">Connection lost or API limit hit. Try again in a few seconds.</p>`;
                 }
             }
 
             isGenerating = false;
         }
 
-        function formatText(text) {
-            return text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#C5A059]">$1</strong>');
-        }
+        document.getElementById('chat-form').addEventListener('submit', handleSend);
 
-        function scrollToBottom() {
-            const container = document.getElementById('chat-messages');
-            if(container) container.scrollTop = container.scrollHeight;
-        }
+        window.showAbout = function() {
+            alert('About the Oracle\n\nLore Bridge is an AI-powered companion for fans of Lord of the Mysteries and Mushoku Tensei.');
+            menuOverlay.classList.remove('active');
+            sideMenu.classList.remove('active');
+        };
 
-        // Event Listeners
-        document.querySelectorAll('#universe-toggle .toggle-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('#universe-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                switchUniverse(btn.dataset.universe);
-            });
-        });
-
-        document.querySelectorAll('#audience-toggle .toggle-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('#audience-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentAudience = btn.dataset.audience;
-                updateAllUI();
-            });
-        });
-
-        document.getElementById('send-btn').addEventListener('click', (e) => sendMessage(e));
-        document.getElementById('user-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage(e);
-        });
-
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                }
-            });
-        });
-
-        // Initialize
         generateParticles();
         updateAllUI();
-        applyBackgrounds();
         applyBackground('lom');
-
-        // NEW: Menu functionality (added without touching your core logic)
-        const menuBtn = document.getElementById('menu-btn');
-        const sideMenu = document.getElementById('side-menu');
-        const menuOverlay = document.getElementById('menu-overlay');
-
-        if (menuBtn) {
-            menuBtn.addEventListener('click', () => {
-                sideMenu.classList.toggle('open');
-                menuOverlay.classList.toggle('open');
-                
-                // Update menu title based on current theme
-                const menuTitle = document.getElementById('menu-title');
-                if (currentUniverse === 'lom') {
-                    menuTitle.textContent = 'The Gray Fog';
-                    menuTitle.style.color = '#C5A059';
-                } else {
-                    menuTitle.textContent = "The Adventurer's Guild";
-                    menuTitle.style.color = '#32cd32';
-                }
-            });
-        }
-
-        function closeMenu() {
-            sideMenu.classList.remove('open');
-            menuOverlay.classList.remove('open');
-        }
-
-        // Close menu when clicking overlay (already handled above)
-        if (menuOverlay) {
-            menuOverlay.addEventListener('click', closeMenu);
-        }
-
-        // Update menu icon when theme changes
-        const originalUpdateAllUI = updateAllUI;
-        window.updateAllUI = function() {
-            originalUpdateAllUI();
-            if (menuBtn) {
-                menuBtn.innerHTML = currentUniverse === 'lom' ? '🃏' : '🗡️';
-            }
-        };
     </script>
 </body>
 </html>
