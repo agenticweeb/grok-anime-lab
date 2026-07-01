@@ -3,207 +3,687 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Lore Bridge • Spoiler-Free Context</title>
+    <title>Lore Bridge • Immersive Fandom Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Cinzel:wght@400;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap');
-        :root { --bg: #1A0B2E; --text: #F5F5F0; --accent: #C5A059; --card-bg: #12071F; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', system_ui, sans-serif; }
-        .heading-serif { font-family: 'Playfair Display', Georgia, serif; }
-        .manhua-card { background-color: var(--card-bg); border: 1px solid rgba(197, 160, 89, 0.15); }
-        
-        /* Chat Styles */
-        #chat-container { height: 50vh; overflow-y: auto; scroll-behavior: smooth; }
-        #chat-container::-webkit-scrollbar { width: 6px; }
-        #chat-container::-webkit-scrollbar-thumb { background: rgba(197, 160, 89, 0.3); border-radius: 3px; }
-        
-        .msg-user { background: rgba(197, 160, 89, 0.15); border-left: 3px solid var(--accent); }
-        .msg-ai { background: rgba(255,255,255,0.05); }
-        
-        .typing-indicator span { animation: blink 1.4s infinite both; }
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes blink { 0%, 80%, 100% { opacity: 0; } 40% { opacity: 1; } }
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Cinzel:wght@400;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap');
+
+        :root {
+            --bg: #0f051d;
+            --accent: #C5A059;
+            --accent2: #4A5568;
+            --text: #F5F5F0;
+            --card: #12071F;
+            --bubble-user: #1F1633;
+            --bubble-ai: #1A1329;
+        }
+
+        body {
+            font-family: 'Inter', system_ui, sans-serif;
+            transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                        color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .theme-lom {
+            --bg: #0f051d;
+            --accent: #C5A059;
+            --accent2: #4A5568;
+            --text: #F5F5F0;
+            --card: #12071F;
+            --bubble-user: #1F1633;
+            --bubble-ai: #1A1329;
+        }
+
+        .theme-mt {
+            --bg: #0a1f0a;
+            --accent: #D4AF37;
+            --accent2: #10B981;
+            --text: #F5F5F0;
+            --card: #0F1A0F;
+            --bubble-user: #132613;
+            --bubble-ai: #0F1F0F;
+        }
+
+        body.theme-lom { background-color: #0f051d; color: #F5F5F0; }
+        body.theme-mt { background-color: #0a1f0a; color: #F5F5F0; }
+
+        .heading-serif-lom { font-family: 'Playfair Display', Georgia, serif; }
+        .heading-serif-mt { font-family: 'Cinzel', Georgia, serif; }
+
+        .glass {
+            background: rgba(255,255,255,0.06);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .portal-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .portal-btn.active {
+            box-shadow: 0 0 25px var(--accent);
+            transform: scale(1.02);
+        }
+
+        .chat-bubble {
+            max-width: 78%;
+            padding: 14px 18px;
+            border-radius: 18px;
+            line-height: 1.5;
+            transition: all 0.2s ease;
+        }
+
+        .theme-lom .chat-bubble.user { background: #1F1633; border: 1px solid #C5A05933; }
+        .theme-lom .chat-bubble.ai { background: #1A1329; border: 1px solid #4A556833; }
+
+        .theme-mt .chat-bubble.user { background: #132613; border: 1px solid #D4AF3733; }
+        .theme-mt .chat-bubble.ai { background: #0F1F0F; border: 1px solid #10B98133; }
+
+        .suggestion-chip {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap;
+        }
+        .suggestion-chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2);
+        }
+
+        .fog-layer {
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 30% 40%, rgba(180,180,200,0.06) 0%, transparent 70%);
+            animation: fog-drift 25s ease infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes fog-drift {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(3%, 2%); }
+        }
+
+        .ember {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #D4AF37;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #D4AF37;
+            animation: float-ember 4s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .context-shield {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .portal-flash {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle, rgba(197,160,89,0.15) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            animation: portal-flash-anim 0.7s ease forwards;
+        }
+
+        .lore-response {
+            font-size: 0.95rem;
+            line-height: 1.65;
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
-    
-    <!-- Header -->
-    <div class="w-full px-5 pt-6 pb-4 border-b border-[#C5A059]/20 bg-[#1A0B2E]/80 backdrop-blur-sm sticky top-0 z-10">
-        <div class="max-w-4xl mx-auto">
-            <div class="flex items-center justify-between mb-4">
-                <div>
-                    <h1 class="text-3xl md:text-4xl font-bold heading-serif tracking-tight text-white">Anime Lore Bridge</h1>
-                    <p class="text-[#C5A059] text-sm mt-1 font-medium">Ask anything. Zero spoilers. Fan persona.</p>
+<body class="theme-lom min-h-screen">
+
+    <!-- Top Bar -->
+    <nav class="sticky top-0 z-50 glass border-b border-white/10">
+        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
+            <!-- Logo -->
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#C5A059] to-[#D4AF37] flex items-center justify-center">
+                    <span class="text-[#0f051d] text-2xl font-bold">LB</span>
                 </div>
-                <div class="hidden md:flex items-center gap-2 text-xs px-3 py-1.5 rounded-full border border-[#C5A059]/30 bg-[#12071F]">
-                    <span class="text-[#C5A059]">POWERED BY GROK</span>
+                <div>
+                    <span class="font-semibold text-2xl tracking-tight">Lore Bridge</span>
                 </div>
             </div>
+
+            <!-- Portal Buttons -->
+            <div class="flex items-center gap-2 bg-black/30 rounded-3xl p-1 border border-white/10">
+                <button onclick="switchTheme('lom')"
+                        id="btn-lom"
+                        class="portal-btn active flex items-center gap-2 px-5 py-2 rounded-3xl text-sm font-semibold bg-[#C5A059] text-[#0f051d]">
+                    <span>🃏</span>
+                    <span>Lord of the Mysteries</span>
+                </button>
+                <button onclick="switchTheme('mt')"
+                        id="btn-mt"
+                        class="portal-btn flex items-center gap-2 px-5 py-2 rounded-3xl text-sm font-semibold hover:bg-white/5">
+                    <span>🗡️</span>
+                    <span>Mushoku Tensei</span>
+                </button>
+            </div>
+
+            <!-- Audience Toggle -->
+            <div class="flex items-center gap-1 bg-black/40 rounded-3xl p-1 border border-white/10">
+                <button onclick="setAudience('watcher')"
+                        id="aud-watcher"
+                        class="px-4 py-1.5 text-xs font-medium rounded-3xl flex items-center gap-1.5 active-audience">
+                    <span>👁️</span>
+                    <span>Watcher</span>
+                </button>
+                <button onclick="setAudience('reader')"
+                        id="aud-reader"
+                        class="px-4 py-1.5 text-xs font-medium rounded-3xl flex items-center gap-1.5 hover:bg-white/5">
+                    <span>📖</span>
+                    <span>Reader</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Context Shield -->
+    <div class="max-w-5xl mx-auto px-6 pt-5">
+        <div id="context-shield"
+             class="context-shield inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-sm border border-white/10 bg-black/30">
+            <span id="shield-text">🌫️ Mode: LoM Watcher • Locked to end of Vol 1 • No Spoilers</span>
+        </div>
+    </div>
+
+    <!-- Main Chat Container -->
+    <div class="max-w-5xl mx-auto px-6 pt-6 pb-24">
+        <div class="rounded-3xl overflow-hidden border border-white/10 shadow-2xl" style="background: var(--card);">
             
-            <!-- Series Toggle -->
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="switchSeries('lom')" id="btn-lom" class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border-2 transition-all bg-[#C5A059] text-[#1A0B2E] border-[#C5A059]">
-                    <i class="fa-solid fa-infinity"></i> Lord of the Mysteries
-                </button>
-                <button onclick="switchSeries('mt')" id="btn-mt" class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border-2 transition-all bg-[#12071F] text-white border-[#C5A059]/40 hover:border-[#C5A059]">
-                    <i class="fa-solid fa-dragon"></i> Mushoku Tensei
-                </button>
+            <!-- Chat Header -->
+            <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div id="chat-avatar" 
+                         class="w-9 h-9 rounded-2xl flex items-center justify-center text-xl bg-gradient-to-br from-[#C5A059] to-[#D4AF37]">
+                        🃏
+                    </div>
+                    <div>
+                        <div class="font-semibold" id="chat-title">The Gray Fog Oracle</div>
+                        <div class="text-xs text-white/50">Spoiler-free • Up to current anime</div>
+                    </div>
+                </div>
+                <div class="text-xs px-3 py-1 rounded-full border border-white/20 text-white/60">LIVE CONTEXT</div>
+            </div>
+
+            <!-- Messages -->
+            <div id="chat-messages" 
+                 class="h-[420px] overflow-y-auto p-6 space-y-6 bg-black/20 scroll-smooth"
+                 style="scrollbar-width: thin;">
+                <!-- Messages injected by JS -->
+            </div>
+
+            <!-- Suggestion Chips -->
+            <div class="px-6 pt-4 pb-3 border-t border-white/10 bg-black/30">
+                <div class="text-[10px] tracking-[1px] text-white/50 mb-2 px-1">SMART SUGGESTIONS</div>
+                <div id="suggestion-chips" class="flex flex-wrap gap-2">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Input -->
+            <div class="p-4 border-t border-white/10 bg-black/40">
+                <div class="flex gap-3">
+                    <input id="chat-input" 
+                           type="text" 
+                           placeholder="Ask anything about the story so far..."
+                           class="flex-1 bg-black/40 border border-white/20 focus:border-[var(--accent)] rounded-3xl px-5 py-3 text-sm outline-none placeholder:text-white/40"
+                           onkeypress="if (event.key === 'Enter') sendMessage()">
+                    <button onclick="sendMessage()"
+                            class="px-7 rounded-3xl font-semibold flex items-center gap-2 transition-all active:scale-[0.985]"
+                            style="background: var(--accent); color: #0f051d;">
+                        <span>Send</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Chat Area -->
-    <div class="flex-1 flex flex-col max-w-4xl w-full mx-auto px-5 pt-6 pb-4">
-        
-        <!-- Status Context -->
-        <div id="context-bar" class="mb-4 p-3 rounded-xl bg-[#12071F] border border-[#C5A059]/20 text-xs text-[#F5F5F0]/70 flex items-start gap-3">
-            <i class="fa-solid fa-shield-halved text-[#C5A059] mt-0.5"></i>
-            <span id="context-text">Currently locked to: <strong class="text-[#C5A059]">LoM Vol 1 (End of S1/Specials)</strong>. I will not spoil future volumes.</span>
-        </div>
-
-        <!-- Messages -->
-        <div id="chat-container" class="flex-1 flex flex-col gap-4 pb-4">
-            <!-- Welcome Message -->
-            <div class="msg-ai rounded-2xl p-4 max-w-[90%]">
-                <p class="text-sm leading-relaxed">Hey! Got a question about the watch order, the Beyonder system, or what the anime skipped? Ask me anything. I've read the source material, but I promise I won't spoil what you haven't seen yet. 🧠</p>
+    <!-- Suggestion Box -->
+    <div class="max-w-5xl mx-auto px-6">
+        <div class="rounded-3xl border border-white/10 p-5 bg-black/30">
+            <div class="flex items-center justify-between mb-3">
+                <div>
+                    <span class="font-semibold">Help improve the Bridge</span>
+                    <span class="text-xs ml-2 text-white/50">Community feedback</span>
+                </div>
+                <button onclick="openSuggestionModal()"
+                        class="text-xs px-4 py-1.5 rounded-2xl border border-white/20 hover:bg-white/5 flex items-center gap-2">
+                    <i class="fa-solid fa-lightbulb"></i>
+                    <span>Share an idea</span>
+                </button>
+            </div>
+            <div id="community-suggestions" class="text-xs text-white/60 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1">
+                <!-- Populated from localStorage -->
             </div>
         </div>
+    </div>
 
-        <!-- Input Area -->
-        <div class="sticky bottom-0 bg-[#1A0B2E] pt-4 pb-6">
-            <form onsubmit="handleSend(event)" class="flex gap-3">
-                <input type="text" id="user-input" placeholder="e.g., Why did Klein do the tarot trick?" autocomplete="off"
-                       class="flex-1 bg-[#12071F] border border-[#C5A059]/30 rounded-2xl px-5 py-3.5 text-sm text-white placeholder-[#F5F5F0]/40 focus:outline-none focus:border-[#C5A059] transition-colors">
-                <button type="submit" id="send-btn" class="bg-[#C5A059] hover:bg-[#d4af37] text-[#1A0B2E] font-bold px-5 rounded-2xl transition-all active:scale-95 flex items-center justify-center w-14">
-                    <i class="fa-solid fa-paper-plane"></i>
-                </button>
-            </form>
+    <!-- Footer -->
+    <div class="max-w-5xl mx-auto px-6 mt-8 text-xs text-white/50 flex items-center justify-between">
+        <div>Built with <span class="font-semibold">@grok</span></div>
+        <a href="#" class="hover:text-white/80 flex items-center gap-1.5 transition-colors">
+            <i class="fa-solid fa-mug-hot"></i>
+            <span>☕ Support the Bridge</span>
+        </a>
+    </div>
+
+    <!-- Suggestion Modal -->
+    <div id="suggestion-modal" onclick="if (event.target.id === 'suggestion-modal') closeSuggestionModal()"
+         class="hidden fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-6">
+        <div onclick="event.stopImmediatePropagation()" 
+             class="max-w-md w-full rounded-3xl p-7 border border-white/20"
+             style="background: var(--card);">
+            <h3 class="text-xl font-semibold mb-4">What would make Lore Bridge better?</h3>
+            
+            <textarea id="suggestion-text" rows="4" 
+                      class="w-full bg-black/40 border border-white/20 rounded-2xl p-4 text-sm resize-y"
+                      placeholder="Example: Add a 'Where am I in the story?' progress tracker..."></textarea>
+            
+            <div class="flex gap-3 mt-4">
+                <button onclick="closeSuggestionModal()" 
+                        class="flex-1 py-3 rounded-2xl border border-white/20 text-sm">Cancel</button>
+                <button onclick="submitSuggestion()" 
+                        class="flex-1 py-3 rounded-2xl text-sm font-semibold"
+                        style="background: var(--accent); color: #0f051d;">Submit Feedback</button>
+            </div>
         </div>
     </div>
 
     <script>
-        let currentSeries = 'lom';
-        let isGenerating = false;
+        // === STATE ===
+        let currentTheme = 'lom';
+        let currentAudience = 'watcher';
+        let currentSeries = 'Lord of the Mysteries';
 
-        const contexts = {
-            lom: 'Currently locked to: <strong class="text-[#C5A059]">LoM Vol 1 (End of S1/Specials)</strong>. I will not spoil future volumes.',
-            mt: 'Currently locked to: <strong class="text-[#C5A059]">Mushoku Tensei (Pre-Season 3)</strong>. I will not spoil S3 events.'
-        };
+        // === THEME SWITCHING (with portal effect) ===
+        function switchTheme(theme) {
+            if (theme === currentTheme) return;
 
-        function switchSeries(series) {
-            if (isGenerating) return;
-            currentSeries = series;
-            document.getElementById('context-text').innerHTML = contexts[series];
-            
+            // Portal flash effect
+            const flash = document.createElement('div');
+            flash.className = 'portal-flash';
+            document.body.appendChild(flash);
+            setTimeout(() => flash.remove(), 700);
+
+            // Switch body class
+            document.body.classList.remove('theme-lom', 'theme-mt');
+            document.body.classList.add(`theme-${theme}`);
+            currentTheme = theme;
+
+            // Update buttons
             const btnLom = document.getElementById('btn-lom');
             const btnMt = document.getElementById('btn-mt');
 
-            if (series === 'lom') {
-                btnLom.className = 'flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border-2 transition-all bg-[#C5A059] text-[#1A0B2E] border-[#C5A059]';
-                btnMt.className = 'flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border-2 transition-all bg-[#12071F] text-white border-[#C5A059]/40 hover:border-[#C5A059]';
+            if (theme === 'lom') {
+                btnLom.classList.add('active', 'bg-[#C5A059]', 'text-[#0f051d]');
+                btnLom.classList.remove('hover:bg-white/5');
+                btnMt.classList.remove('active', 'bg-[#C5A059]', 'text-[#0f051d]');
+                btnMt.classList.add('hover:bg-white/5');
+                currentSeries = 'Lord of the Mysteries';
+                document.getElementById('chat-avatar').innerHTML = '🃏';
+                document.getElementById('chat-title').innerHTML = 'The Gray Fog Oracle';
             } else {
-                btnMt.className = 'flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border-2 transition-all bg-[#C5A059] text-[#1A0B2E] border-[#C5A059]';
-                btnLom.className = 'flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border-2 transition-all bg-[#12071F] text-white border-[#C5A059]/40 hover:border-[#C5A059]';
+                btnMt.classList.add('active', 'bg-[#D4AF37]', 'text-[#0a1f0a]');
+                btnMt.classList.remove('hover:bg-white/5');
+                btnLom.classList.remove('active', 'bg-[#C5A059]', 'text-[#0f051d]');
+                btnLom.classList.add('hover:bg-white/5');
+                currentSeries = 'Mushoku Tensei';
+                document.getElementById('chat-avatar').innerHTML = '🗡️';
+                document.getElementById('chat-title').innerHTML = 'The Six-Faced Oracle';
             }
+
+            // Update dynamic UI
+            updateContextShield();
+            updateSuggestionChips();
             
-            // Clear chat on switch to avoid context bleeding
-            document.getElementById('chat-container').innerHTML = `
-                <div class="msg-ai rounded-2xl p-4 max-w-[90%]">
-                    <p class="text-sm leading-relaxed">Switched to ${series === 'lom' ? 'Lord of the Mysteries' : 'Mushoku Tensei'}. What do you want to know?</p>
-                </div>`;
+            // Add a welcome message if chat is empty
+            const messages = document.getElementById('chat-messages');
+            if (messages.children.length < 2) {
+                setTimeout(() => {
+                    addAIMessage(getWelcomeMessage());
+                }, 600);
+            }
         }
 
-        async function handleSend(e) {
-            e.preventDefault();
-            if (isGenerating) return;
+        function getWelcomeMessage() {
+            if (currentTheme === 'lom') {
+                return "Welcome, seeker. The gray fog listens. Ask me anything about the story so far — I will answer without spoiling what lies ahead.";
+            } else {
+                return "The world of the Six Faces welcomes you. I can help you understand what the anime has shown… and gently fill in the context the adaptation left behind.";
+            }
+        }
+
+        // === AUDIENCE TOGGLE ===
+        function setAudience(audience) {
+            currentAudience = audience;
             
-            const input = document.getElementById('user-input');
-            const msg = input.value.trim();
-            if (!msg) return;
+            const watcherBtn = document.getElementById('aud-watcher');
+            const readerBtn = document.getElementById('aud-reader');
 
-            isGenerating = true;
-            input.value = '';
-            
-            const chatContainer = document.getElementById('chat-container');
-            
-            // Append User Message
-            chatContainer.innerHTML += `
-                <div class="msg-user rounded-2xl p-4 max-w-[80%] ml-auto">
-                    <p class="text-sm leading-relaxed">${msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
-                </div>`;
-            
-            // Append AI Placeholder
-            const aiId = 'msg-' + Date.now();
-            chatContainer.innerHTML += `
-                <div id="${aiId}" class="msg-ai rounded-2xl p-4 max-w-[90%]">
-                    <div class="typing-indicator flex gap-1 text-[#C5A059]">
-                        <span class="w-2 h-2 bg-[#C5A059] rounded-full inline-block"></span>
-                        <span class="w-2 h-2 bg-[#C5A059] rounded-full inline-block"></span>
-                        <span class="w-2 h-2 bg-[#C5A059] rounded-full inline-block"></span>
-                    </div>
-                </div>`;
-            scrollToBottom();
+            if (audience === 'watcher') {
+                watcherBtn.classList.add('bg-white/10', 'font-semibold');
+                readerBtn.classList.remove('bg-white/10', 'font-semibold');
+            } else {
+                readerBtn.classList.add('bg-white/10', 'font-semibold');
+                watcherBtn.classList.remove('bg-white/10', 'font-semibold');
+            }
 
-            try {
-                const res = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: msg, series: currentSeries })
-                });
+            updateContextShield();
+            updateSuggestionChips();
+        }
 
-                const reader = res.body.getReader();
-                const decoder = new TextDecoder();
-                let aiResponse = '';
-                let isFirstChunk = true;
+        // === CONTEXT SHIELD ===
+        function updateContextShield() {
+            const shield = document.getElementById('shield-text');
+            const mode = currentAudience === 'watcher' ? 'Watcher' : 'Reader';
+            let text = '';
 
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
-                    
-                    const chunk = decoder.decode(value);
-                    const lines = chunk.split('\n').filter(l => l.startsWith('data: '));
+            if (currentTheme === 'lom') {
+                text = `🌫️ Mode: LoM ${mode} • Locked to end of Vol 1 • No Spoilers`;
+            } else {
+                text = `🗡️ Mode: MT ${mode} • Pre-S3 context • Light novel gaps filled safely`;
+            }
+            shield.innerHTML = text;
+        }
 
-                    for (const line of lines) {
-                        const data = line.slice(6).trim();
-                        if (data === '[DONE]') continue;
-                        
-                        try {
-                            const parsed = JSON.parse(data);
-                            aiResponse += parsed.content;
-                            
-                            const aiDiv = document.getElementById(aiId);
-                            if (aiDiv) {
-                                if (isFirstChunk) {
-                                    aiDiv.innerHTML = `<p class="text-sm leading-relaxed whitespace-pre-wrap">${formatText(aiResponse)}</p>`;
-                                    isFirstChunk = false;
-                                } else {
-                                    aiDiv.querySelector('p').innerHTML = formatText(aiResponse);
-                                }
-                                scrollToBottom();
-                            }
-                        } catch (e) {}
-                    }
+        // === SMART SUGGESTION CHIPS ===
+        function updateSuggestionChips() {
+            const container = document.getElementById('suggestion-chips');
+            container.innerHTML = '';
+
+            let chips = [];
+
+            if (currentTheme === 'lom') {
+                if (currentAudience === 'watcher') {
+                    chips = [
+                        "Explain the Beyonder system simply",
+                        "Why is the watch order confusing?",
+                        "Who is The Fool?"
+                    ];
+                } else {
+                    chips = [
+                        "Analyze Klein's acting method",
+                        "Theorycraft: The City of Silver's true purpose",
+                        "Foreshadowing in Vol 1"
+                    ];
                 }
-            } catch (err) {
-                document.getElementById(aiId).innerHTML = `<p class="text-sm text-red-400">Oops, hit a limit or error. Try again in a sec.</p>`;
+            } else {
+                if (currentAudience === 'watcher') {
+                    chips = [
+                        "What did S2 skip about Sylphie?",
+                        "Explain the Superd tribe stigma",
+                        "Magic system basics for S3"
+                    ];
+                } else {
+                    chips = [
+                        "Discuss Rudeus's psychological growth",
+                        "How does the Laplace factor play into S3?",
+                        "What the anime cut from the light novels"
+                    ];
+                }
             }
 
-            isGenerating = false;
+            chips.forEach(text => {
+                const chip = document.createElement('button');
+                chip.className = `suggestion-chip px-4 py-2 text-xs rounded-2xl border border-white/20 hover:border-[var(--accent)] bg-black/30`;
+                chip.innerHTML = text;
+                chip.onclick = () => {
+                    addUserMessage(text);
+                    setTimeout(() => {
+                        generateAIResponse(text);
+                    }, 650);
+                };
+                container.appendChild(chip);
+            });
         }
 
-        function formatText(text) {
-            return text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#C5A059]">$1</strong>');
-        }
-
-        function scrollToBottom() {
-            const container = document.getElementById('chat-container');
+        // === CHAT FUNCTIONS ===
+        function addUserMessage(text) {
+            const container = document.getElementById('chat-messages');
+            const msg = document.createElement('div');
+            msg.className = `flex justify-end`;
+            msg.innerHTML = `
+                <div class="chat-bubble user max-w-[75%]">
+                    <div class="text-sm">${text}</div>
+                </div>
+            `;
+            container.appendChild(msg);
             container.scrollTop = container.scrollHeight;
         }
 
-        // Focus input on load
-        window.onload = () => document.getElementById('user-input').focus();
+        function addAIMessage(text) {
+            const container = document.getElementById('chat-messages');
+            const msg = document.createElement('div');
+            msg.className = `flex justify-start`;
+            msg.innerHTML = `
+                <div class="chat-bubble ai max-w-[82%]">
+                    <div class="lore-response">${text}</div>
+                </div>
+            `;
+            container.appendChild(msg);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const container = document.getElementById('chat-messages');
+            const typing = document.createElement('div');
+            typing.id = 'typing-indicator';
+            typing.className = `flex justify-start`;
+            typing.innerHTML = `
+                <div class="chat-bubble ai px-5 py-3">
+                    <div class="flex gap-1.5">
+                        <div class="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce"></div>
+                        <div class="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                        <div class="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(typing);
+            container.scrollTop = container.scrollHeight;
+            return typing;
+        }
+
+        function removeTypingIndicator() {
+            const el = document.getElementById('typing-indicator');
+            if (el) el.remove();
+        }
+
+        function generateAIResponse(userMessage) {
+            const typing = showTypingIndicator();
+
+            setTimeout(() => {
+                removeTypingIndicator();
+                let response = '';
+
+                const msg = userMessage.toLowerCase();
+
+                // LoM responses
+                if (currentTheme === 'lom') {
+                    if (msg.includes('beyonder')) {
+                        response = "The Beyonder system works through Pathways and Sequences. People drink special potions to advance. To do it safely, they must 'Act' in line with their current Sequence's name and nature. This helps them digest the power without losing control.";
+                    } else if (msg.includes('fool')) {
+                        response = "The Fool is the mysterious leader of the Tarot Club. He appears as a figure shrouded in gray fog and has shown remarkable abilities in guiding the other members.";
+                    } else if (msg.includes('watch order') || msg.includes('confusing')) {
+                        response = "The recommended order is: Season 1 Episodes 1–10 → Specials (City of Silver + Marked Hunt) → Season 1 Episodes 11–13. The specials add important world context that makes the later episodes hit harder.";
+                    } else if (msg.includes('acting method') || msg.includes('city of silver')) {
+                        response = "Klein's careful 'acting' as The Fool is one of the most important things established so far. The City of Silver has ancient ties to the gray fog that are only beginning to be explored.";
+                    } else {
+                        response = "That's a great question. Everything I share stays within what has been shown in the anime and specials so far. The gray fog keeps the rest hidden for now.";
+                    }
+                } 
+                // MT responses
+                else {
+                    if (msg.includes('sylphie') || msg.includes('skip')) {
+                        response = "The anime condensed a lot of Sylphie's internal growth and perspective. In the light novels her journey has more emotional depth and quiet moments that show how much she has changed since childhood.";
+                    } else if (msg.includes('superd')) {
+                        response = "The Superd tribe carries a heavy stigma because of historical events. They are incredibly strong warriors, but the world sees them through old fears. Their story is one of pride and misunderstood honor.";
+                    } else if (msg.includes('growth') || msg.includes('psychological')) {
+                        response = "Rudeus's inner thoughts in the novels reveal a lot of quiet healing, self-doubt, and gradual growth. The anime shows his actions, but the books let you live inside his mind during key moments.";
+                    } else if (msg.includes('laplace') || msg.includes('orsted') || msg.includes('cut')) {
+                        response = "There are several layers of history and relationships the anime hasn't fully shown yet. These elements are important for understanding the bigger picture heading into Season 3, but they stay carefully hidden for now.";
+                    } else {
+                        response = "I can share context from the light novels that the anime adaptation left out, without spoiling what happens next. What specifically would you like to understand better before Season 3?";
+                    }
+                }
+
+                addAIMessage(response);
+            }, 1250);
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            addUserMessage(text);
+            input.value = '';
+
+            setTimeout(() => {
+                generateAIResponse(text);
+            }, 700);
+        }
+
+        // === SUGGESTION BOX ===
+        function openSuggestionModal() {
+            document.getElementById('suggestion-modal').classList.remove('hidden');
+            document.getElementById('suggestion-modal').classList.add('flex');
+        }
+
+        function closeSuggestionModal() {
+            const modal = document.getElementById('suggestion-modal');
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }
+
+        function submitSuggestion() {
+            const textarea = document.getElementById('suggestion-text');
+            const text = textarea.value.trim();
+            if (!text) return;
+
+            // Save to localStorage
+            let suggestions = JSON.parse(localStorage.getItem('loreBridgeSuggestions') || '[]');
+            suggestions.unshift({
+                text: text,
+                date: new Date().toLocaleDateString(),
+                theme: currentTheme
+            });
+            if (suggestions.length > 6) suggestions.pop();
+            localStorage.setItem('loreBridgeSuggestions', JSON.stringify(suggestions));
+
+            closeSuggestionModal();
+            textarea.value = '';
+
+            // Show thank you toast
+            const toast = document.createElement('div');
+            toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-2xl text-sm border border-white/20`;
+            toast.style.background = 'var(--card)';
+            toast.innerHTML = `Thank you. Your idea has been added to the community board.`;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.transition = 'all 0.3s ease';
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2200);
+
+            // Refresh community suggestions list
+            loadCommunitySuggestions();
+        }
+
+        function loadCommunitySuggestions() {
+            const container = document.getElementById('community-suggestions');
+            container.innerHTML = '';
+
+            let suggestions = JSON.parse(localStorage.getItem('loreBridgeSuggestions') || '[]');
+
+            if (suggestions.length === 0) {
+                container.innerHTML = `<div class="col-span-2 text-xs opacity-60">No community ideas yet. Be the first to share one!</div>`;
+                return;
+            }
+
+            suggestions.slice(0, 4).forEach(s => {
+                const div = document.createElement('div');
+                div.className = `text-xs py-1 border-l-2 pl-3 border-[var(--accent)]/40`;
+                div.innerHTML = `
+                    <span class="opacity-75">"${s.text.length > 75 ? s.text.substring(0,72) + '...' : s.text}"</span>
+                    <span class="block text-[10px] opacity-50 mt-0.5">${s.date}</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // === INITIALIZATION ===
+        function initializeApp() {
+            // Set initial theme
+            document.body.classList.add('theme-lom');
+
+            // Initial buttons state
+            document.getElementById('btn-lom').classList.add('active', 'bg-[#C5A059]', 'text-[#0f051d]');
+            document.getElementById('aud-watcher').classList.add('bg-white/10', 'font-semibold');
+
+            // Initial welcome message
+            const messages = document.getElementById('chat-messages');
+            messages.innerHTML = `
+                <div class="flex justify-start">
+                    <div class="chat-bubble ai max-w-[82%]">
+                        <div class="lore-response">Welcome, seeker. The gray fog listens. Ask me anything about the story so far — I will answer without spoiling what lies ahead.</div>
+                    </div>
+                </div>
+            `;
+
+            // Load dynamic content
+            updateContextShield();
+            updateSuggestionChips();
+            loadCommunitySuggestions();
+
+            // Add subtle animated background for current theme
+            addAnimatedBackground();
+
+            // Keyboard shortcut hint
+            console.log('%c[Lore Bridge] Premium immersive mode ready. Theme morphing + smart context active.', 'color:#C5A059');
+        }
+
+        function addAnimatedBackground() {
+            // Remove old layers if any
+            document.querySelectorAll('.fog-layer, .ember').forEach(el => el.remove());
+
+            if (currentTheme === 'lom') {
+                const fog = document.createElement('div');
+                fog.className = 'fog-layer';
+                document.body.appendChild(fog);
+            } else {
+                // Create floating embers
+                for (let i = 0; i < 18; i++) {
+                    const ember = document.createElement('div');
+                    ember.className = 'ember';
+                    ember.style.left = Math.random() * 100 + '%';
+                    ember.style.top = Math.random() * 100 + '%';
+                    ember.style.animationDuration = (3 + Math.random() * 5) + 's';
+                    ember.style.animationDelay = '-' + Math.random() * 5 + 's';
+                    ember.style.opacity = Math.random() * 0.6 + 0.3;
+                    document.body.appendChild(ember);
+                }
+            }
+        }
+
+        // Re-apply background when theme changes
+        const originalSwitch = window.switchTheme;
+        window.switchTheme = function(theme) {
+            originalSwitch(theme);
+            setTimeout(() => {
+                addAnimatedBackground();
+            }, 650);
+        };
+
+        // Boot everything
+        window.onload = initializeApp;
     </script>
 </body>
 </html>
