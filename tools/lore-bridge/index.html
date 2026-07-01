@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Lore Bridge • Spoiler-Free Context</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap');
+        :root { --bg: #1A0B2E; --text: #F5F5F0; --accent: #C5A059; --card-bg: #12071F; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', system_ui, sans-serif; }
+        .heading-serif { font-family: 'Playfair Display', Georgia, serif; }
+        .manhua-card { background-color: var(--card-bg); border: 1px solid rgba(197, 160, 89, 0.15); }
+        
+        /* Chat Styles */
+        #chat-container { height: 50vh; overflow-y: auto; scroll-behavior: smooth; }
+        #chat-container::-webkit-scrollbar { width: 6px; }
+        #chat-container::-webkit-scrollbar-thumb { background: rgba(197, 160, 89, 0.3); border-radius: 3px; }
+        
+        .msg-user { background: rgba(197, 160, 89, 0.15); border-left: 3px solid var(--accent); }
+        .msg-ai { background: rgba(255,255,255,0.05); }
+        
+        .typing-indicator span { animation: blink 1.4s infinite both; }
+        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+        @keyframes blink { 0%, 80%, 100% { opacity: 0; } 40% { opacity: 1; } }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    
+    <!-- Header -->
+    <div class="w-full px-5 pt-6 pb-4 border-b border-[#C5A059]/20 bg-[#1A0B2E]/80 backdrop-blur-sm sticky top-0 z-10">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <h1 class="text-3xl md:text-4xl font-bold heading-serif tracking-tight text-white">Anime Lore Bridge</h1>
+                    <p class="text-[#C5A059] text-sm mt-1 font-medium">Ask anything. Zero spoilers. Fan persona.</p>
+                </div>
+                <div class="hidden md:flex items-center gap-2 text-xs px-3 py-1.5 rounded-full border border-[#C5A059]/30 bg-[#12071F]">
+                    <span class="text-[#C5A059]">POWERED BY GROK</span>
+                </div>
+            </div>
+            
+            <!-- Series Toggle -->
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="switchSeries('lom')" id="btn-lom" class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border-2 transition-all bg-[#C5A059] text-[#1A0B2E] border-[#C5A059]">
+                    <i class="fa-solid fa-infinity"></i> Lord of the Mysteries
+                </button>
+                <button onclick="switchSeries('mt')" id="btn-mt" class="flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border-2 transition-all bg-[#12071F] text-white border-[#C5A059]/40 hover:border-[#C5A059]">
+                    <i class="fa-solid fa-dragon"></i> Mushoku Tensei
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Area -->
+    <div class="flex-1 flex flex-col max-w-4xl w-full mx-auto px-5 pt-6 pb-4">
+        
+        <!-- Status Context -->
+        <div id="context-bar" class="mb-4 p-3 rounded-xl bg-[#12071F] border border-[#C5A059]/20 text-xs text-[#F5F5F0]/70 flex items-start gap-3">
+            <i class="fa-solid fa-shield-halved text-[#C5A059] mt-0.5"></i>
+            <span id="context-text">Currently locked to: <strong class="text-[#C5A059]">LoM Vol 1 (End of S1/Specials)</strong>. I will not spoil future volumes.</span>
+        </div>
+
+        <!-- Messages -->
+        <div id="chat-container" class="flex-1 flex flex-col gap-4 pb-4">
+            <!-- Welcome Message -->
+            <div class="msg-ai rounded-2xl p-4 max-w-[90%]">
+                <p class="text-sm leading-relaxed">Hey! Got a question about the watch order, the Beyonder system, or what the anime skipped? Ask me anything. I've read the source material, but I promise I won't spoil what you haven't seen yet. 🧠</p>
+            </div>
+        </div>
+
+        <!-- Input Area -->
+        <div class="sticky bottom-0 bg-[#1A0B2E] pt-4 pb-6">
+            <form onsubmit="handleSend(event)" class="flex gap-3">
+                <input type="text" id="user-input" placeholder="e.g., Why did Klein do the tarot trick?" autocomplete="off"
+                       class="flex-1 bg-[#12071F] border border-[#C5A059]/30 rounded-2xl px-5 py-3.5 text-sm text-white placeholder-[#F5F5F0]/40 focus:outline-none focus:border-[#C5A059] transition-colors">
+                <button type="submit" id="send-btn" class="bg-[#C5A059] hover:bg-[#d4af37] text-[#1A0B2E] font-bold px-5 rounded-2xl transition-all active:scale-95 flex items-center justify-center w-14">
+                    <i class="fa-solid fa-paper-plane"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentSeries = 'lom';
+        let isGenerating = false;
+
+        const contexts = {
+            lom: 'Currently locked to: <strong class="text-[#C5A059]">LoM Vol 1 (End of S1/Specials)</strong>. I will not spoil future volumes.',
+            mt: 'Currently locked to: <strong class="text-[#C5A059]">Mushoku Tensei (Pre-Season 3)</strong>. I will not spoil S3 events.'
+        };
+
+        function switchSeries(series) {
+            if (isGenerating) return;
+            currentSeries = series;
+            document.getElementById('context-text').innerHTML = contexts[series];
+            
+            const btnLom = document.getElementById('btn-lom');
+            const btnMt = document.getElementById('btn-mt');
+
+            if (series === 'lom') {
+                btnLom.className = 'flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border-2 transition-all bg-[#C5A059] text-[#1A0B2E] border-[#C5A059]';
+                btnMt.className = 'flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border-2 transition-all bg-[#12071F] text-white border-[#C5A059]/40 hover:border-[#C5A059]';
+            } else {
+                btnMt.className = 'flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border-2 transition-all bg-[#C5A059] text-[#1A0B2E] border-[#C5A059]';
+                btnLom.className = 'flex items-center justify-center gap-2 px-4 py-3 rounded-xl text-sm font-semibold border-2 transition-all bg-[#12071F] text-white border-[#C5A059]/40 hover:border-[#C5A059]';
+            }
+            
+            // Clear chat on switch to avoid context bleeding
+            document.getElementById('chat-container').innerHTML = `
+                <div class="msg-ai rounded-2xl p-4 max-w-[90%]">
+                    <p class="text-sm leading-relaxed">Switched to ${series === 'lom' ? 'Lord of the Mysteries' : 'Mushoku Tensei'}. What do you want to know?</p>
+                </div>`;
+        }
+
+        async function handleSend(e) {
+            e.preventDefault();
+            if (isGenerating) return;
+            
+            const input = document.getElementById('user-input');
+            const msg = input.value.trim();
+            if (!msg) return;
+
+            isGenerating = true;
+            input.value = '';
+            
+            const chatContainer = document.getElementById('chat-container');
+            
+            // Append User Message
+            chatContainer.innerHTML += `
+                <div class="msg-user rounded-2xl p-4 max-w-[80%] ml-auto">
+                    <p class="text-sm leading-relaxed">${msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>
+                </div>`;
+            
+            // Append AI Placeholder
+            const aiId = 'msg-' + Date.now();
+            chatContainer.innerHTML += `
+                <div id="${aiId}" class="msg-ai rounded-2xl p-4 max-w-[90%]">
+                    <div class="typing-indicator flex gap-1 text-[#C5A059]">
+                        <span class="w-2 h-2 bg-[#C5A059] rounded-full inline-block"></span>
+                        <span class="w-2 h-2 bg-[#C5A059] rounded-full inline-block"></span>
+                        <span class="w-2 h-2 bg-[#C5A059] rounded-full inline-block"></span>
+                    </div>
+                </div>`;
+            scrollToBottom();
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg, series: currentSeries })
+                });
+
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder();
+                let aiResponse = '';
+                let isFirstChunk = true;
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n').filter(l => l.startsWith('data: '));
+
+                    for (const line of lines) {
+                        const data = line.slice(6).trim();
+                        if (data === '[DONE]') continue;
+                        
+                        try {
+                            const parsed = JSON.parse(data);
+                            aiResponse += parsed.content;
+                            
+                            const aiDiv = document.getElementById(aiId);
+                            if (aiDiv) {
+                                if (isFirstChunk) {
+                                    aiDiv.innerHTML = `<p class="text-sm leading-relaxed whitespace-pre-wrap">${formatText(aiResponse)}</p>`;
+                                    isFirstChunk = false;
+                                } else {
+                                    aiDiv.querySelector('p').innerHTML = formatText(aiResponse);
+                                }
+                                scrollToBottom();
+                            }
+                        } catch (e) {}
+                    }
+                }
+            } catch (err) {
+                document.getElementById(aiId).innerHTML = `<p class="text-sm text-red-400">Oops, hit a limit or error. Try again in a sec.</p>`;
+            }
+
+            isGenerating = false;
+        }
+
+        function formatText(text) {
+            return text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\*\*(.*?)\*\*/g, '<strong class="text-[#C5A059]">$1</strong>');
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('chat-container');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Focus input on load
+        window.onload = () => document.getElementById('user-input').focus();
+    </script>
+</body>
+</html>
