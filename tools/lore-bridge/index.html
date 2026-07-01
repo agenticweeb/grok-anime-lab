@@ -798,6 +798,121 @@
                 justify-content: center;
             }
         }
+	/* ==========================================
+	   MOBILE RESCUE - STRICT MOBILE FIRST
+	   ========================================== */
+
+	/* Force proper box sizing */
+	*, *::before, *::after {
+	    box-sizing: border-box !important;
+	}
+
+	/* Make sure body doesn't overflow horizontally */
+	html, body {
+	    overflow-x: hidden !important;
+	    width: 100% !important;
+	    max-width: 100vw !important;
+	}
+
+	/* Fix text wrapping globally */
+	p, span, div, li, a, button {
+	    overflow-wrap: break-word !important;
+	    word-wrap: break-word !important;
+	    hyphens: auto !important;
+	}
+
+	/* Header & Top Bar */
+	header, .sticky-top, nav {
+	    padding-left: 1rem !important;
+	    padding-right: 1rem !important;
+	}
+
+	/* Toggle Buttons */
+	.lore-btn, .theme-toggle-btn, [class*="btn"] {
+	    padding: 0.75rem 1rem !important;
+	    font-size: 0.875rem !important;
+	    white-space: normal !important;
+	    line-height: 1.2 !important;
+	}
+
+	/* Context Shield / Status Bar */
+	#context-bar, .context-shield, [class*="status"] {
+	    font-size: 0.75rem !important;
+	    padding: 0.75rem !important;
+	    margin-bottom: 1rem !important;
+	}
+
+	/* Chat Container */
+	#chat-container {
+	    padding: 0 !important;
+	    display: flex !important;
+	    flex-direction: column !important;
+	    gap: 1rem !important;
+	}
+
+	/* Chat Bubbles - The most important fix */
+	.msg-user, .msg-ai, [class*="msg-"], [class*="bubble-"], [class*="chat-"] {
+	    max-width: 90% !important;
+	    padding: 0.875rem !important;
+	    font-size: 0.9rem !important;
+	    line-height: 1.5 !important;
+	    word-break: break-word !important;
+	    margin-left: auto !important;
+	    margin-right: auto !important;
+	}
+
+	.msg-user, [class*="msg-user"], [class*="bubble-user"] {
+	    margin-left: auto !important;
+	    margin-right: 0.5rem !important;
+	}
+
+	.msg-ai, [class*="msg-ai"], [class*="bubble-ai"] {
+	    margin-right: auto !important;
+	    margin-left: 0.5rem !important;
+	}
+
+	/* Suggestion Chips */
+	.suggestion-chip, [class*="chip-"], [class*="suggestion"] {
+	    font-size: 0.8rem !important;
+	    padding: 0.5rem 0.75rem !important;
+	    white-space: normal !important;
+	    text-align: center !important;
+	}
+
+	/* Input Area */
+	form, .input-area, [class*="input-"] {
+	    padding: 0 0.5rem !important;
+	}
+
+	input[type="text"], input[type="search"], textarea {
+	    font-size: 16px !important; /* Prevents iOS zoom */
+	    padding: 0.75rem 1rem !important;
+	    width: 100% !important;
+	}
+
+	/* Footer */
+	footer, .footer-links {
+	    padding: 1rem !important;
+	    font-size: 0.75rem !important;
+	    text-align: center !important;
+	    flex-direction: column !important;
+	    gap: 0.5rem !important;
+	}
+
+	/* Diegetic Tip Button */
+	.diegetic-btn, .tip-jar-btn {
+	    width: 100% !important;
+	    justify-content: center !important;
+	    margin-top: 0.5rem !important;
+	}
+
+	/* About Modal/Page */
+	.about-page, .modal-content, [class*="modal"] {
+	    margin: 1rem !important;
+	    padding: 1.5rem !important;
+	    max-height: 90vh !important;
+	    overflow-y: auto !important;
+	}
     </style>
 </head>
 <body class="theme-lom">
