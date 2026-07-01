@@ -3,166 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lore Bridge • Immersive Fandom Hub</title>
+    <title>Lore Bridge • Premium Fandom Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Cinzel:wght@400;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&amp;family=Abril+Fatface&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&amp;family=Cinzel:wght@400;700&amp;family=Inter:wght@300;400;500;600&amp;display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&amp;family=Abril+Fatface&amp;display=swap');
 
         :root {
-            --bg: #0f051d;
             --accent: #C5A059;
-            --accent2: #4A5568;
-            --text: #F5F5F0;
-            --card: #12071F;
-            --bubble-user: #1F1633;
-            --bubble-ai: #1A1329;
         }
 
         body {
-            font-family: 'Inter', system_ui, sans-serif;
-            transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1),
-                        color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            font-family: ui-serif, "Times New Roman", Georgia, serif;
+            transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .theme-lom {
-            --bg: #0f051d;
             --accent: #C5A059;
             --accent2: #4A5568;
-            --text: #F5F5F0;
-            --card: #12071F;
-            --bubble-user: #1F1633;
-            --bubble-ai: #1A1329;
+            background-color: #0f051d;
+            color: #F5F5F0;
         }
 
         .theme-mt {
-            --bg: #0a1f0a;
             --accent: #D4AF37;
             --accent2: #10B981;
-            --text: #F5F5F0;
-            --card: #0F1A0F;
-            --bubble-user: #132613;
-            --bubble-ai: #0F1F0F;
+            background-color: #0a1f0a;
+            color: #F5F5F0;
+            font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
-        body.theme-lom { background-color: #0f051d; color: #F5F5F0; }
-        body.theme-mt { background-color: #0a1f0a; color: #F5F5F0; }
-
-        .heading-serif-lom { font-family: 'Playfair Display', Georgia, serif; }
-        .heading-serif-mt { font-family: 'Cinzel', Georgia, serif; }
+        .theme-lom .heading { font-family: 'Cormorant Garamond', ui-serif, "Times New Roman", Georgia, serif; }
+        .theme-mt .heading { font-family: 'Abril Fatface', ui-sans-serif, system-ui, sans-serif; }
 
         .glass {
-            background: rgba(255,255,255,0.06);
+            background: rgba(15, 5, 29, 0.65);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255,255,255,0.1);
+            border: 1px solid rgba(197, 160, 89, 0.15);
         }
 
-        .portal-btn {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .theme-mt .glass {
+            background: rgba(10, 31, 10, 0.65);
+            border: 1px solid rgba(212, 175, 55, 0.15);
         }
-        .portal-btn.active {
-            box-shadow: 0 0 25px var(--accent);
-            transform: scale(1.02);
+
+        .portal-container {
+            transition: clip-path 0.65s cubic-bezier(0.23, 1.0, 0.32, 1);
+            will-change: clip-path;
         }
 
         .chat-bubble {
             max-width: 78%;
             padding: 14px 18px;
-            border-radius: 18px;
-            line-height: 1.5;
-            transition: all 0.2s ease;
+            border-radius: 20px;
+            line-height: 1.55;
+            position: relative;
+            transition: box-shadow 0.3s ease, transform 0.2s ease;
         }
 
-        .theme-lom .chat-bubble.user { background: #1F1633; border: 1px solid #C5A05933; }
-        .theme-lom .chat-bubble.ai { background: #1A1329; border: 1px solid #4A556833; }
+        .theme-lom .chat-bubble {
+            background: #F8F1E3;
+            color: #2C2522;
+            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.18),
+                        0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid #C5A05933;
+        }
 
-        .theme-mt .chat-bubble.user { background: #132613; border: 1px solid #D4AF3733; }
-        .theme-mt .chat-bubble.ai { background: #0F1F0F; border: 1px solid #10B98133; }
+        .theme-lom .chat-bubble:hover {
+            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.18),
+                        0 0 0 1px #C5A05955,
+                        0 10px 30px rgba(76, 29, 149, 0.15);
+        }
+
+        .theme-mt .chat-bubble {
+            background: #3C2F2F;
+            color: #F5F5F0;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.35),
+                        0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid #D4AF3733;
+        }
+
+        .theme-mt .chat-bubble:hover {
+            box-shadow: inset 0 0 25px rgba(212, 175, 55, 0.25),
+                        0 4px 15px rgba(0, 0, 0, 0.3);
+        }
 
         .suggestion-chip {
             transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.875rem;
+            padding: 8px 14px;
+            border-radius: 9999px;
             white-space: nowrap;
         }
-        .suggestion-chip:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.2);
+
+        .theme-lom .suggestion-chip {
+            background: rgba(197, 160, 89, 0.08);
+            border: 1px solid rgba(197, 160, 89, 0.25);
+            color: #F5F5F0;
         }
 
-        .fog-layer {
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 30% 40%, rgba(180,180,200,0.06) 0%, transparent 70%);
-            animation: fog-drift 25s ease infinite;
-            pointer-events: none;
-            z-index: 1;
+        .theme-lom .suggestion-chip:hover {
+            background: rgba(197, 160, 89, 0.15);
+            text-shadow: 0 0 12px rgba(76, 29, 149, 0.6);
+            border-color: #C5A059;
         }
 
-        @keyframes fog-drift {
-            0%, 100% { transform: translate(0, 0); }
-            50% { transform: translate(3%, 2%); }
+        .theme-mt .suggestion-chip {
+            background: rgba(16, 185, 129, 0.08);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #F5F5F0;
         }
 
-        .ember {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: #D4AF37;
-            border-radius: 50%;
-            box-shadow: 0 0 6px #D4AF37;
-            animation: float-ember 4s ease-in-out infinite;
-            pointer-events: none;
-            z-index: 1;
+        .theme-mt .suggestion-chip:hover {
+            transform: scale(1.05);
+            background: rgba(212, 175, 55, 0.15);
+            border-color: #D4AF37;
+            box-shadow: 0 0 0 1px #D4AF37;
         }
 
-        .context-shield {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        .floating-tarot {
+            animation: tarot-drift 18s linear infinite;
+            opacity: 0.12;
         }
 
-        .portal-flash {
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(circle, rgba(197,160,89,0.15) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 9999;
-            opacity: 0;
-            animation: portal-flash-anim 0.7s ease forwards;
+        .floating-mote {
+            animation: mote-drift 12s ease-in-out infinite;
+            box-shadow: 0 0 8px #D4AF37,
+                        0 0 16px #10B981;
+        }
+
+        @keyframes tarot-drift {
+            0% { transform: translateY(120px) rotate(0deg); }
+            100% { transform: translateY(-120px) rotate(25deg); }
+        }
+
+        @keyframes mote-drift {
+            0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+            50% { transform: translateY(-80px) scale(0.8); opacity: 0.9; }
         }
 
         .lore-response {
             font-size: 0.95rem;
             line-height: 1.65;
         }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.6s ease;
+        }
+
+        .theme-lom body::after {
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(255,255,255,0.035) 0px,
+                rgba(255,255,255,0.035) 1px,
+                transparent 1px,
+                transparent 2.5px
+            );
+            mix-blend-mode: overlay;
+        }
+
+        .theme-mt body::after {
+            background: radial-gradient(circle at 50% 30%, transparent 35%, rgba(16, 185, 129, 0.06) 100%);
+            backdrop-filter: blur(1px);
+        }
+
+        .context-shield {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .main-portal {
+            transition: clip-path 0.65s cubic-bezier(0.23, 1.0, 0.32, 1);
+        }
     </style>
 </head>
-<body class="theme-lom min-h-screen">
+<body class="theme-lom min-h-screen overflow-x-hidden">
 
-    <!-- Top Bar -->
+    <!-- Atmospheric Background Effects -->
+    <div id="bg-effects" class="fixed inset-0 pointer-events-none z-0"></div>
+
+    <!-- Top Navigation -->
     <nav class="sticky top-0 z-50 glass border-b border-white/10">
         <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
             <!-- Logo -->
             <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#C5A059] to-[#D4AF37] flex items-center justify-center">
-                    <span class="text-[#0f051d] text-2xl font-bold">LB</span>
+                <div class="w-9 h-9 rounded-2xl flex items-center justify-center" 
+                     style="background: linear-gradient(135deg, #C5A059, #D4AF37);">
+                    <span class="text-[#0f051d] text-2xl font-bold tracking-tighter">LB</span>
                 </div>
-                <div>
-                    <span class="font-semibold text-2xl tracking-tight">Lore Bridge</span>
-                </div>
+                <div class="heading text-3xl font-bold tracking-tighter">Lore Bridge</div>
             </div>
 
-            <!-- Portal Buttons -->
-            <div class="flex items-center gap-2 bg-black/30 rounded-3xl p-1 border border-white/10">
+            <!-- Portal Toggle Buttons -->
+            <div class="flex items-center gap-1.5 bg-black/40 p-1 rounded-3xl border border-white/10">
                 <button onclick="switchTheme('lom')"
                         id="btn-lom"
-                        class="portal-btn active flex items-center gap-2 px-5 py-2 rounded-3xl text-sm font-semibold bg-[#C5A059] text-[#0f051d]">
+                        class="portal-btn flex items-center gap-2 px-6 py-2 rounded-3xl text-sm font-semibold bg-[#C5A059] text-[#0f051d] active">
                     <span>🃏</span>
-                    <span>Lord of the Mysteries</span>
+                    <span class="font-medium">Lord of the Mysteries</span>
                 </button>
                 <button onclick="switchTheme('mt')"
                         id="btn-mt"
-                        class="portal-btn flex items-center gap-2 px-5 py-2 rounded-3xl text-sm font-semibold hover:bg-white/5">
+                        class="portal-btn flex items-center gap-2 px-6 py-2 rounded-3xl text-sm font-semibold hover:bg-white/5 transition-colors">
                     <span>🗡️</span>
-                    <span>Mushoku Tensei</span>
+                    <span class="font-medium">Mushoku Tensei</span>
                 </button>
             </div>
 
@@ -170,13 +219,13 @@
             <div class="flex items-center gap-1 bg-black/40 rounded-3xl p-1 border border-white/10">
                 <button onclick="setAudience('watcher')"
                         id="aud-watcher"
-                        class="px-4 py-1.5 text-xs font-medium rounded-3xl flex items-center gap-1.5 active-audience">
+                        class="px-4 py-1.5 text-xs font-medium rounded-3xl flex items-center gap-1.5 bg-white/10">
                     <span>👁️</span>
                     <span>Watcher</span>
                 </button>
                 <button onclick="setAudience('reader')"
                         id="aud-reader"
-                        class="px-4 py-1.5 text-xs font-medium rounded-3xl flex items-center gap-1.5 hover:bg-white/5">
+                        class="px-4 py-1.5 text-xs font-medium rounded-3xl flex items-center gap-1.5 hover:bg-white/5 transition-colors">
                     <span>📖</span>
                     <span>Reader</span>
                 </button>
@@ -187,112 +236,73 @@
     <!-- Context Shield -->
     <div class="max-w-5xl mx-auto px-6 pt-5">
         <div id="context-shield"
-             class="context-shield inline-flex items-center gap-2 px-4 py-2 rounded-2xl text-sm border border-white/10 bg-black/30">
+             class="context-shield inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm border border-white/10 bg-black/30">
             <span id="shield-text">🌫️ Mode: LoM Watcher • Locked to end of Vol 1 • No Spoilers</span>
         </div>
     </div>
 
-    <!-- Main Chat Container -->
-    <div class="max-w-5xl mx-auto px-6 pt-6 pb-24">
-        <div class="rounded-3xl overflow-hidden border border-white/10 shadow-2xl" style="background: var(--card);">
+    <!-- Main Content with Portal Effect -->
+    <div class="max-w-5xl mx-auto px-6 pt-6 pb-8">
+        <div id="main-portal" 
+             class="main-portal rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-[#12071F] theme-lom:bg-[#12071F] theme-mt:bg-[#0F1A0F]">
             
             <!-- Chat Header -->
-            <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between">
+            <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-black/20">
                 <div class="flex items-center gap-3">
                     <div id="chat-avatar" 
-                         class="w-9 h-9 rounded-2xl flex items-center justify-center text-xl bg-gradient-to-br from-[#C5A059] to-[#D4AF37]">
+                         class="w-9 h-9 rounded-2xl flex items-center justify-center text-2xl"
+                         style="background: linear-gradient(135deg, #C5A059, #D4AF37);">
                         🃏
                     </div>
                     <div>
-                        <div class="font-semibold" id="chat-title">The Gray Fog Oracle</div>
+                        <div id="chat-title" class="heading text-xl font-semibold tracking-tight">The Gray Fog Oracle</div>
                         <div class="text-xs text-white/50">Spoiler-free • Up to current anime</div>
                     </div>
                 </div>
-                <div class="text-xs px-3 py-1 rounded-full border border-white/20 text-white/60">LIVE CONTEXT</div>
+                <div class="px-3 py-1 text-xs rounded-full border border-white/20 text-white/60 tracking-widest">LIVE CONTEXT</div>
             </div>
 
-            <!-- Messages -->
+            <!-- Messages Area -->
             <div id="chat-messages" 
-                 class="h-[420px] overflow-y-auto p-6 space-y-6 bg-black/20 scroll-smooth"
-                 style="scrollbar-width: thin;">
-                <!-- Messages injected by JS -->
+                 class="h-[460px] overflow-y-auto p-6 space-y-6 bg-black/10"
+                 style="scrollbar-width: thin; scrollbar-color: #C5A05933 transparent;">
             </div>
 
             <!-- Suggestion Chips -->
-            <div class="px-6 pt-4 pb-3 border-t border-white/10 bg-black/30">
-                <div class="text-[10px] tracking-[1px] text-white/50 mb-2 px-1">SMART SUGGESTIONS</div>
+            <div class="px-6 pt-4 pb-4 border-t border-white/10 bg-black/30">
+                <div class="text-[10px] tracking-[1.5px] text-white/50 mb-2.5 px-1 font-medium">SMART SUGGESTIONS</div>
                 <div id="suggestion-chips" class="flex flex-wrap gap-2">
-                    <!-- Populated by JS -->
                 </div>
             </div>
 
-            <!-- Input -->
+            <!-- Input Area -->
             <div class="p-4 border-t border-white/10 bg-black/40">
-                <div class="flex gap-3">
+                <div class="flex gap-3 items-center">
                     <input id="chat-input" 
                            type="text" 
                            placeholder="Ask anything about the story so far..."
-                           class="flex-1 bg-black/40 border border-white/20 focus:border-[var(--accent)] rounded-3xl px-5 py-3 text-sm outline-none placeholder:text-white/40"
+                           class="flex-1 bg-black/40 border border-white/20 focus:border-[var(--accent)] rounded-3xl px-6 py-3.5 text-sm outline-none placeholder:text-white/40 transition-all"
                            onkeypress="if (event.key === 'Enter') sendMessage()">
                     <button onclick="sendMessage()"
-                            class="px-7 rounded-3xl font-semibold flex items-center gap-2 transition-all active:scale-[0.985]"
-                            style="background: var(--accent); color: #0f051d;">
-                        <span>Send</span>
-                        <i class="fa-solid fa-paper-plane"></i>
+                            class="px-8 py-3.5 rounded-3xl font-semibold flex items-center gap-2 transition-all active:scale-[0.985] text-[#0f051d]"
+                            style="background: var(--accent);">
+                        <span class="font-medium">Send</span>
+                        <i class="fa-solid fa-paper-plane text-sm"></i>
                     </button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Suggestion Box -->
+    <!-- Diegetic Tip Jar Footer -->
     <div class="max-w-5xl mx-auto px-6">
-        <div class="rounded-3xl border border-white/10 p-5 bg-black/30">
-            <div class="flex items-center justify-between mb-3">
-                <div>
-                    <span class="font-semibold">Help improve the Bridge</span>
-                    <span class="text-xs ml-2 text-white/50">Community feedback</span>
-                </div>
-                <button onclick="openSuggestionModal()"
-                        class="text-xs px-4 py-1.5 rounded-2xl border border-white/20 hover:bg-white/5 flex items-center gap-2">
-                    <i class="fa-solid fa-lightbulb"></i>
-                    <span>Share an idea</span>
-                </button>
-            </div>
-            <div id="community-suggestions" class="text-xs text-white/60 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-1">
-                <!-- Populated from localStorage -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="max-w-5xl mx-auto px-6 mt-8 text-xs text-white/50 flex items-center justify-between">
-        <div>Built with <span class="font-semibold">@grok</span></div>
-        <a href="#" class="hover:text-white/80 flex items-center gap-1.5 transition-colors">
-            <i class="fa-solid fa-mug-hot"></i>
-            <span>☕ Support the Bridge</span>
-        </a>
-    </div>
-
-    <!-- Suggestion Modal -->
-    <div id="suggestion-modal" onclick="if (event.target.id === 'suggestion-modal') closeSuggestionModal()"
-         class="hidden fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-6">
-        <div onclick="event.stopImmediatePropagation()" 
-             class="max-w-md w-full rounded-3xl p-7 border border-white/20"
-             style="background: var(--card);">
-            <h3 class="text-xl font-semibold mb-4">What would make Lore Bridge better?</h3>
+        <div class="flex items-center justify-between text-xs text-white/60 border-t border-white/10 pt-5">
+            <div>Built with <span class="font-semibold text-white/80">@grok</span></div>
             
-            <textarea id="suggestion-text" rows="4" 
-                      class="w-full bg-black/40 border border-white/20 rounded-2xl p-4 text-sm resize-y"
-                      placeholder="Example: Add a 'Where am I in the story?' progress tracker..."></textarea>
-            
-            <div class="flex gap-3 mt-4">
-                <button onclick="closeSuggestionModal()" 
-                        class="flex-1 py-3 rounded-2xl border border-white/20 text-sm">Cancel</button>
-                <button onclick="submitSuggestion()" 
-                        class="flex-1 py-3 rounded-2xl text-sm font-semibold"
-                        style="background: var(--accent); color: #0f051d;">Submit Feedback</button>
-            </div>
+            <a id="tip-jar" href="#" 
+               class="flex items-center gap-2 px-4 py-2 rounded-2xl hover:bg-white/5 transition-all text-sm font-medium border border-white/10">
+                <span id="tip-text">🃏 Offer a Sacrifice to The Fool</span>
+            </a>
         </div>
     </div>
 
@@ -302,30 +312,122 @@
         let currentAudience = 'watcher';
         let currentSeries = 'Lord of the Mysteries';
 
-        // === THEME SWITCHING (with portal effect) ===
+        // Smart Chips Data (exact as specified)
+        const chipsData = {
+            lom: {
+                watcher: [
+                    "Explain the Beyonder system simply",
+                    "Why is the watch order confusing?",
+                    "Who is The Fool?"
+                ],
+                reader: [
+                    "Analyze Klein's acting method",
+                    "Theorycraft: City of Silver's purpose",
+                    "Foreshadowing in Vol 1"
+                ]
+            },
+            mt: {
+                watcher: [
+                    "What did S2 skip about Sylphie?",
+                    "Explain the Superd tribe stigma",
+                    "Magic system basics for S3"
+                ],
+                reader: [
+                    "Rudeus's psychological growth",
+                    "Laplace factor in S3",
+                    "Orsted's true motives"
+                ]
+            }
+        };
+
+        // === ATMOSPHERIC BACKGROUNDS ===
+        function createAtmosphericEffects(theme) {
+            const container = document.getElementById('bg-effects');
+            container.innerHTML = '';
+
+            if (theme === 'lom') {
+                // Floating tarot cards / sigils using inline SVG
+                const positions = [
+                    { left: '12%', top: '18%' },
+                    { left: '78%', top: '32%' },
+                    { left: '25%', top: '72%' },
+                    { left: '85%', top: '65%' }
+                ];
+
+                positions.forEach((pos, i) => {
+                    const el = document.createElement('div');
+                    el.className = `floating-tarot absolute w-8 h-8`;
+                    el.style.left = pos.left;
+                    el.style.top = pos.top;
+                    el.style.animationDelay = `-${i * 4.5}s`;
+                    
+                    el.innerHTML = `
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="4" y="4" width="24" height="24" rx="3" stroke="#C5A059" stroke-width="1.5" opacity="0.6"/>
+                            <path d="M10 12L16 8L22 12" stroke="#C5A059" stroke-width="1.2" opacity="0.7"/>
+                            <circle cx="16" cy="18" r="3.5" stroke="#C5A059" stroke-width="1.2" opacity="0.6"/>
+                        </svg>
+                    `;
+                    container.appendChild(el);
+                });
+            } else {
+                // Glowing magical motes
+                for (let i = 0; i < 5; i++) {
+                    const el = document.createElement('div');
+                    el.className = `floating-mote absolute rounded-full`;
+                    el.style.left = Math.random() * 100 + '%';
+                    el.style.top = Math.random() * 100 + '%';
+                    el.style.width = (3 + Math.random() * 4) + 'px';
+                    el.style.height = el.style.width;
+                    el.style.animationDuration = (9 + Math.random() * 7) + 's';
+                    el.style.animationDelay = `-${Math.random() * 8}s`;
+                    container.appendChild(el);
+                }
+            }
+        }
+
+        // === DIMENSIONAL SHIFT / PORTAL EFFECT ===
+        function triggerPortalShift() {
+            const portal = document.getElementById('main-portal');
+            portal.style.transition = 'none';
+            portal.style.clipPath = 'circle(0% at 50% 50%)';
+            
+            // Force reflow
+            void portal.offsetWidth;
+            
+            portal.style.transition = 'clip-path 0.65s cubic-bezier(0.23, 1.0, 0.32, 1)';
+            portal.style.clipPath = 'circle(150% at 50% 50%)';
+            
+            // Reset after animation
+            setTimeout(() => {
+                portal.style.transition = 'clip-path 0.65s cubic-bezier(0.23, 1.0, 0.32, 1)';
+            }, 700);
+        }
+
+        // === THEME SWITCHING ===
         function switchTheme(theme) {
             if (theme === currentTheme) return;
 
-            // Portal flash effect
-            const flash = document.createElement('div');
-            flash.className = 'portal-flash';
-            document.body.appendChild(flash);
-            setTimeout(() => flash.remove(), 700);
-
-            // Switch body class
-            document.body.classList.remove('theme-lom', 'theme-mt');
-            document.body.classList.add(`theme-${theme}`);
-            currentTheme = theme;
-
-            // Update buttons
+            const body = document.body;
             const btnLom = document.getElementById('btn-lom');
             const btnMt = document.getElementById('btn-mt');
+            const portal = document.getElementById('main-portal');
 
+            // Trigger portal animation
+            triggerPortalShift();
+
+            // Update body class
+            body.classList.remove('theme-lom', 'theme-mt');
+            body.classList.add(`theme-${theme}`);
+            currentTheme = theme;
+
+            // Update button styles
             if (theme === 'lom') {
                 btnLom.classList.add('active', 'bg-[#C5A059]', 'text-[#0f051d]');
                 btnLom.classList.remove('hover:bg-white/5');
                 btnMt.classList.remove('active', 'bg-[#C5A059]', 'text-[#0f051d]');
                 btnMt.classList.add('hover:bg-white/5');
+                
                 currentSeries = 'Lord of the Mysteries';
                 document.getElementById('chat-avatar').innerHTML = '🃏';
                 document.getElementById('chat-title').innerHTML = 'The Gray Fog Oracle';
@@ -334,29 +436,34 @@
                 btnMt.classList.remove('hover:bg-white/5');
                 btnLom.classList.remove('active', 'bg-[#C5A059]', 'text-[#0f051d]');
                 btnLom.classList.add('hover:bg-white/5');
+                
                 currentSeries = 'Mushoku Tensei';
                 document.getElementById('chat-avatar').innerHTML = '🗡️';
                 document.getElementById('chat-title').innerHTML = 'The Six-Faced Oracle';
             }
 
+            // Refresh atmospheric effects
+            createAtmosphericEffects(theme);
+            
             // Update dynamic UI
             updateContextShield();
             updateSuggestionChips();
-            
-            // Add a welcome message if chat is empty
-            const messages = document.getElementById('chat-messages');
-            if (messages.children.length < 2) {
-                setTimeout(() => {
+            updateTipJar();
+
+            // Add subtle welcome if chat empty
+            setTimeout(() => {
+                const messages = document.getElementById('chat-messages');
+                if (messages.children.length < 1) {
                     addAIMessage(getWelcomeMessage());
-                }, 600);
-            }
+                }
+            }, 800);
         }
 
         function getWelcomeMessage() {
             if (currentTheme === 'lom') {
-                return "Welcome, seeker. The gray fog listens. Ask me anything about the story so far — I will answer without spoiling what lies ahead.";
+                return "The gray fog listens. Ask me anything about the story so far. I will answer without revealing what lies beyond.";
             } else {
-                return "The world of the Six Faces welcomes you. I can help you understand what the anime has shown… and gently fill in the context the adaptation left behind.";
+                return "The Six Faces welcome you. I can share context the anime left behind — without spoiling what comes next in Season 3.";
             }
         }
 
@@ -398,59 +505,33 @@
             const container = document.getElementById('suggestion-chips');
             container.innerHTML = '';
 
-            let chips = [];
-
-            if (currentTheme === 'lom') {
-                if (currentAudience === 'watcher') {
-                    chips = [
-                        "Explain the Beyonder system simply",
-                        "Why is the watch order confusing?",
-                        "Who is The Fool?"
-                    ];
-                } else {
-                    chips = [
-                        "Analyze Klein's acting method",
-                        "Theorycraft: The City of Silver's true purpose",
-                        "Foreshadowing in Vol 1"
-                    ];
-                }
-            } else {
-                if (currentAudience === 'watcher') {
-                    chips = [
-                        "What did S2 skip about Sylphie?",
-                        "Explain the Superd tribe stigma",
-                        "Magic system basics for S3"
-                    ];
-                } else {
-                    chips = [
-                        "Discuss Rudeus's psychological growth",
-                        "How does the Laplace factor play into S3?",
-                        "What the anime cut from the light novels"
-                    ];
-                }
-            }
+            const themeKey = currentTheme;
+            const audienceKey = currentAudience;
+            const chips = chipsData[themeKey][audienceKey];
 
             chips.forEach(text => {
                 const chip = document.createElement('button');
-                chip.className = `suggestion-chip px-4 py-2 text-xs rounded-2xl border border-white/20 hover:border-[var(--accent)] bg-black/30`;
+                chip.className = `suggestion-chip px-4 py-2 text-sm border`;
                 chip.innerHTML = text;
+                
                 chip.onclick = () => {
                     addUserMessage(text);
                     setTimeout(() => {
                         generateAIResponse(text);
-                    }, 650);
+                    }, 420);
                 };
+                
                 container.appendChild(chip);
             });
         }
 
-        // === CHAT FUNCTIONS ===
+        // === CHAT LOGIC (with simulated streaming) ===
         function addUserMessage(text) {
             const container = document.getElementById('chat-messages');
             const msg = document.createElement('div');
             msg.className = `flex justify-end`;
             msg.innerHTML = `
-                <div class="chat-bubble user max-w-[75%]">
+                <div class="chat-bubble user">
                     <div class="text-sm">${text}</div>
                 </div>
             `;
@@ -463,7 +544,7 @@
             const msg = document.createElement('div');
             msg.className = `flex justify-start`;
             msg.innerHTML = `
-                <div class="chat-bubble ai max-w-[82%]">
+                <div class="chat-bubble ai">
                     <div class="lore-response">${text}</div>
                 </div>
             `;
@@ -471,70 +552,75 @@
             container.scrollTop = container.scrollHeight;
         }
 
-        function showTypingIndicator() {
+        function streamAIResponse(fullText) {
             const container = document.getElementById('chat-messages');
-            const typing = document.createElement('div');
-            typing.id = 'typing-indicator';
-            typing.className = `flex justify-start`;
-            typing.innerHTML = `
-                <div class="chat-bubble ai px-5 py-3">
-                    <div class="flex gap-1.5">
-                        <div class="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce"></div>
-                        <div class="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
-                        <div class="w-1.5 h-1.5 bg-white/60 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
-                    </div>
-                </div>
-            `;
-            container.appendChild(typing);
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = `flex justify-start`;
+            
+            const bubble = document.createElement('div');
+            bubble.className = `chat-bubble ai`;
+            
+            const content = document.createElement('div');
+            content.className = `lore-response`;
+            bubble.appendChild(content);
+            wrapper.appendChild(bubble);
+            container.appendChild(wrapper);
+            
             container.scrollTop = container.scrollHeight;
-            return typing;
-        }
 
-        function removeTypingIndicator() {
-            const el = document.getElementById('typing-indicator');
-            if (el) el.remove();
+            let i = 0;
+            const speed = 22; // ms per character for smooth streaming feel
+            
+            const interval = setInterval(() => {
+                if (i < fullText.length) {
+                    content.innerHTML = fullText.substring(0, i + 1) + `<span class="opacity-70">▌</span>`;
+                    i++;
+                    container.scrollTop = container.scrollHeight;
+                } else {
+                    clearInterval(interval);
+                    content.innerHTML = fullText;
+                }
+            }, speed);
         }
 
         function generateAIResponse(userMessage) {
-            const typing = showTypingIndicator();
+            const msg = userMessage.toLowerCase();
+            let response = '';
 
-            setTimeout(() => {
-                removeTypingIndicator();
-                let response = '';
-
-                const msg = userMessage.toLowerCase();
-
-                // LoM responses
-                if (currentTheme === 'lom') {
-                    if (msg.includes('beyonder')) {
-                        response = "The Beyonder system works through Pathways and Sequences. People drink special potions to advance. To do it safely, they must 'Act' in line with their current Sequence's name and nature. This helps them digest the power without losing control.";
-                    } else if (msg.includes('fool')) {
-                        response = "The Fool is the mysterious leader of the Tarot Club. He appears as a figure shrouded in gray fog and has shown remarkable abilities in guiding the other members.";
-                    } else if (msg.includes('watch order') || msg.includes('confusing')) {
-                        response = "The recommended order is: Season 1 Episodes 1–10 → Specials (City of Silver + Marked Hunt) → Season 1 Episodes 11–13. The specials add important world context that makes the later episodes hit harder.";
-                    } else if (msg.includes('acting method') || msg.includes('city of silver')) {
-                        response = "Klein's careful 'acting' as The Fool is one of the most important things established so far. The City of Silver has ancient ties to the gray fog that are only beginning to be explored.";
-                    } else {
-                        response = "That's a great question. Everything I share stays within what has been shown in the anime and specials so far. The gray fog keeps the rest hidden for now.";
-                    }
-                } 
-                // MT responses
-                else {
-                    if (msg.includes('sylphie') || msg.includes('skip')) {
-                        response = "The anime condensed a lot of Sylphie's internal growth and perspective. In the light novels her journey has more emotional depth and quiet moments that show how much she has changed since childhood.";
-                    } else if (msg.includes('superd')) {
-                        response = "The Superd tribe carries a heavy stigma because of historical events. They are incredibly strong warriors, but the world sees them through old fears. Their story is one of pride and misunderstood honor.";
-                    } else if (msg.includes('growth') || msg.includes('psychological')) {
-                        response = "Rudeus's inner thoughts in the novels reveal a lot of quiet healing, self-doubt, and gradual growth. The anime shows his actions, but the books let you live inside his mind during key moments.";
-                    } else if (msg.includes('laplace') || msg.includes('orsted') || msg.includes('cut')) {
-                        response = "There are several layers of history and relationships the anime hasn't fully shown yet. These elements are important for understanding the bigger picture heading into Season 3, but they stay carefully hidden for now.";
-                    } else {
-                        response = "I can share context from the light novels that the anime adaptation left out, without spoiling what happens next. What specifically would you like to understand better before Season 3?";
-                    }
+            // LoM responses (spoiler-free)
+            if (currentTheme === 'lom') {
+                if (msg.includes('beyonder')) {
+                    response = "The Beyonder system is built on Pathways and Sequences. Individuals advance by drinking potions tied to a specific Pathway. To progress safely, they must 'Act' according to the nature of their current Sequence. This process helps them digest the power without losing control.";
+                } else if (msg.includes('fool')) {
+                    response = "The Fool is the enigmatic leader of the Tarot Club. He appears as a figure cloaked in gray fog and has demonstrated the ability to guide members and grant certain powers during their gatherings.";
+                } else if (msg.includes('watch order') || msg.includes('confusing')) {
+                    response = "The clearest path is: Season 1 Episodes 1–10, followed by the two Specials (City of Silver + Marked Hunt), then Season 1 Episodes 11–13. The specials provide essential context that makes the later episodes much more impactful.";
+                } else if (msg.includes('acting') || msg.includes('city of silver')) {
+                    response = "Klein's careful performance as The Fool is one of the most important developments so far. The City of Silver holds ancient connections to the gray fog that are only beginning to surface in the story.";
+                } else {
+                    response = "That's a thoughtful question. Everything I share remains within what has been shown in the anime and specials. The gray fog keeps future events hidden for now.";
                 }
+            } 
+            // MT responses (spoiler-free, focused on skipped content)
+            else {
+                if (msg.includes('sylphie') || msg.includes('skip')) {
+                    response = "The anime condensed much of Sylphie's inner journey and emotional growth. In the light novels, her perspective and quiet development add significant depth to her character and her relationship with Rudeus.";
+                } else if (msg.includes('superd')) {
+                    response = "The Superd tribe carries a deep stigma rooted in historical events. They are renowned warriors with immense physical strength, yet the world views them through layers of old fear and misunderstanding.";
+                } else if (msg.includes('growth') || msg.includes('psychological')) {
+                    response = "Rudeus's internal monologue in the novels reveals layers of healing, doubt, and gradual self-acceptance that the anime can only hint at through his actions. These thoughts provide crucial context for his decisions.";
+                } else if (msg.includes('laplace') || msg.includes('orsted') || msg.includes('motives')) {
+                    response = "There are deeper historical threads and relationships the anime has not yet fully explored. These elements become more relevant as the story moves toward Season 3, but remain carefully unrevealed for now.";
+                } else {
+                    response = "I can provide light novel context that the anime adaptation omitted, while staying strictly before Season 3. What would you like to understand better?";
+                }
+            }
 
-                addAIMessage(response);
-            }, 1250);
+            // Use streaming effect
+            setTimeout(() => {
+                streamAIResponse(response);
+            }, 180);
         }
 
         function sendMessage() {
@@ -547,93 +633,40 @@
 
             setTimeout(() => {
                 generateAIResponse(text);
-            }, 700);
+            }, 650);
         }
 
-        // === SUGGESTION BOX ===
-        function openSuggestionModal() {
-            document.getElementById('suggestion-modal').classList.remove('hidden');
-            document.getElementById('suggestion-modal').classList.add('flex');
-        }
-
-        function closeSuggestionModal() {
-            const modal = document.getElementById('suggestion-modal');
-            modal.classList.remove('flex');
-            modal.classList.add('hidden');
-        }
-
-        function submitSuggestion() {
-            const textarea = document.getElementById('suggestion-text');
-            const text = textarea.value.trim();
-            if (!text) return;
-
-            // Save to localStorage
-            let suggestions = JSON.parse(localStorage.getItem('loreBridgeSuggestions') || '[]');
-            suggestions.unshift({
-                text: text,
-                date: new Date().toLocaleDateString(),
-                theme: currentTheme
-            });
-            if (suggestions.length > 6) suggestions.pop();
-            localStorage.setItem('loreBridgeSuggestions', JSON.stringify(suggestions));
-
-            closeSuggestionModal();
-            textarea.value = '';
-
-            // Show thank you toast
-            const toast = document.createElement('div');
-            toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 px-6 py-3 rounded-2xl text-sm border border-white/20`;
-            toast.style.background = 'var(--card)';
-            toast.innerHTML = `Thank you. Your idea has been added to the community board.`;
-            document.body.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.transition = 'all 0.3s ease';
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 2200);
-
-            // Refresh community suggestions list
-            loadCommunitySuggestions();
-        }
-
-        function loadCommunitySuggestions() {
-            const container = document.getElementById('community-suggestions');
-            container.innerHTML = '';
-
-            let suggestions = JSON.parse(localStorage.getItem('loreBridgeSuggestions') || '[]');
-
-            if (suggestions.length === 0) {
-                container.innerHTML = `<div class="col-span-2 text-xs opacity-60">No community ideas yet. Be the first to share one!</div>`;
-                return;
+        // === DIEGETIC TIP JAR ===
+        function updateTipJar() {
+            const tipText = document.getElementById('tip-text');
+            
+            if (currentTheme === 'lom') {
+                tipText.innerHTML = `🃏 Offer a Sacrifice to The Fool`;
+            } else {
+                tipText.innerHTML = `🧪 Purchase a Healing Potion from the Guild`;
             }
-
-            suggestions.slice(0, 4).forEach(s => {
-                const div = document.createElement('div');
-                div.className = `text-xs py-1 border-l-2 pl-3 border-[var(--accent)]/40`;
-                div.innerHTML = `
-                    <span class="opacity-75">"${s.text.length > 75 ? s.text.substring(0,72) + '...' : s.text}"</span>
-                    <span class="block text-[10px] opacity-50 mt-0.5">${s.date}</span>
-                `;
-                container.appendChild(div);
-            });
         }
 
         // === INITIALIZATION ===
         function initializeApp() {
+            const body = document.body;
+            
             // Set initial theme
-            document.body.classList.add('theme-lom');
-
-            // Initial buttons state
+            body.classList.add('theme-lom');
+            
+            // Initial button states
             document.getElementById('btn-lom').classList.add('active', 'bg-[#C5A059]', 'text-[#0f051d]');
             document.getElementById('aud-watcher').classList.add('bg-white/10', 'font-semibold');
+
+            // Create atmospheric effects
+            createAtmosphericEffects('lom');
 
             // Initial welcome message
             const messages = document.getElementById('chat-messages');
             messages.innerHTML = `
                 <div class="flex justify-start">
-                    <div class="chat-bubble ai max-w-[82%]">
-                        <div class="lore-response">Welcome, seeker. The gray fog listens. Ask me anything about the story so far — I will answer without spoiling what lies ahead.</div>
+                    <div class="chat-bubble ai">
+                        <div class="lore-response">The gray fog listens. Ask me anything about the story so far. I will answer without revealing what lies beyond.</div>
                     </div>
                 </div>
             `;
@@ -641,48 +674,20 @@
             // Load dynamic content
             updateContextShield();
             updateSuggestionChips();
-            loadCommunitySuggestions();
+            updateTipJar();
 
-            // Add subtle animated background for current theme
-            addAnimatedBackground();
-
-            // Keyboard shortcut hint
-            console.log('%c[Lore Bridge] Premium immersive mode ready. Theme morphing + smart context active.', 'color:#C5A059');
-        }
-
-        function addAnimatedBackground() {
-            // Remove old layers if any
-            document.querySelectorAll('.fog-layer, .ember').forEach(el => el.remove());
-
-            if (currentTheme === 'lom') {
-                const fog = document.createElement('div');
-                fog.className = 'fog-layer';
-                document.body.appendChild(fog);
-            } else {
-                // Create floating embers
-                for (let i = 0; i < 18; i++) {
-                    const ember = document.createElement('div');
-                    ember.className = 'ember';
-                    ember.style.left = Math.random() * 100 + '%';
-                    ember.style.top = Math.random() * 100 + '%';
-                    ember.style.animationDuration = (3 + Math.random() * 5) + 's';
-                    ember.style.animationDelay = '-' + Math.random() * 5 + 's';
-                    ember.style.opacity = Math.random() * 0.6 + 0.3;
-                    document.body.appendChild(ember);
+            // Keyboard accessibility
+            document.addEventListener('keydown', function(e) {
+                if (e.key === '/' && document.activeElement.tagName === 'BODY') {
+                    e.preventDefault();
+                    document.getElementById('chat-input').focus();
                 }
-            }
+            });
+
+            console.log('%c[Lore Bridge] Premium dimensional hub initialized. Portal effects + streaming ready.', 'color:#C5A059');
         }
 
-        // Re-apply background when theme changes
-        const originalSwitch = window.switchTheme;
-        window.switchTheme = function(theme) {
-            originalSwitch(theme);
-            setTimeout(() => {
-                addAnimatedBackground();
-            }, 650);
-        };
-
-        // Boot everything
+        // Boot the application
         window.onload = initializeApp;
     </script>
 </body>
