@@ -490,6 +490,139 @@
             pointer-events: none;
             z-index: 9998;
         }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 16px;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            background: rgba(0, 0, 0, 0.25);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            z-index: 98;
+        }
+
+        .warmth-dots { display: flex; gap: 4px; }
+        .warmth-dot {
+            width: 6px; height: 6px; border-radius: 50%;
+            background: var(--border);
+            transition: background 0.3s;
+        }
+        .warmth-dot.active { background: var(--menu-accent); box-shadow: 0 0 6px var(--menu-accent); }
+
+        .progress-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+            z-index: 97;
+        }
+        .progress-bar label { font-size: 0.72rem; color: var(--text-muted); white-space: nowrap; }
+        .progress-bar select {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-family: var(--font-body);
+        }
+
+        .msg-ai .persona-label {
+            font-size: 0.7rem;
+            color: var(--menu-accent);
+            margin-bottom: 6px;
+            opacity: 0.9;
+        }
+
+        .msg-style-nighthawk { border-left: 3px solid var(--menu-accent); }
+        .msg-style-tarot { border: 1px solid var(--menu-accent); border-radius: 4px 18px 18px 18px; }
+        .msg-style-guild { border-left: 3px solid var(--primary); font-family: var(--font-body); }
+        .msg-style-journal { border-left: 3px solid var(--menu-accent); font-style: italic; }
+
+        .msg-receipts, .msg-skipped {
+            margin-top: 10px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            padding-top: 8px;
+        }
+        .msg-receipts summary, .msg-skipped summary { cursor: pointer; color: var(--menu-accent); }
+        .msg-receipts ul { margin-top: 6px; padding-left: 18px; }
+
+        .msg-veil {
+            border: 1px solid var(--menu-accent) !important;
+            animation: veil-shake 0.5s ease;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
+        }
+
+        .msg-actions { margin-top: 10px; }
+        .share-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--menu-accent);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
+        .share-btn:hover { border-color: var(--menu-accent); }
+
+        .spoiler-veil-active #bg-scrim {
+            animation: fog-roll 2.5s ease;
+        }
+        @keyframes fog-roll {
+            0%, 100% { filter: blur(0); }
+            50% { filter: blur(8px) brightness(0.4); }
+        }
+        @keyframes veil-shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+        .egg-pulse { animation: egg-pulse 1s ease; }
+        @keyframes egg-pulse {
+            50% { filter: brightness(1.3); }
+        }
+
+        .about-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 10001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .about-overlay.active { display: flex; }
+        .about-modal {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 420px;
+            max-height: 80dvh;
+            overflow-y: auto;
+        }
+        .about-modal h2 { font-family: var(--font-heading); color: var(--primary); margin-bottom: 12px; }
+        .about-modal p { margin-bottom: 12px; line-height: 1.5; font-size: 0.9rem; }
+        .about-modal ul { margin: 8px 0 12px 18px; font-size: 0.85rem; }
+        .about-modal button {
+            margin-top: 12px;
+            background: var(--primary);
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+        }
     </style>
 </head>
 <body class="theme-lom">
@@ -513,6 +646,16 @@
             <button class="toggle-btn active" data-audience="watcher">👁️ Watcher</button>
             <button class="toggle-btn" data-audience="reader">📖 Reader</button>
         </div>
+    </div>
+
+    <div class="status-bar">
+        <span id="mode-status">🌫️ Loading...</span>
+        <span class="warmth-dots" id="warmth-dots" title="Trust grows as you chat (this session only)"></span>
+    </div>
+
+    <div class="progress-bar">
+        <label for="progress-select">Where are you?</label>
+        <select id="progress-select" aria-label="Your progress in the story"></select>
     </div>
 
     <!-- Parallax & Particles -->
@@ -556,17 +699,119 @@
             <a href="#" class="menu-link" id="support-link" target="_blank">Offer a Sacrifice</a>
             <a href="mailto:angazadesk@zohomail.com?subject=Lore Bridge Feedback" class="menu-link">Report an Anomaly</a>
         </div>
-        <div class="menu-footer">Built with @grok</div>
+        <div class="menu-footer">Built with @grok · Memory: this device only</div>
+    </div>
+
+    <div class="about-overlay" id="about-overlay">
+        <div class="about-modal" id="about-modal"></div>
     </div>
 
     <script type="module">
         import { siteConfig } from './config.js';
+        import {
+            loadSession, saveSession, loadProgress, saveProgress,
+            getNickname, trimHistory, parseMetadata, checkEasterEgg,
+            playUniverseSound, triggerSpoilerVeil, triggerEggEffect,
+            generateTheoryCard, getMessageStyleClass, getPersonaLabel
+        } from './immersion.js';
 
         let currentUniverse = 'lom';
         let currentAudience = 'watcher';
         let isGenerating = false;
+        let session = loadSession('lom', 'watcher');
 
         window.siteConfig = siteConfig;
+
+        function updateWarmthUI() {
+            const dots = document.getElementById('warmth-dots');
+            if (!dots) return;
+            const max = 12;
+            dots.innerHTML = '';
+            for (let i = 0; i < 5; i++) {
+                const d = document.createElement('span');
+                d.className = 'warmth-dot' + (session.warmth >= (i + 1) * 2 ? ' active' : '');
+                dots.appendChild(d);
+            }
+        }
+
+        function updateModeStatus() {
+            const el = document.getElementById('mode-status');
+            const cfg = siteConfig[currentUniverse]?.[currentAudience];
+            if (el && cfg) el.textContent = cfg.modeStatus || '';
+        }
+
+        function populateProgressSelect() {
+            const sel = document.getElementById('progress-select');
+            if (!sel) return;
+            const options = siteConfig[currentUniverse]?.progressOptions?.[currentAudience] || [];
+            const saved = loadProgress(currentUniverse, currentAudience);
+            sel.innerHTML = '<option value="">— Set your progress —</option>';
+            options.forEach((opt) => {
+                const o = document.createElement('option');
+                o.value = opt;
+                o.textContent = opt;
+                if (opt === saved) o.selected = true;
+                sel.appendChild(o);
+            });
+        }
+
+        function getProgressStamp() {
+            const sel = document.getElementById('progress-select');
+            return sel?.value || loadProgress(currentUniverse, currentAudience) || '';
+        }
+
+        function buildAiMessageHtml(text, meta = {}) {
+            const styleClass = getMessageStyleClass(currentUniverse, currentAudience, siteConfig);
+            const persona = getPersonaLabel(currentUniverse, currentAudience, siteConfig);
+            const isVeil = !!meta.veil;
+            const displayText = meta.veil || text;
+
+            let html = `<div class="persona-label">${persona}</div>`;
+            html += `<p style="white-space: pre-wrap;">${formatText(displayText)}</p>`;
+
+            if (meta.skipped) {
+                html += `<details class="msg-skipped"><summary>📺 Anime skipped this</summary><p>${formatText(meta.skipped)}</p></details>`;
+            }
+            if (meta.receipts?.length) {
+                html += `<details class="msg-receipts"><summary>📜 Fan receipts</summary><ul>`;
+                meta.receipts.forEach((r) => { html += `<li>${formatText(r)}</li>`; });
+                html += `</ul></details>`;
+            }
+            if (currentAudience === 'reader' && text.length > 80 && !isVeil) {
+                const icon = currentUniverse === 'lom' ? '🃏' : '🗡️';
+                html += `<div class="msg-actions"><button type="button" class="share-btn" data-share="${encodeURIComponent(text.slice(0, 280))}">Share this take ${icon}</button></div>`;
+            }
+
+            return { html, styleClass: styleClass + (isVeil ? ' msg-veil' : '') };
+        }
+
+        function attachShareHandlers(container) {
+            container.querySelectorAll('.share-btn').forEach((btn) => {
+                btn.onclick = () => {
+                    const text = decodeURIComponent(btn.dataset.share || '');
+                    const dataUrl = generateTheoryCard(text, currentUniverse, siteConfig);
+                    const a = document.createElement('a');
+                    a.href = dataUrl;
+                    a.download = 'lore-bridge-theory.png';
+                    a.click();
+                };
+            });
+        }
+
+        function renderAiMessage(aiId, rawText) {
+            const meta = parseMetadata(rawText);
+            const { html, styleClass } = buildAiMessageHtml(meta.text, meta);
+            const el = document.getElementById(aiId);
+            if (!el) return meta;
+
+            el.className = `msg-ai ${styleClass}`;
+            el.innerHTML = html;
+            attachShareHandlers(el);
+
+            if (meta.veil) triggerSpoilerVeil();
+            scrollToBottom();
+            return meta;
+        }
 
         function applyBackground(series) {
             if (!window.siteConfig) return;
@@ -583,25 +828,47 @@
             }
         }
 
-        // CORE FIX: Resets the chat and UI elements when Universe or Audience changes
         function resetChatForCurrentMode() {
+            session = loadSession(currentUniverse, currentAudience);
             const config = siteConfig[currentUniverse];
             if (!config) return;
             const modeConfig = config[currentAudience];
             if (!modeConfig) return;
-            
+
+            updateModeStatus();
+            updateWarmthUI();
+            populateProgressSelect();
+
             const chatContainer = document.getElementById('chat-container');
-            
-            // 1. Clear existing messages to prevent cross-contamination
             chatContainer.innerHTML = '';
-            
-            // 2. Inject the correct welcome message for this specific Universe + Audience
-            const welcomeDiv = document.createElement('div');
-            welcomeDiv.className = 'msg-ai';
-            welcomeDiv.style.maxWidth = '95%';
-            welcomeDiv.style.width = '95%';
-            welcomeDiv.innerHTML = `<p>${modeConfig.welcomeMessage}</p>`;
-            chatContainer.appendChild(welcomeDiv);
+
+            if (session.history.length > 0) {
+                session.history.forEach((turn) => {
+                    const div = document.createElement('div');
+                    if (turn.role === 'user') {
+                        div.className = 'msg-user';
+                        div.style.maxWidth = '90%';
+                        div.style.width = '90%';
+                        div.innerHTML = `<p>${turn.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`;
+                    } else {
+                        const { html, styleClass } = buildAiMessageHtml(parseMetadata(turn.content).text, parseMetadata(turn.content));
+                        div.className = `msg-ai ${styleClass}`;
+                        div.style.maxWidth = '95%';
+                        div.style.width = '95%';
+                        div.innerHTML = html;
+                    }
+                    chatContainer.appendChild(div);
+                });
+                attachShareHandlers(chatContainer);
+            } else {
+                const welcomeDiv = document.createElement('div');
+                const styleClass = getMessageStyleClass(currentUniverse, currentAudience, siteConfig);
+                welcomeDiv.className = `msg-ai ${styleClass}`;
+                welcomeDiv.style.maxWidth = '95%';
+                welcomeDiv.style.width = '95%';
+                welcomeDiv.innerHTML = `<div class="persona-label">${getPersonaLabel(currentUniverse, currentAudience, siteConfig)}</div><p>${modeConfig.welcomeMessage}</p>`;
+                chatContainer.appendChild(welcomeDiv);
+            }
             
             // 3. Update suggestion chips
             const suggestionsContainer = document.getElementById('suggestions');
@@ -637,18 +904,18 @@
 
         function switchUniverse(newUniverse) {
             if (newUniverse === currentUniverse) return;
-            
+
             const portal = document.getElementById('portal-overlay');
             const body = document.body;
-            
+
             portal.classList.add('active');
-            
+            playUniverseSound(newUniverse);
+
             setTimeout(() => {
                 body.classList.remove('theme-lom', 'theme-mt');
                 body.classList.add(`theme-${newUniverse}`);
                 currentUniverse = newUniverse;
-                
-                // Reset chat and UI for the new universe
+
                 resetChatForCurrentMode();
                 generateParticles();
                 applyBackground(newUniverse);
@@ -739,11 +1006,10 @@
         }
 
         function updateAiMessage(aiId, text) {
-            const currentAiDiv = document.getElementById(aiId);
-            if (!currentAiDiv) return;
-            currentAiDiv.innerHTML = `<p style="white-space: pre-wrap;">${formatText(text)}</p>`;
-            scrollToBottom();
+            renderAiMessage(aiId, text);
         }
+
+        let streamRawBuffer = '';
 
         function parseSseLines(buffer, onChunk) {
             const lines = buffer.split('\n');
@@ -767,6 +1033,7 @@
         }
 
         async function streamChat(apiUrl, payload, aiId) {
+            streamRawBuffer = '';
             const res = await fetch(apiUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'text/event-stream' },
@@ -783,7 +1050,7 @@
                 let aiResponse = '';
                 parseSseLines(text + '\n', (chunk) => { aiResponse += chunk; });
                 updateAiMessage(aiId, aiResponse || 'No response received.');
-                return;
+                return aiResponse;
             }
 
             const reader = res.body.getReader();
@@ -798,6 +1065,7 @@
                 buffer += decoder.decode(value, { stream: true });
                 buffer = parseSseLines(buffer, (chunk) => {
                     aiResponse += chunk;
+                    streamRawBuffer = aiResponse;
                     updateAiMessage(aiId, aiResponse);
                 });
             }
@@ -805,9 +1073,11 @@
             if (buffer.trim()) {
                 parseSseLines(buffer + '\n', (chunk) => {
                     aiResponse += chunk;
+                    streamRawBuffer = aiResponse;
                     updateAiMessage(aiId, aiResponse);
                 });
             }
+            return streamRawBuffer || aiResponse;
         }
 
         async function bufferedChat(apiUrl, payload, aiId) {
@@ -822,7 +1092,9 @@
                 throw new Error(data.error || `API request failed (${res.status})`);
             }
 
-            updateAiMessage(aiId, data.content || 'No response received.');
+            const content = data.content || 'No response received.';
+            updateAiMessage(aiId, content);
+            return content;
         }
 
         async function handleSend(e) {
@@ -832,6 +1104,13 @@
             const input = document.getElementById('user-input');
             const msg = input.value.trim();
             if (!msg) return;
+
+            const egg = checkEasterEgg(msg, siteConfig, currentUniverse);
+            if (egg && !session.eggs?.includes(egg.phrase)) {
+                session.eggs = session.eggs || [];
+                session.eggs.push(egg.phrase);
+                triggerEggEffect(egg.effect);
+            }
 
             isGenerating = true;
             input.value = '';
@@ -867,22 +1146,36 @@
             const payload = {
                 message: msg,
                 series: currentUniverse,
-                audience: currentAudience
+                audience: currentAudience,
+                progress: getProgressStamp(),
+                warmth: session.warmth,
+                nickname: getNickname(siteConfig, session.warmth),
+                history: session.history
             };
+
+            let fullResponse = '';
 
             try {
                 const apiUrl = getApiUrl();
 
                 if (prefersBufferedChat()) {
-                    await bufferedChat(apiUrl, payload, aiId);
+                    fullResponse = await bufferedChat(apiUrl, payload, aiId);
                 } else {
                     try {
-                        await streamChat(apiUrl, payload, aiId);
+                        fullResponse = await streamChat(apiUrl, payload, aiId);
                     } catch (streamErr) {
                         console.warn('Streaming failed, retrying without stream:', streamErr);
-                        await bufferedChat(apiUrl, payload, aiId);
+                        fullResponse = await bufferedChat(apiUrl, payload, aiId);
                     }
                 }
+
+                renderAiMessage(aiId, fullResponse);
+                session.history.push({ role: 'user', content: msg });
+                session.history.push({ role: 'assistant', content: fullResponse });
+                session.history = trimHistory(session.history, siteConfig.memory?.maxHistoryTurns || 8);
+                session.warmth += siteConfig.memory?.warmthPerMessage || 1;
+                saveSession(currentUniverse, currentAudience, session);
+                updateWarmthUI();
             } catch (err) {
                 const currentAiDiv = document.getElementById(aiId);
                 if (currentAiDiv) {
@@ -895,15 +1188,33 @@
 
         document.getElementById('chat-form').addEventListener('submit', handleSend);
 
+        document.getElementById('progress-select')?.addEventListener('change', (e) => {
+            saveProgress(currentUniverse, currentAudience, e.target.value);
+        });
+
+        const aboutOverlay = document.getElementById('about-overlay');
+        const aboutModal = document.getElementById('about-modal');
+
         window.showAbout = function() {
-            alert('About the Oracle\n\nLore Bridge is an AI-powered companion for fans of Lord of the Mysteries and Mushoku Tensei. Select your universe and whether you are an Anime Watcher or Novel Reader to get tailored, spoiler-free lore!');
+            const a = siteConfig.about;
+            aboutModal.innerHTML = `
+                <h2>${a.title}</h2>
+                <p>${a.description}</p>
+                <p><strong>Features</strong></p><ul>${a.features.map((f) => `<li>${f}</li>`).join('')}</ul>
+                <p><strong>Tech</strong></p><ul>${a.techStack.map((t) => `<li>${t}</li>`).join('')}</ul>
+                <p style="font-size:0.8rem;color:var(--text-muted)">Memory uses your browser only (sessionStorage + localStorage). No account. Clears when you close the tab — except your progress stamp.</p>
+                <button type="button" id="about-close">Close</button>`;
+            aboutOverlay.classList.add('active');
+            document.getElementById('about-close').onclick = () => aboutOverlay.classList.remove('active');
             menuOverlay.classList.remove('active');
             sideMenu.classList.remove('active');
         };
+        aboutOverlay?.addEventListener('click', (e) => {
+            if (e.target === aboutOverlay) aboutOverlay.classList.remove('active');
+        });
 
-        // Initialize App
         generateParticles();
-        resetChatForCurrentMode(); // Sets the correct initial welcome message and chips
+        resetChatForCurrentMode();
         applyBackground('lom');
     </script>
 </body>

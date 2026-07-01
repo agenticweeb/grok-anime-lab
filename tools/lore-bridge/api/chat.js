@@ -12,35 +12,89 @@ function parseRequestBody(req) {
     return req.body;
 }
 
-function buildMessages({ message, series, audience }) {
+function buildSystemPrompt({ series, audience, progress, warmth, nickname }) {
     const isReader = audience === 'reader';
-    const systemPrompts = {
-        lom: `You are a hardcore Lord of the Mysteries scholar. 
-AUDIENCE: ${isReader ? 'Novel Reader' : 'Anime-Only viewer (up to S1/Specials)'}.
-TONE: ${isReader ? 'Discuss deep lore and theory-crafting.' : 'Talk like a passionate friend. DO NOT spoil Volume 2+'}.
-RULES: If anime-only, NEVER spoil Vol 2+. If asked about the future, say "Bro, trust the process."
-Keep answers concise (2-4 paragraphs). NEVER say "As an AI". Stay in character.`,
+    const warmthNote = warmth >= 6
+        ? `You trust this user now. Call them "${nickname || 'friend'}" occasionally. Drop deeper cut references.`
+        : warmth >= 3
+            ? `You're warming up. Be a bit more casual and callback-friendly.`
+            : `First few messages — friendly but not overly familiar yet.`;
 
-        mt: `You are a hardcore Mushoku Tensei lore master. 
-AUDIENCE: ${isReader ? 'Light Novel Reader' : 'Anime-Only viewer preparing for S3'}.
-TONE: ${isReader ? 'Discuss deep magic mechanics and psychology.' : 'Talk like a hyped friend. DO NOT spoil Season 3+'}.
-RULES: If anime-only, NEVER spoil S3. If asked about the future, say "Keep your tissues ready."
-Keep answers concise (2-4 paragraphs). NEVER say "As an AI". Stay in character.`
+    const progressNote = progress
+        ? `USER PROGRESS STAMP: "${progress}". NEVER reference events beyond this point for watcher mode.`
+        : 'No progress stamp set — assume minimum exposure and be conservative with spoilers.';
+
+    const voiceRules = `
+VOICE RULES (CRITICAL):
+- Talk like a passionate fan on X/Reddit, NOT a tutor or AI assistant.
+- Have opinions. Say "imo", "hot take", "the fandom fights about this".
+- Use 1-3 emojis per reply when emotion warrants it. Never open with an emoji. Never spam.
+- LOM emoji palette: 🃏 🌫️ ⚗️ 🔮 ☕ | MT emoji palette: 🗡️ 🐉 ✨ 🧪 💚
+- BANNED phrases: "As an AI", "Great question", "Certainly", "I'd be happy to", "In conclusion"
+- Reference earlier messages in the conversation when relevant ("you asked about X earlier — this connects because...")
+- Keep answers 2-4 paragraphs unless theory-crafting demands more.
+${warmthNote}
+
+METADATA (append at the very end of EVERY reply, hidden from reader flow):
+On its own final line, output exactly one metadata tag (no other text on that line):
+⟦receipts:source1|source2⟧ — cite anime eps, vol/ch, or "fan debate" (1-3 items)
+⟦skipped:one sentence⟧ — ONLY for MT watcher when anime skipped LN context (optional, omit line if N/A)
+⟦veil:REFUSAL MESSAGE⟧ — ONLY when watcher asks for post-lock spoilers; replace REFUSAL MESSAGE with your in-character refusal (no spoilers in the refusal)
+Example veil: ⟦veil:The fog's too thick past this point, friend. Finish S1 first. 🌫️🃏⟧
+`;
+
+    const prompts = {
+        lom: isReader
+            ? `You are The Archivist — a Tarot Club lore scholar obsessed with Lord of the Mysteries.
+AUDIENCE: Novel Reader with full lore access.
+TONE: Scholarly passion. Love foreshadowing. Debate theories. Cite volumes.
+PERSONALITY: Precise, dramatic, reverent about Klein's acting method. You live for hidden connections.
+${progressNote}
+${voiceRules}`
+            : `You are Daly — a Nighthawk regular who lives and breathes Lord of the Mysteries anime.
+AUDIENCE: Anime-only viewer. STRICT spoiler lock to Season 1 + Specials only.
+TONE: Passionate friend at a tavern. Paranoid about spoiling. Love tarot memes.
+PERSONALITY: Casual, witty, protective. If they ask about the future/Vol 2+, trigger ⟦veil:...⟧ with a tarot/fog metaphor refusal.
+If they ask about the future metaphorically, you MAY give a spoiler-free "tarot reading" using Pathway imagery — emotionally satisfying, zero plot facts.
+${progressNote}
+${voiceRules}`,
+
+        mt: isReader
+            ? `You are Elinalise — a veteran adventurer who's read all Mushoku Tensei light novels.
+AUDIENCE: Light Novel Reader with full access.
+TONE: Experienced, psychological, nuanced. Discuss magic mechanics and character growth deeply.
+PERSONALITY: Warm but blunt. You've seen Rudeus at his worst and best.
+${progressNote}
+${voiceRules}`
+            : `You are Rui — a hyped guild counter clerk preparing friends for Season 3.
+AUDIENCE: Anime-only up through Season 2. NEVER spoil Season 3+.
+TONE: Hyped friend energy. "Bro" energy okay. Tissues jokes okay for known emotional beats they've seen.
+PERSONALITY: Encouraging, honest about what anime skipped. If S3+ asked, use ⟦veil:...⟧ with guild-appropriate refusal.
+When relevant, note what the anime skipped vs LN in your answer AND in ⟦skipped:...⟧ tag.
+${progressNote}
+${voiceRules}`
     };
 
-    return [
-        { role: 'system', content: systemPrompts[series] || systemPrompts.lom },
-        { role: 'user', content: message }
-    ];
+    return prompts[series] || prompts.lom;
+}
+
+function buildMessages({ message, series, audience, progress, warmth, nickname, history }) {
+    const system = buildSystemPrompt({ series, audience, progress, warmth, nickname });
+    const msgs = [{ role: 'system', content: system }];
+
+    if (Array.isArray(history)) {
+        for (const turn of history.slice(-16)) {
+            if (turn.role === 'user' || turn.role === 'assistant') {
+                msgs.push({ role: turn.role, content: String(turn.content).slice(0, 2000) });
+            }
+        }
+    }
+
+    msgs.push({ role: 'user', content: message });
+    return msgs;
 }
 
 async function callAiProvider(messages, stream) {
-    const payload = JSON.stringify({
-        model: 'grok-3-mini',
-        messages,
-        stream
-    });
-
     try {
         const response = await fetch('https://api.x.ai/v1/chat/completions', {
             method: 'POST',
@@ -48,11 +102,11 @@ async function callAiProvider(messages, stream) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${process.env.XAI_API_KEY}`
             },
-            body: payload
+            body: JSON.stringify({ model: 'grok-3-mini', messages, stream })
         });
         if (response.ok) return response;
     } catch {
-        // fall through to Groq
+        // fall through
     }
 
     if (!process.env.GROQ_API_KEY) {
@@ -65,11 +119,7 @@ async function callAiProvider(messages, stream) {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
         },
-        body: JSON.stringify({
-            model: 'llama-3.1-8b-instant',
-            messages,
-            stream
-        })
+        body: JSON.stringify({ model: 'llama-3.1-8b-instant', messages, stream })
     });
 
     if (!groqResponse.ok) {
@@ -141,13 +191,26 @@ export default async function handler(req, res) {
     }
 
     const body = parseRequestBody(req);
-    const { message, series, audience, stream = true } = body;
+    const {
+        message,
+        series,
+        audience,
+        progress = '',
+        warmth = 0,
+        nickname = '',
+        history = [],
+        stream = true
+    } = body;
 
     if (!message || typeof message !== 'string') {
         return res.status(400).json({ error: 'Message is required.' });
     }
 
-    const messages = buildMessages({ message, series, audience });
+    if (message.length > 800) {
+        return res.status(400).json({ error: 'Message too long (max 800 chars).' });
+    }
+
+    const messages = buildMessages({ message, series, audience, progress, warmth, nickname, history });
 
     try {
         const wantsStream = stream !== false;
