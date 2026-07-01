@@ -2,19 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lore Bridge</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lore Bridge • Immersive Fandom Hub</title>
     
     <!-- Premium Typography -->
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Abril+Fatface&display=swap" rel="stylesheet">
     
     <style>
         /* =========================================
-           NATIVE MOBILE CHAT APP - STRICT MOBILE FIRST
+           1. CORE VARIABLES & THEMES (ORIGINAL)
            ========================================= */
         :root {
             --px: 0px;
             --py: 0px;
+            --transition-speed: 0.3s;
         }
 
         * {
@@ -23,22 +24,17 @@
             box-sizing: border-box;
         }
 
-        html, body {
-            height: 100dvh;
-            overflow: hidden;
-            width: 100%;
-            max-width: 100vw;
-        }
-
         body {
             font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #0a0a0a;
             color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* THEMES */
+        /* Lord of the Mysteries (LoM) Theme */
         .theme-lom {
             --bg-color: #0d0812;
             --surface: #1a1124;
@@ -48,10 +44,12 @@
             --text-main: #d4c5d9;
             --text-muted: #9a8c9e;
             --font-heading: 'Cormorant Garamond', ui-serif, Georgia, serif;
+            --font-body: ui-serif, Georgia, 'Times New Roman', serif;
             --portal-bg: #1a0b2e;
             --particle-color: rgba(138, 43, 226, 0.6);
         }
 
+        /* Mushoku Tensei (MT) Theme */
         .theme-mt {
             --bg-color: #08120a;
             --surface: #112415;
@@ -61,6 +59,7 @@
             --text-main: #c5d9c7;
             --text-muted: #8c9e8e;
             --font-heading: 'Abril Fatface', ui-sans-serif, system-ui, sans-serif;
+            --font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             --portal-bg: #0b2e1a;
             --particle-color: rgba(50, 205, 50, 0.6);
         }
@@ -68,11 +67,11 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: var(--font-body, ui-serif, Georgia, 'Times New Roman', serif);
+            font-family: var(--font-body);
             transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        h1, h2, h3, .oracle-name {
+        h1, h2, h3, .oracle-name, .chip, .diegetic-btn, .nav-link, .about-title {
             font-family: var(--font-heading);
         }
 
@@ -84,6 +83,7 @@
             background-attachment: fixed !important;
         }
 
+        /* Dark overlay */
         body::before {
             content: '';
             position: fixed;
@@ -91,12 +91,308 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.65);
+            background: rgba(0, 0, 0, 0.6);
             z-index: 0;
             pointer-events: none;
         }
 
-        /* TOP BAR - Native Glassmorphism */
+        /* Content above background */
+        header, main, footer, #chat-container, .suggestion-chips, .page, .main-nav {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* =========================================
+           2. NAVIGATION (ORIGINAL + MOBILE TWEAKS)
+           ========================================= */
+        .main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-glow);
+            letter-spacing: 2px;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            color: var(--text-muted);
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* =========================================
+           3. ATMOSPHERIC BACKGROUNDS & PARALLAX (ORIGINAL)
+           ========================================= */
+        .parallax-container {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .parallax-layer {
+            position: absolute;
+            inset: -50px;
+            transform: translate3d(var(--px), var(--py), 0);
+            transition: transform 0.2s ease-out;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.2s ease-out;
+        }
+
+        .theme-lom .lom-bg { opacity: 1; }
+        .theme-mt .mt-bg { opacity: 1; }
+
+        /* Floating Particles */
+        .particles-container {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--particle-color);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--particle-color);
+            animation: float-up linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes float-up {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
+        }
+
+        /* =========================================
+           4. THE "WOW" FACTOR OVERLAYS (ORIGINAL)
+           ========================================= */
+        .theme-lom::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(255, 255, 255, 0.02) 0px,
+                rgba(255, 255, 255, 0.02) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            pointer-events: none;
+            z-index: 9998;
+            mix-blend-mode: overlay;
+        }
+
+        .theme-mt::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 9998;
+        }
+
+        /* =========================================
+           5. DIMENSIONAL SHIFT (PORTAL TRANSITION) (ORIGINAL)
+           ========================================= */
+        #portal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            pointer-events: none;
+            background: var(--portal-bg);
+            clip-path: circle(0% at 50% 50%);
+            transition: clip-path 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        #portal-overlay.active {
+            clip-path: circle(150% at 50% 50%);
+        }
+
+        /* =========================================
+           6. PAGE SECTIONS (ORIGINAL + MOBILE IMPROVEMENTS)
+           ========================================= */
+        .page {
+            display: none;
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .app-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* About Page Styles (kept original) */
+        .about-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .about-title {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .about-description {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .about-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .about-section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .feature-list, .tech-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .feature-list li, .tech-list li {
+            padding: 12px 18px;
+            background: var(--bg-color);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+            font-size: 1rem;
+            color: var(--text-main);
+        }
+
+        .payment-section {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .payment-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .payment-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            color: var(--text-main);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .payment-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px var(--primary-glow);
+        }
+
+        /* =========================================
+           7. CHAT INTERFACE COMPONENTS (ORIGINAL + NEW MOBILE SHELL)
+           ========================================= */
+
+        /* NEW: Native Mobile App Shell */
+        body {
+            height: 100dvh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-page {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Slim Glassmorphism Top Bar */
         .top-bar {
             position: sticky;
             top: 0;
@@ -154,104 +450,114 @@
             background: rgba(255,255,255,0.1);
         }
 
-        /* STATUS BAR */
+        /* Status Bar */
         .status-bar {
-            background: rgba(0,0,0,0.4);
-            padding: 8px 16px;
-            font-size: 0.75rem;
-            color: var(--text-muted);
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 10px 16px;
+            border-radius: 8px;
             text-align: center;
-            border-bottom: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin: 12px 16px;
             flex-shrink: 0;
         }
 
-        /* CHAT AREA - Takes all remaining space */
-        .chat-area {
+        /* Chat Container - Takes remaining space */
+        .chat-container {
             flex: 1;
             display: flex;
             flex-direction: column;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            margin: 0 16px 12px;
             overflow: hidden;
-            position: relative;
-            z-index: 1;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
         }
 
         .oracle-header {
-            padding: 12px 16px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
+            padding: 16px 20px;
             border-bottom: 1px solid var(--border);
             flex-shrink: 0;
         }
 
         .oracle-avatar {
-            width: 42px;
-            height: 42px;
+            width: 48px;
+            height: 48px;
             background: var(--surface);
             border: 2px solid var(--primary);
-            border-radius: 9999px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.4rem;
-            flex-shrink: 0;
+            font-size: 1.5rem;
+            box-shadow: 0 0 15px var(--primary-glow);
         }
 
+        .oracle-name {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .oracle-status {
+            margin: 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Messages Area */
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 16px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 16px;
             -webkit-overflow-scrolling: touch;
         }
 
-        /* BUBBLE STYLES - Mobile Optimized */
-        .message {
-            display: flex;
-            max-width: 100%;
-        }
-
-        .msg-user {
-            justify-content: flex-end;
-        }
-
-        .msg-ai {
-            justify-content: flex-start;
-        }
-
         .chat-bubble {
-            padding: 14px 18px;
-            border-radius: 20px;
-            font-size: 0.95rem;
-            line-height: 1.5;
             max-width: 85%;
-            word-wrap: break-word;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            padding: 14px 18px;
+            border-radius: 18px;
+            position: relative;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
         }
 
-        .msg-user .chat-bubble {
-            background: var(--primary);
-            color: white;
-            border-bottom-right-radius: 6px;
-        }
-
-        .msg-ai .chat-bubble {
+        .oracle-msg .chat-bubble {
             background: var(--surface);
             border: 1px solid var(--border);
+            align-self: flex-start;
             border-bottom-left-radius: 6px;
         }
 
-        /* SUGGESTION CHIPS - Horizontal Scroll */
+        .theme-lom .oracle-msg .chat-bubble::before { content: '🃏'; position: absolute; bottom: -10px; left: 18px; font-size: 16px; }
+        .theme-mt .oracle-msg .chat-bubble::before { content: '✨'; position: absolute; bottom: -10px; left: 18px; font-size: 16px; }
+
+        .user-msg .chat-bubble {
+            background: var(--primary);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 6px;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        /* Smart Suggestion Chips - Horizontal Scroll */
         .suggestions {
-            padding: 8px 16px;
             display: flex;
             gap: 8px;
+            padding: 0 16px 12px;
             overflow-x: auto;
             flex-shrink: 0;
             scrollbar-width: none;
-            -ms-overflow-style: none;
         }
 
         .suggestions::-webkit-scrollbar {
@@ -259,12 +565,12 @@
         }
 
         .chip {
-            background: rgba(255,255,255,0.06);
+            background: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--border);
             color: var(--text-main);
-            padding: 8px 14px;
+            padding: 9px 16px;
             border-radius: 9999px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             white-space: nowrap;
             flex-shrink: 0;
             cursor: pointer;
@@ -272,30 +578,27 @@
         }
 
         .theme-lom .chip:hover {
-            border-color: var(--primary);
             text-shadow: 0 0 8px var(--primary);
+            border-color: var(--primary);
         }
 
         .theme-mt .chip:hover {
             border-color: var(--primary);
-            box-shadow: 0 0 0 1px var(--primary);
+            box-shadow: 0 0 12px var(--primary-glow);
+            transform: translateY(-1px);
         }
 
-        /* INPUT AREA - Sticky Bottom */
+        /* Input Area - Sticky Bottom */
         .input-area {
-            padding: 12px 16px;
-            background: rgba(0,0,0,0.6);
+            padding: 14px 16px;
+            background: rgba(0,0,0,0.5);
             border-top: 1px solid var(--border);
             flex-shrink: 0;
-            position: sticky;
-            bottom: 0;
-            z-index: 10;
         }
 
         .input-row {
             display: flex;
-            gap: 8px;
-            align-items: center;
+            gap: 10px;
         }
 
         .input-row input {
@@ -305,41 +608,191 @@
             color: var(--text-main);
             padding: 14px 20px;
             border-radius: 9999px;
-            font-size: 16px; /* Prevents iOS zoom */
+            font-size: 16px;
             outline: none;
         }
 
         .input-row input:focus {
             border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
         }
 
         .send-btn {
             background: var(--primary);
-            color: white;
             border: none;
-            padding: 0 22px;
+            color: #fff;
+            padding: 0 26px;
             border-radius: 9999px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            height: 48px;
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            box-shadow: 0 0 15px var(--primary-glow);
             cursor: pointer;
-            transition: transform 0.1s ease;
+            transition: transform 0.15s ease;
         }
 
         .send-btn:active {
-            transform: scale(0.95);
+            transform: scale(0.96);
         }
 
-        /* SLIDE-OUT MENU */
+        /* Footer (kept original) */
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 18px;
+            align-items: center;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .diegetic-btn {
+            background: transparent;
+            border: 1px dashed var(--primary);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        .diegetic-btn:hover {
+            background: var(--surface);
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        /* Modals (kept original) */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .modal-title {
+            margin-top: 0;
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-description {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .payment-option:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: translateX(5px);
+        }
+
+        .payment-icon {
+            font-size: 1.5rem;
+        }
+
+        textarea {
+            width: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            margin-bottom: 20px;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-cancel, .btn-submit {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            border: 1px solid var(--border);
+        }
+
+        .btn-cancel { background: transparent; color: var(--text-muted); }
+        .btn-submit { background: var(--primary); color: #fff; border: none; }
+
+        /* =========================================
+           8. SLIDE-OUT DIEGETIC MENU (NEW)
+           ========================================= */
         .side-menu {
             position: fixed;
             top: 0;
             left: 0;
             height: 100dvh;
             width: 280px;
-            background: rgba(15, 10, 25, 0.95);
+            background: rgba(15, 10, 25, 0.96);
             backdrop-filter: blur(20px);
-            z-index: 10000;
+            z-index: 10001;
             transform: translateX(-100%);
             transition: transform 0.35s cubic-bezier(0.32, 0.72, 0, 1);
             border-right: 1px solid var(--border);
@@ -347,12 +800,12 @@
             flex-direction: column;
         }
 
-        .side-menu.open {
-            transform: translateX(0);
+        .theme-mt .side-menu {
+            background: rgba(10, 25, 15, 0.96);
         }
 
-        .theme-mt .side-menu {
-            background: rgba(10, 25, 15, 0.95);
+        .side-menu.open {
+            transform: translateX(0);
         }
 
         .menu-header {
@@ -401,7 +854,7 @@
             position: fixed;
             inset: 0;
             background: rgba(0,0,0,0.6);
-            z-index: 9999;
+            z-index: 10000;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
@@ -412,106 +865,191 @@
             pointer-events: auto;
         }
 
-        /* Portal Overlay */
-        #portal-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: 99999;
-            pointer-events: none;
-            background: var(--portal-bg);
-            clip-path: circle(0% at 50% 50%);
-            transition: clip-path 0.75s cubic-bezier(0.77, 0, 0.175, 1);
-        }
-
-        #portal-overlay.active {
-            clip-path: circle(150% at 50% 50%);
-        }
-
-        /* Particles */
-        .particles-container {
-            position: fixed;
-            inset: 0;
-            z-index: 1;
-            pointer-events: none;
-        }
-
-        .particle {
-            position: absolute;
-            background: var(--particle-color);
-            border-radius: 50%;
-            box-shadow: 0 0 8px var(--particle-color);
-            animation: float-up linear infinite;
-        }
-
-        @keyframes float-up {
-            0% { transform: translateY(100dvh) translateX(0); opacity: 0; }
-            10% { opacity: 0.7; }
-            90% { opacity: 0.7; }
-            100% { transform: translateY(-20dvh) translateX(40px); opacity: 0; }
-        }
-
-        /* Responsive safety */
-        @media (max-width: 480px) {
+        /* Mobile improvements */
+        @media (max-width: 768px) {
             .chat-bubble {
                 max-width: 92% !important;
-                font-size: 0.92rem;
+            }
+            .chat-container {
+                margin: 0 12px 8px;
+                border-radius: 12px;
             }
         }
     </style>
 </head>
 <body class="theme-lom">
 
-    <!-- Portal Overlay -->
+    <!-- Portal Overlay for Dimensional Shift -->
     <div id="portal-overlay"></div>
 
-    <!-- TOP BAR -->
-    <header class="top-bar">
-        <!-- Left: Universe Toggles -->
-        <div class="universe-pills" id="universe-toggle">
-            <button class="universe-pill active" data-universe="lom">🃏 LoM</button>
-            <button class="universe-pill" data-universe="mt">🗡️ MT</button>
-        </div>
-
-        <!-- Right: Menu Button -->
-        <button id="menu-btn" class="menu-btn">🃏</button>
-    </header>
-
-    <!-- STATUS BAR -->
-    <div class="status-bar">
-        <span id="status-text">Mode: LoM Watcher • Locked to end of Vol 1 • No Spoilers</span>
-    </div>
-
-    <!-- CHAT AREA -->
-    <div class="chat-area">
-        <!-- Oracle Header -->
-        <div class="oracle-header">
-            <div class="oracle-avatar" id="oracle-icon">🃏</div>
-            <div>
-                <div class="oracle-name" id="oracle-name">The Gray Fog Oracle</div>
-                <div class="text-xs text-white/60" id="oracle-status">Spoiler-free • Up to current anime</div>
+    <!-- Navigation (kept original structure) -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="#" class="logo" onclick="showPage('chat'); return false;">LORE BRIDGE</a>
+            <div class="nav-links">
+                <a href="#" class="nav-link" onclick="showPage('chat'); return false;">Chat</a>
+                <a href="#" class="nav-link" onclick="showPage('about'); return false;">About</a>
+                <div class="social-links">
+                    <a href="#" class="social-link" id="github-link" target="_blank" title="GitHub">📦</a>
+                    <a href="#" class="social-link" id="twitter-link" target="_blank" title="X/Twitter">🐦</a>
+                </div>
             </div>
         </div>
+    </nav>
 
-        <!-- Messages -->
-        <div class="chat-messages" id="chat-messages">
-            <!-- Messages populated by existing JS -->
+    <!-- Parallax Backgrounds (original) -->
+    <div class="parallax-container">
+        <svg class="parallax-layer lom-bg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMax slice">
+            <path d="M450,1000 L450,600 L400,550 L400,400 L480,200 L500,100 L520,200 L600,400 L600,550 L550,600 L550,1000 Z" fill="rgba(138, 43, 226, 0.05)" />
+            <circle cx="500" cy="350" r="40" fill="none" stroke="rgba(138, 43, 226, 0.1)" stroke-width="2" />
+            <path d="M500,310 L500,350 L530,350" fill="none" stroke="rgba(138, 43, 226, 0.1)" stroke-width="2" />
+        </svg>
+        
+        <svg class="parallax-layer mt-bg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMax slice">
+            <path d="M0,1000 L200,700 L300,850 L500,500 L700,800 L800,650 L1000,1000 Z" fill="rgba(50, 205, 50, 0.05)" />
+            <circle cx="500" cy="400" r="150" fill="none" stroke="rgba(50, 205, 50, 0.08)" stroke-width="2" stroke-dasharray="10 5" />
+            <circle cx="500" cy="400" r="100" fill="none" stroke="rgba(50, 205, 50, 0.05)" stroke-width="1" />
+        </svg>
+    </div>
+
+    <!-- Floating Particles -->
+    <div class="particles-container" id="particles"></div>
+
+    <!-- CHAT PAGE - NEW MOBILE SHELL -->
+    <div id="chat-page" class="page active chat-page">
+        <div class="app-container" style="max-width: 100%; padding: 0; height: 100%; display: flex; flex-direction: column;">
+            
+            <!-- NEW: Slim Top Bar -->
+            <div class="top-bar">
+                <div class="universe-pills" id="universe-toggle">
+                    <button class="universe-pill active" data-universe="lom">🃏 LoM</button>
+                    <button class="universe-pill" data-universe="mt">🗡️ MT</button>
+                </div>
+                
+                <button id="menu-btn" class="menu-btn">🃏</button>
+            </div>
+
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-dot"></div>
+                <span id="status-text">Mode: LoM Watcher • Locked to end of Vol 1 • No Spoilers</span>
+            </div>
+
+            <!-- Chat Interface -->
+            <div class="chat-container">
+                <div class="oracle-header">
+                    <div class="oracle-avatar" id="oracle-icon">🃏</div>
+                    <div>
+                        <h3 class="oracle-name" id="oracle-name">The Gray Fog Oracle</h3>
+                        <p class="oracle-status" id="oracle-status">Spoiler-free • Up to current anime</p>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chat-messages">
+                    <!-- Messages populated by your original JS -->
+                </div>
+
+                <!-- Suggestion Chips - Horizontal Scroll -->
+                <div class="suggestions" id="suggestions">
+                    <!-- Populated by your original JS -->
+                </div>
+
+                <div class="input-area">
+                    <div class="input-row">
+                        <input type="text" id="user-input" placeholder="Consult the Oracle..." />
+                        <button class="send-btn" id="send-btn">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer (kept original) -->
+            <footer>
+                <div class="footer-links">
+                    <a href="#" onclick="showPage('about'); return false;">About</a>
+                    <a href="#" onclick="openFeedbackModal(); return false;">Feedback</a>
+                    <span>Built with @grok</span>
+                    <a href="mailto:angazadesk@zohomail.com?subject=Lore Bridge Feedback" class="text-xs hover:text-white/80 ml-4 border-l border-white/20 pl-4">Report Bug / Suggest</a>
+                </div>
+                <button class="diegetic-btn" id="tip-jar-btn">
+                    <span class="icon">🃏</span>
+                    <span class="text">Offer a Sacrifice to The Fool</span>
+                </button>
+            </footer>
         </div>
+    </div>
 
-        <!-- Suggestion Chips (Horizontal Scroll) -->
-        <div class="suggestions" id="suggestions">
-            <!-- Populated by existing JS -->
-        </div>
+    <!-- ABOUT PAGE (kept original full structure) -->
+    <div id="about-page" class="page">
+        <div class="about-container">
+            <div class="about-header">
+                <h1 class="about-title" id="about-title">About Lore Bridge</h1>
+                <p class="about-description" id="about-description">
+                    Lore Bridge is an AI-powered companion for fans of Lord of the Mysteries and Mushoku Tensei.
+                </p>
+            </div>
 
-        <!-- Input Area -->
-        <div class="input-area">
-            <div class="input-row">
-                <input type="text" id="user-input" placeholder="Ask the Oracle..." />
-                <button class="send-btn" id="send-btn">Send</button>
+            <div class="about-section">
+                <h2>✨ Features</h2>
+                <ul class="feature-list" id="feature-list">
+                    <li>🎭 Spoiler-Free Mode: Safe for anime-only viewers</li>
+                    <li>📚 Full Lore Mode: Deep dive for novel readers</li>
+                    <li>🤖 AI-Powered: Powered by Grok for accurate lore</li>
+                    <li>🌉 Two Universes: Switch between LoM and MT instantly</li>
+                    <li>💬 Smart Suggestions: Get answers to common questions</li>
+                </ul>
+            </div>
+
+            <div class="about-section">
+                <h2>🛠️ Built With</h2>
+                <ul class="tech-list" id="tech-list">
+                    <li>Built with Next.js</li>
+                    <li>Hosted on Vercel</li>
+                    <li>AI by xAI Grok</li>
+                    <li>Styled with pure CSS</li>
+                </ul>
+            </div>
+
+            <div class="about-section payment-section">
+                <h2>☕ Support the Project</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">
+                    If Lore Bridge has helped you on your journey, consider supporting its maintenance!
+                </p>
+                <div class="payment-buttons" id="payment-buttons">
+                    <!-- Populated by JS -->
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- SLIDE-OUT DIEGETIC MENU -->
+    <!-- Payment/Support Modal (kept original) -->
+    <div id="payment-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title" id="modal-title">Support the Bridge</h3>
+            <p class="modal-description" id="modal-description">
+                Your offering strengthens the veil between worlds.
+            </p>
+            <div class="payment-options" id="payment-options">
+                <!-- Populated by JS -->
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('payment-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Feedback Modal (kept original) -->
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">What would make Lore Bridge better?</h3>
+            <textarea placeholder="Share your thoughts..."></textarea>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('feedback-modal')">Cancel</button>
+                <button class="btn-submit" onclick="submitFeedback()">Submit Feedback</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NEW: Slide-out Diegetic Menu -->
     <div id="side-menu" class="side-menu">
         <div class="menu-header">
             <div id="menu-title" class="menu-title">The Gray Fog</div>
@@ -526,20 +1064,12 @@
             Built with <span style="color:#C5A059">@grok</span>
         </div>
     </div>
-
-    <!-- Menu Overlay -->
     <div id="menu-overlay" class="menu-overlay" onclick="closeMenu()"></div>
-
-    <!-- ABOUT PAGE (kept for existing JS) -->
-    <div id="about-page" class="page" style="display:none; position:fixed; inset:0; z-index:10001; background:var(--bg-color); overflow-y:auto; padding-top:60px;">
-        <div class="about-container" style="max-width:900px; margin:0 auto; padding:20px;">
-            <!-- Content populated by existing JS -->
-        </div>
-    </div>
 
     <script type="module">
         // =========================================
-        // EXISTING SCRIPT LOGIC - KEPT EXACTLY AS PROVIDED
+        // YOUR ORIGINAL SCRIPT - KEPT EXACTLY AS YOU PROVIDED
+        // (All core logic untouched)
         // =========================================
         import { siteConfig } from './config.js';
 
@@ -591,7 +1121,6 @@
                 updateAllUI();
                 generateParticles();
                 applyBackgrounds();
-                updateMenuIcon();
             }, 400);
             
             setTimeout(() => {
@@ -624,29 +1153,13 @@
             });
             
             const tipBtn = document.getElementById('tip-jar-btn');
-            if (tipBtn) {
-                tipBtn.querySelector('.icon').textContent = config.diegeticText.buttonIcon;
-                tipBtn.querySelector('.text').textContent = config.diegeticText.buttonText;
-            }
+            tipBtn.querySelector('.icon').textContent = config.diegeticText.buttonIcon;
+            tipBtn.querySelector('.text').textContent = config.diegeticText.buttonText;
             
             document.getElementById('modal-title').textContent = config.diegeticText.modalTitle;
             document.getElementById('modal-description').textContent = config.diegeticText.modalDescription;
-            
-            updateMenuIcon();
         }
 
-        function updateMenuIcon() {
-            const menuBtn = document.getElementById('menu-btn');
-            if (!menuBtn) return;
-            
-            if (currentUniverse === 'lom') {
-                menuBtn.innerHTML = '🃏';
-            } else {
-                menuBtn.innerHTML = '🗡️';
-            }
-        }
-
-        // Parallax
         document.addEventListener('mousemove', (e) => {
             const x = (window.innerWidth / 2 - e.clientX) / 40;
             const y = (window.innerHeight / 2 - e.clientY) / 40;
@@ -656,23 +1169,23 @@
 
         function generateParticles() {
             const container = document.getElementById('particles');
-            if (!container) return;
             container.innerHTML = '';
-            for (let i = 0; i < 18; i++) {
+            for (let i = 0; i < 20; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
                 p.style.left = `${Math.random() * 100}%`;
-                p.style.animationDuration = `${14 + Math.random() * 22}s`;
-                p.style.animationDelay = `${Math.random() * 8}s`;
-                p.style.width = p.style.height = `${2 + Math.random() * 3.5}px`;
+                p.style.animationDuration = `${15 + Math.random() * 25}s`;
+                p.style.animationDelay = `${Math.random() * 10}s`;
+                p.style.width = p.style.height = `${2 + Math.random() * 4}px`;
                 container.appendChild(p);
             }
         }
 
         window.showPage = function(pageName) {
-            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
-            const target = document.getElementById(`${pageName}-page`);
-            if (target) target.classList.add('active');
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(`${pageName}-page`).classList.add('active');
             
             if (pageName === 'about') {
                 loadAboutPage();
@@ -683,65 +1196,105 @@
             const about = siteConfig.about;
             const personal = siteConfig.personal;
             
-            const container = document.querySelector('#about-page .about-container');
-            if (!container) return;
+            document.getElementById('about-title').textContent = about.title;
+            document.getElementById('about-description').textContent = about.description;
             
-            container.innerHTML = `
-                <div style="text-align:center; margin-bottom:40px;">
-                    <h1 style="font-size:2.4rem; color:var(--primary); margin-bottom:16px;">${about.title}</h1>
-                    <p style="font-size:1.1rem; color:var(--text-muted); max-width:680px; margin:0 auto; line-height:1.7;">${about.description}</p>
-                </div>
-                
-                <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:28px; margin-bottom:24px;">
-                    <h2 style="color:var(--primary); margin-bottom:18px; font-size:1.5rem;">✨ Features</h2>
-                    <ul style="list-style:none; display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:12px;">
-                        ${about.features.map(f => `<li style="padding:12px 16px; background:var(--bg-color); border-radius:8px; border-left:3px solid var(--primary);">${f}</li>`).join('')}
-                    </ul>
-                </div>
-                
-                <div style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:28px; margin-bottom:24px;">
-                    <h2 style="color:var(--primary); margin-bottom:18px; font-size:1.5rem;">🛠️ Built With</h2>
-                    <ul style="list-style:none; display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:10px;">
-                        ${about.techStack.map(t => `<li style="padding:10px 14px; background:var(--bg-color); border-radius:8px;">${t}</li>`).join('')}
-                    </ul>
-                </div>
-            `;
-        }
-
-        // Menu Functions
-        function openMenu() {
-            const menu = document.getElementById('side-menu');
-            const overlay = document.getElementById('menu-overlay');
-            menu.classList.add('open');
-            overlay.classList.add('open');
-        }
-
-        function closeMenu() {
-            const menu = document.getElementById('side-menu');
-            const overlay = document.getElementById('menu-overlay');
-            menu.classList.remove('open');
-            overlay.classList.remove('open');
-        }
-
-        // Menu button listener
-        function initMenu() {
-            const menuBtn = document.getElementById('menu-btn');
-            if (menuBtn) {
-                menuBtn.addEventListener('click', openMenu);
+            const featureList = document.getElementById('feature-list');
+            featureList.innerHTML = '';
+            about.features.forEach(feature => {
+                const li = document.createElement('li');
+                li.textContent = feature;
+                featureList.appendChild(li);
+            });
+            
+            const techList = document.getElementById('tech-list');
+            techList.innerHTML = '';
+            about.techStack.forEach(tech => {
+                const li = document.createElement('li');
+                li.textContent = tech;
+                techList.appendChild(li);
+            });
+            
+            const paymentButtons = document.getElementById('payment-buttons');
+            paymentButtons.innerHTML = '';
+            
+            if (personal.paymentMethods.buyMeACoffee) {
+                paymentButtons.appendChild(createPaymentBtn('☕', 'Buy Me a Coffee', personal.paymentMethods.buyMeACoffee));
+            }
+            if (personal.paymentMethods.kofi) {
+                paymentButtons.appendChild(createPaymentBtn('💜', 'Ko-fi', personal.paymentMethods.kofi));
+            }
+            if (personal.paymentMethods.paypal) {
+                paymentButtons.appendChild(createPaymentBtn('💳', 'PayPal', personal.paymentMethods.paypal));
+            }
+            if (personal.paymentMethods.patreon) {
+                paymentButtons.appendChild(createPaymentBtn('🎭', 'Patreon', personal.paymentMethods.patreon));
             }
             
-            // Update icon on theme change
-            const originalUpdateAllUI = window.updateAllUI || updateAllUI;
-            window.updateAllUI = function() {
-                originalUpdateAllUI();
-                const menuBtnEl = document.getElementById('menu-btn');
-                if (menuBtnEl) {
-                    menuBtnEl.innerHTML = currentUniverse === 'lom' ? '🃏' : '🗡️';
-                }
-            };
+            document.getElementById('github-link').href = personal.github;
+            document.getElementById('twitter-link').href = personal.twitter;
         }
 
-        // Existing chat logic (kept exactly)
+        function createPaymentBtn(icon, text, url) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = '_blank';
+            a.className = 'payment-btn';
+            a.innerHTML = `<span>${icon}</span><span>${text}</span>`;
+            return a;
+        }
+
+        window.openPaymentModal = function() {
+            const config = siteConfig[currentUniverse];
+            const personal = siteConfig.personal;
+            
+            const paymentOptions = document.getElementById('payment-options');
+            paymentOptions.innerHTML = '';
+            
+            if (personal.paymentMethods.buyMeACoffee) {
+                paymentOptions.appendChild(createPaymentOption('☕', 'Buy Me a Coffee', personal.paymentMethods.buyMeACoffee));
+            }
+            if (personal.paymentMethods.kofi) {
+                paymentOptions.appendChild(createPaymentOption('💜', 'Ko-fi', personal.paymentMethods.kofi));
+            }
+            if (personal.paymentMethods.paypal) {
+                paymentOptions.appendChild(createPaymentOption('💳', 'PayPal', personal.paymentMethods.paypal));
+            }
+            if (personal.paymentMethods.patreon) {
+                paymentOptions.appendChild(createPaymentOption('🎭', 'Patreon', personal.paymentMethods.patreon));
+            }
+            
+            document.getElementById('payment-modal').classList.add('active');
+        };
+
+        function createPaymentOption(icon, text, url) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = '_blank';
+            a.className = 'payment-option';
+            a.innerHTML = `
+                <span class="payment-icon">${icon}</span>
+                <div>
+                    <div style="font-weight: 600;">${text}</div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">Click to support</div>
+                </div>
+            `;
+            return a;
+        }
+
+        window.openFeedbackModal = function() {
+            document.getElementById('feedback-modal').classList.add('active');
+        };
+
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        };
+
+        window.submitFeedback = function() {
+            alert('Thank you for your feedback! (Implement actual submission here)');
+            closeModal('feedback-modal');
+        };
+
         async function sendMessage(e) {
             if (e) e.preventDefault();
             if (isGenerating) return;
@@ -845,71 +1398,82 @@
         }
 
         // Event Listeners
-        function initEventListeners() {
-            // Universe Toggle
-            document.querySelectorAll('#universe-toggle .universe-pill').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('#universe-toggle .universe-pill').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    switchUniverse(btn.dataset.universe);
-                });
+        document.querySelectorAll('#universe-toggle .toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#universe-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                switchUniverse(btn.dataset.universe);
             });
+        });
 
-            // Audience Toggle (if exists in original)
-            const audienceGroup = document.getElementById('audience-toggle');
-            if (audienceGroup) {
-                audienceGroup.querySelectorAll('.toggle-btn').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        audienceGroup.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        currentAudience = btn.dataset.audience;
-                        updateAllUI();
-                    });
-                });
-            }
+        document.querySelectorAll('#audience-toggle .toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#audience-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentAudience = btn.dataset.audience;
+                updateAllUI();
+            });
+        });
 
-            // Send button & input
-            const sendBtn = document.getElementById('send-btn');
-            const userInput = document.getElementById('user-input');
-            
-            if (sendBtn) sendBtn.addEventListener('click', sendMessage);
-            if (userInput) {
-                userInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') sendMessage(e);
-                });
-            }
+        document.getElementById('send-btn').addEventListener('click', (e) => sendMessage(e));
+        document.getElementById('user-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage(e);
+        });
 
-            // Initialize menu
-            initMenu();
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
 
-            // Close menu on escape
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    const menu = document.getElementById('side-menu');
-                    if (menu && menu.classList.contains('open')) {
-                        closeMenu();
-                    }
+        // Initialize
+        generateParticles();
+        updateAllUI();
+        applyBackgrounds();
+        applyBackground('lom');
+
+        // NEW: Menu functionality (added without touching your core logic)
+        const menuBtn = document.getElementById('menu-btn');
+        const sideMenu = document.getElementById('side-menu');
+        const menuOverlay = document.getElementById('menu-overlay');
+
+        if (menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                sideMenu.classList.toggle('open');
+                menuOverlay.classList.toggle('open');
+                
+                // Update menu title based on current theme
+                const menuTitle = document.getElementById('menu-title');
+                if (currentUniverse === 'lom') {
+                    menuTitle.textContent = 'The Gray Fog';
+                    menuTitle.style.color = '#C5A059';
+                } else {
+                    menuTitle.textContent = "The Adventurer's Guild";
+                    menuTitle.style.color = '#32cd32';
                 }
             });
         }
 
-        // Initialize everything
-        function initializeApp() {
-            generateParticles();
-            updateAllUI();
-            applyBackgrounds();
-            applyBackground('lom');
-            initEventListeners();
-            
-            // Set initial menu icon
-            const menuBtn = document.getElementById('menu-btn');
-            if (menuBtn) menuBtn.innerHTML = '🃏';
-            
-            // Make sure chat starts scrolled to bottom
-            setTimeout(scrollToBottom, 300);
+        function closeMenu() {
+            sideMenu.classList.remove('open');
+            menuOverlay.classList.remove('open');
         }
 
-        window.onload = initializeApp;
+        // Close menu when clicking overlay (already handled above)
+        if (menuOverlay) {
+            menuOverlay.addEventListener('click', closeMenu);
+        }
+
+        // Update menu icon when theme changes
+        const originalUpdateAllUI = updateAllUI;
+        window.updateAllUI = function() {
+            originalUpdateAllUI();
+            if (menuBtn) {
+                menuBtn.innerHTML = currentUniverse === 'lom' ? '🃏' : '🗡️';
+            }
+        };
     </script>
 </body>
 </html>
