@@ -3,19 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Lore Bridge • Immersive Fandom Hub</title>
-    
-    <!-- Premium Typography -->
+    <title>Lore Bridge</title>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Abril+Fatface&display=swap" rel="stylesheet">
     
     <style>
-        /* =========================================
-           1. CORE VARIABLES & THEMES
-           ========================================= */
         :root {
             --px: 0px;
             --py: 0px;
-            --transition-speed: 0.3s;
         }
 
         * {
@@ -24,18 +18,20 @@
             box-sizing: border-box;
         }
 
-        /* APP SHELL - Mobile First */
         body {
             font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #0a0a0a;
             color: #fff;
-            overflow: hidden; /* NO PAGE SCROLL */
-            height: 100dvh; /* Dynamic viewport height */
+            height: 100dvh;
+            overflow: hidden;
             display: flex;
             flex-direction: column;
+            background-size: cover !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
         }
 
-        /* Lord of the Mysteries (LoM) Theme */
         .theme-lom {
             --bg-color: #0d0812;
             --surface: #1a1124;
@@ -48,11 +44,9 @@
             --font-body: ui-serif, Georgia, 'Times New Roman', serif;
             --portal-bg: #1a0b2e;
             --particle-color: rgba(138, 43, 226, 0.6);
-            --menu-border: #c5a059;
-            --menu-title: "The Gray Fog";
+            --menu-accent: #C5A059;
         }
 
-        /* Mushoku Tensei (MT) Theme */
         .theme-mt {
             --bg-color: #08120a;
             --surface: #112415;
@@ -65,8 +59,7 @@
             --font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             --portal-bg: #0b2e1a;
             --particle-color: rgba(50, 205, 50, 0.6);
-            --menu-border: #32cd32;
-            --menu-title: "The Adventurer's Guild";
+            --menu-accent: #50C878;
         }
 
         body {
@@ -76,30 +69,16 @@
             transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        /* 4K Background Images */
-        body {
-            background-size: cover !important;
-            background-position: center center !important;
-            background-repeat: no-repeat !important;
-            background-attachment: fixed !important;
-        }
-
-        /* Dark overlay so text is readable over 4K images */
         body::before {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: rgba(0, 0, 0, 0.6);
             z-index: 0;
             pointer-events: none;
         }
 
-        /* =========================================
-           2. TOP BAR (Sticky Header)
-           ========================================= */
+        /* Top Bar */
         .top-bar {
             position: relative;
             z-index: 100;
@@ -107,9 +86,52 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 16px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(12px);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
+            flex-shrink: 0;
+        }
+
+        .app-title {
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            color: var(--primary);
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .menu-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn:hover {
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: scale(1.05);
+        }
+
+        /* Mode Control Bar (Universe & Audience) */
+        .mode-bar {
+            position: relative;
+            z-index: 99;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 10px 16px;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            gap: 10px;
             flex-shrink: 0;
         }
 
@@ -117,19 +139,20 @@
             display: flex;
             background: var(--surface);
             border: 1px solid var(--border);
-            border-radius: 30px;
+            border-radius: 20px;
             padding: 3px;
+            gap: 4px;
         }
 
         .toggle-btn {
             background: transparent;
             border: none;
             color: var(--text-muted);
-            padding: 8px 14px;
-            border-radius: 20px;
+            padding: 6px 12px;
+            border-radius: 16px;
             cursor: pointer;
             font-family: var(--font-body);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             transition: all 0.3s ease;
             white-space: nowrap;
         }
@@ -137,33 +160,11 @@
         .toggle-btn.active {
             background: var(--primary);
             color: #fff;
-            box-shadow: 0 0 15px var(--primary-glow);
+            box-shadow: 0 0 10px var(--primary-glow);
         }
 
-        .menu-btn {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            color: var(--text-main);
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.3rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .menu-btn:hover {
-            background: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
-        }
-
-        /* =========================================
-           3. CHAT AREA (The Core)
-           ========================================= */
-        .chat-area {
+        /* Chat Container */
+        .chat-container {
             flex: 1;
             overflow-y: auto;
             padding: 16px;
@@ -171,83 +172,55 @@
             flex-direction: column;
             gap: 12px;
             position: relative;
-            z-index: 10;
-        }
-
-        .message {
-            display: flex;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+            z-index: 1;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
         }
 
         .msg-user {
-            justify-content: flex-end;
+            align-self: flex-end;
+            background: var(--primary);
+            color: #fff;
+            border-radius: 18px;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 2px 8px var(--primary-glow);
         }
 
         .msg-ai {
-            justify-content: flex-start;
+            align-self: flex-start;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            border-bottom-left-radius: 4px;
         }
 
-        .chat-bubble {
-            padding: 14px 18px;
-            line-height: 1.5;
+        .msg-user p, .msg-ai p {
+            padding: 12px 16px;
+            line-height: 1.6;
+            font-size: 0.95rem;
             word-wrap: break-word;
         }
 
-        .msg-user .chat-bubble {
-            background: var(--primary);
-            color: #fff;
-            border-radius: 18px 18px 4px 18px;
-            box-shadow: 0 4px 15px var(--primary-glow);
-        }
-
-        .msg-ai .chat-bubble {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 18px 18px 18px 4px;
-        }
-
-        .typing-indicator {
-            display: flex;
-            gap: 4px;
-            padding: 4px 0;
-        }
-
         .typing-indicator span {
-            width: 8px;
-            height: 8px;
-            background: var(--primary);
-            border-radius: 50%;
-            animation: typing 1.4s infinite;
+            animation: bounce 1.4s infinite ease-in-out;
         }
 
-        .typing-indicator span:nth-child(2) {
-            animation-delay: 0.2s;
+        .typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+        .typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
         }
 
-        .typing-indicator span:nth-child(3) {
-            animation-delay: 0.4s;
-        }
-
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-            30% { transform: translateY(-8px); opacity: 1; }
-        }
-
-        /* =========================================
-           4. INPUT AREA (Sticky Bottom)
-           ========================================= */
+        /* Input Area */
         .input-area {
             position: relative;
             z-index: 100;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(12px);
-            border-top: 1px solid var(--border);
             padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border);
             flex-shrink: 0;
         }
 
@@ -255,8 +228,8 @@
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            padding-bottom: 12px;
-            margin-bottom: 12px;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
             scrollbar-width: none;
         }
 
@@ -265,7 +238,7 @@
         }
 
         .chip {
-            background: var(--surface);
+            background: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--border);
             color: var(--text-main);
             padding: 8px 14px;
@@ -273,14 +246,13 @@
             cursor: pointer;
             font-size: 0.85rem;
             white-space: nowrap;
-            transition: all 0.3s ease;
             flex-shrink: 0;
+            transition: all 0.3s ease;
         }
 
         .chip:hover {
-            background: var(--primary);
             border-color: var(--primary);
-            color: #fff;
+            background: rgba(138, 43, 226, 0.1);
         }
 
         .input-row {
@@ -293,12 +265,11 @@
             background: var(--surface);
             border: 1px solid var(--border);
             color: var(--text-main);
-            padding: 14px 18px;
-            border-radius: 30px;
+            padding: 12px 16px;
+            border-radius: 24px;
             font-family: var(--font-body);
             font-size: 16px; /* Prevents iOS zoom */
             outline: none;
-            transition: border-color 0.3s ease;
         }
 
         .input-row input:focus {
@@ -310,8 +281,8 @@
             background: var(--primary);
             border: none;
             color: #fff;
-            padding: 0 20px;
-            border-radius: 30px;
+            padding: 12px 20px;
+            border-radius: 24px;
             cursor: pointer;
             font-family: var(--font-heading);
             font-size: 1rem;
@@ -323,20 +294,18 @@
             transform: scale(1.05);
         }
 
-        /* =========================================
-           5. DIEGETIC SIDE MENU
-           ========================================= */
-        .side-menu-overlay {
+        /* Side Menu */
+        .menu-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.7);
             z-index: 999;
             opacity: 0;
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
 
-        .side-menu-overlay.active {
+        .menu-overlay.active {
             opacity: 1;
             pointer-events: all;
         }
@@ -345,15 +314,16 @@
             position: fixed;
             top: 0;
             left: 0;
-            width: 320px;
-            max-width: 85vw;
+            width: 280px;
             height: 100dvh;
-            background: rgba(10, 10, 10, 0.95);
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(20px);
-            border-right: 2px solid var(--menu-border);
+            border-right: 2px solid var(--menu-accent);
             z-index: 1000;
             transform: translateX(-100%);
             transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
             padding: 24px;
             overflow-y: auto;
         }
@@ -362,149 +332,69 @@
             transform: translateX(0);
         }
 
-        .menu-title {
+        .menu-header {
             font-family: var(--font-heading);
-            font-size: 1.8rem;
-            color: var(--primary);
+            font-size: 1.5rem;
+            color: var(--menu-accent);
             margin-bottom: 24px;
-            text-shadow: 0 0 15px var(--primary-glow);
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
         }
 
         .menu-links {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
+            flex: 1;
         }
 
         .menu-link {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 16px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
             color: var(--text-main);
             text-decoration: none;
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             transition: all 0.3s ease;
-            font-size: 0.95rem;
+            font-family: var(--font-body);
+            cursor: pointer;
         }
 
         .menu-link:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            color: #fff;
+            border-color: var(--menu-accent);
+            background: rgba(0, 0, 0, 0.5);
             transform: translateX(4px);
-            box-shadow: 0 0 20px var(--primary-glow);
-        }
-
-        .menu-link-icon {
-            font-size: 1.3rem;
         }
 
         .menu-footer {
-            margin-top: 32px;
+            margin-top: auto;
             padding-top: 16px;
             border-top: 1px solid var(--border);
-            text-align: center;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
+            text-align: center;
         }
 
-        /* =========================================
-           6. MODALS
-           ========================================= */
-        .modal {
-            display: none;
+        /* Parallax & Particles & Overlays */
+        .parallax-container {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.8);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(5px);
-            padding: 20px;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
         }
 
-        .modal.active {
-            display: flex;
+        .parallax-layer {
+            position: absolute;
+            inset: -50px;
+            transform: translate3d(var(--px), var(--py), 0);
+            transition: transform 0.2s ease-out, opacity 0.5s ease;
+            opacity: 0;
         }
 
-        .modal-content {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 24px;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 500px;
-            max-height: 90dvh;
-            overflow-y: auto;
-            box-shadow: 0 0 30px var(--primary-glow);
-        }
+        .theme-lom .lom-bg { opacity: 1; }
+        .theme-mt .mt-bg { opacity: 1; }
 
-        .modal-title {
-            font-family: var(--font-heading);
-            color: var(--primary);
-            font-size: 1.5rem;
-            margin-bottom: 16px;
-        }
-
-        .modal-description {
-            color: var(--text-muted);
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
-
-        .payment-options {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .payment-option {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px;
-            background: var(--bg-color);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            color: var(--text-main);
-        }
-
-        .payment-option:hover {
-            border-color: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
-            transform: translateX(4px);
-        }
-
-        .payment-icon {
-            font-size: 1.3rem;
-        }
-
-        .modal-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-        }
-
-        .btn-cancel {
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: var(--font-body);
-            border: 1px solid var(--border);
-            background: transparent;
-            color: var(--text-muted);
-        }
-
-        /* =========================================
-           7. ATMOSPHERIC EFFECTS
-           ========================================= */
         .particles-container {
             position: fixed;
             inset: 0;
@@ -528,33 +418,6 @@
             100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
         }
 
-        /* The "Wow" Factor Overlays */
-        .theme-lom::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: repeating-linear-gradient(
-                0deg,
-                rgba(255, 255, 255, 0.02) 0px,
-                rgba(255, 255, 255, 0.02) 1px,
-                transparent 1px,
-                transparent 2px
-            );
-            pointer-events: none;
-            z-index: 9998;
-            mix-blend-mode: overlay;
-        }
-
-        .theme-mt::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 9998;
-        }
-
-        /* Portal Transition */
         #portal-overlay {
             position: fixed;
             inset: 0;
@@ -569,155 +432,194 @@
             clip-path: circle(150% at 50% 50%);
         }
 
-        /* About Modal Content */
-        .about-content h2 {
-            color: var(--primary);
-            margin: 20px 0 12px 0;
-            font-size: 1.3rem;
+        .theme-lom::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.02) 0px, rgba(255, 255, 255, 0.02) 1px, transparent 1px, transparent 2px);
+            pointer-events: none;
+            z-index: 9998;
+            mix-blend-mode: overlay;
         }
 
-        .about-content ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .about-content li {
-            padding: 10px 14px;
-            background: var(--bg-color);
-            border-radius: 8px;
-            border-left: 3px solid var(--primary);
-            margin-bottom: 8px;
-            font-size: 0.9rem;
+        .theme-mt::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 9998;
         }
     </style>
 </head>
 <body class="theme-lom">
-
-    <!-- Portal Overlay -->
     <div id="portal-overlay"></div>
 
-    <!-- Particles -->
-    <div class="particles-container" id="particles"></div>
-
-    <!-- TOP BAR -->
+    <!-- Top Bar -->
     <div class="top-bar">
+        <div class="app-title">Lore Bridge</div>
+        <button class="menu-btn" id="menu-toggle">🃏</button>
+    </div>
+
+    <!-- Mode Control Bar (Universe & Audience) -->
+    <div class="mode-bar">
         <div class="toggle-group" id="universe-toggle">
             <button class="toggle-btn active" data-universe="lom">🃏 LoM</button>
             <button class="toggle-btn" data-universe="mt">🗡️ MT</button>
         </div>
-        <button class="menu-btn" id="menu-btn">🃏</button>
-    </div>
-
-    <!-- CHAT AREA -->
-    <div class="chat-area" id="chat-area">
-        <div class="message msg-ai">
-            <div class="chat-bubble" style="max-width: 95%; width: 95%;">
-                <p class="text-sm leading-relaxed">Hey! Ask me anything about the lore.</p>
-            </div>
+        <div class="toggle-group" id="audience-toggle">
+            <button class="toggle-btn active" data-audience="watcher">👁️ Watcher</button>
+            <button class="toggle-btn" data-audience="reader">📖 Reader</button>
         </div>
     </div>
 
-    <!-- INPUT AREA -->
+    <!-- Parallax & Particles -->
+    <div class="parallax-container">
+        <svg class="parallax-layer lom-bg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMax slice">
+            <path d="M450,1000 L450,600 L400,550 L400,400 L480,200 L500,100 L520,200 L600,400 L600,550 L550,600 L550,1000 Z" fill="rgba(138, 43, 226, 0.05)" />
+            <circle cx="500" cy="350" r="40" fill="none" stroke="rgba(138, 43, 226, 0.1)" stroke-width="2" />
+        </svg>
+        <svg class="parallax-layer mt-bg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMax slice">
+            <path d="M0,1000 L200,700 L300,850 L500,500 L700,800 L800,650 L1000,1000 Z" fill="rgba(50, 205, 50, 0.05)" />
+            <circle cx="500" cy="400" r="150" fill="none" stroke="rgba(50, 205, 50, 0.08)" stroke-width="2" stroke-dasharray="10 5" />
+        </svg>
+    </div>
+    <div class="particles-container" id="particles"></div>
+
+    <!-- Chat Area -->
+    <div class="chat-container" id="chat-container">
+        <!-- Messages will be injected here by JS -->
+    </div>
+
+    <!-- Input Area -->
     <div class="input-area">
         <div class="suggestions" id="suggestions">
-            <button class="chip">Who is The Fool?</button>
-            <button class="chip">Explain the Pathways</button>
-            <button class="chip">Mystery of the Gray Fog</button>
+            <!-- Chips injected by JS -->
         </div>
-        <div class="input-row">
-            <input type="text" id="user-input" placeholder="Consult the Oracle..." />
-            <button class="send-btn" id="send-btn">Send</button>
-        </div>
+        <form class="input-row" id="chat-form">
+            <input type="text" id="user-input" placeholder="Ask the Oracle..." autocomplete="off" />
+            <button type="submit" class="send-btn">Send</button>
+        </form>
     </div>
 
-    <!-- SIDE MENU OVERLAY -->
-    <div class="side-menu-overlay" id="menu-overlay"></div>
+    <!-- Side Menu Overlay -->
+    <div class="menu-overlay" id="menu-overlay"></div>
 
-    <!-- SIDE MENU -->
+    <!-- Side Menu -->
     <div class="side-menu" id="side-menu">
-        <h2 class="menu-title" id="menu-title">The Gray Fog</h2>
+        <div class="menu-header" id="menu-header">The Gray Fog</div>
         <div class="menu-links">
-            <a href="#" class="menu-link" onclick="openAboutModal(); return false;">
-                <span class="menu-link-icon">📜</span>
-                <span>About the Oracle</span>
-            </a>
-            <a href="#" class="menu-link" id="github-link" target="_blank">
-                <span class="menu-link-icon">💻</span>
-                <span>View the Source Code</span>
-            </a>
-            <a href="#" class="menu-link" onclick="openPaymentModal(); return false;">
-                <span class="menu-link-icon">☕</span>
-                <span id="menu-donate-text">Offer a Sacrifice</span>
-            </a>
-            <a href="mailto:angazadesk@zohomail.com?subject=Lore Bridge Feedback" class="menu-link">
-                <span class="menu-link-icon">🐛</span>
-                <span id="menu-feedback-text">Report an Anomaly</span>
-            </a>
+            <a href="#" class="menu-link" onclick="showAbout(); return false;">About the Oracle</a>
+            <a href="#" class="menu-link" id="github-link" target="_blank">View the Source Code</a>
+            <a href="#" class="menu-link" id="support-link" target="_blank">Offer a Sacrifice</a>
+            <a href="mailto:angazadesk@zohomail.com?subject=Lore Bridge Feedback" class="menu-link">Report an Anomaly</a>
         </div>
-        <div class="menu-footer">
-            Built with @grok
-        </div>
-    </div>
-
-    <!-- ABOUT MODAL -->
-    <div id="about-modal" class="modal">
-        <div class="modal-content">
-            <h3 class="modal-title">About Lore Bridge</h3>
-            <div class="about-content" id="about-content">
-                <!-- Populated by JS -->
-            </div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal('about-modal')">Close</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- PAYMENT MODAL -->
-    <div id="payment-modal" class="modal">
-        <div class="modal-content">
-            <h3 class="modal-title" id="payment-modal-title">Support the Bridge</h3>
-            <p class="modal-description" id="payment-modal-description">
-                Your offering strengthens the veil between worlds.
-            </p>
-            <div class="payment-options" id="payment-options">
-                <!-- Populated by JS -->
-            </div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal('payment-modal')">Close</button>
-            </div>
-        </div>
+        <div class="menu-footer">Built with @grok</div>
     </div>
 
     <script type="module">
-        // Import config
         import { siteConfig } from './config.js';
 
-        // =========================================
-        // STATE MANAGEMENT
-        // =========================================
         let currentUniverse = 'lom';
         let currentAudience = 'watcher';
         let isGenerating = false;
 
         window.siteConfig = siteConfig;
 
-        // =========================================
-        // BACKGROUND IMAGES
-        // =========================================
         function applyBackground(series) {
             if (!window.siteConfig) return;
-            const bg = window.siteConfig[series]?.backgroundImage;
+            const bg = window.siteConfig[series]?.backgroundImage || (window.siteConfig[series]?.images?.background);
             if (bg) {
                 document.body.style.backgroundImage = `url('${bg}')`;
-                document.body.style.backgroundSize = 'cover';
-                document.body.style.backgroundPosition = 'center';
-                document.body.style.backgroundAttachment = 'fixed';
+            } else {
+                document.body.style.backgroundImage = 'none';
             }
         }
 
-        // =========================================
-        // PARTICLES
-        // =========================================
+        // CORE FIX: Resets the chat and UI elements when Universe or Audience changes
+        function resetChatForCurrentMode() {
+            const config = siteConfig[currentUniverse];
+            if (!config) return;
+            const modeConfig = config[currentAudience];
+            if (!modeConfig) return;
+            
+            const chatContainer = document.getElementById('chat-container');
+            
+            // 1. Clear existing messages to prevent cross-contamination
+            chatContainer.innerHTML = '';
+            
+            // 2. Inject the correct welcome message for this specific Universe + Audience
+            const welcomeDiv = document.createElement('div');
+            welcomeDiv.className = 'msg-ai';
+            welcomeDiv.style.maxWidth = '95%';
+            welcomeDiv.style.width = '95%';
+            welcomeDiv.innerHTML = `<p>${modeConfig.welcomeMessage}</p>`;
+            chatContainer.appendChild(welcomeDiv);
+            
+            // 3. Update suggestion chips
+            const suggestionsContainer = document.getElementById('suggestions');
+            suggestionsContainer.innerHTML = '';
+            modeConfig.suggestions.forEach(suggestion => {
+                const chip = document.createElement('button');
+                chip.className = 'chip';
+                chip.textContent = suggestion;
+                chip.onclick = () => {
+                    document.getElementById('user-input').value = suggestion;
+                    document.getElementById('chat-form').dispatchEvent(new Event('submit'));
+                };
+                suggestionsContainer.appendChild(chip);
+            });
+            
+            // 4. Update input placeholder
+            document.getElementById('user-input').placeholder = modeConfig.inputPlaceholder;
+            
+            // 5. Update diegetic side menu text
+            updateMenuText();
+        }
+
+        function updateMenuText() {
+            document.getElementById('menu-toggle').textContent = currentUniverse === 'lom' ? '🃏' : '🗡️';
+            document.getElementById('menu-header').textContent = currentUniverse === 'lom' ? 'The Gray Fog' : 'The Adventurer\'s Guild';
+            document.getElementById('support-link').textContent = currentUniverse === 'lom' ? 'Offer a Sacrifice' : 'Buy a Potion';
+            
+            if (siteConfig.personal) {
+                document.getElementById('github-link').href = siteConfig.personal.github || '#';
+                document.getElementById('support-link').href = siteConfig.personal.paymentMethods?.buyMeACoffee || '#';
+            }
+        }
+
+        function switchUniverse(newUniverse) {
+            if (newUniverse === currentUniverse) return;
+            
+            const portal = document.getElementById('portal-overlay');
+            const body = document.body;
+            
+            portal.classList.add('active');
+            
+            setTimeout(() => {
+                body.classList.remove('theme-lom', 'theme-mt');
+                body.classList.add(`theme-${newUniverse}`);
+                currentUniverse = newUniverse;
+                
+                // Reset chat and UI for the new universe
+                resetChatForCurrentMode();
+                generateParticles();
+                applyBackground(newUniverse);
+            }, 400);
+            
+            setTimeout(() => {
+                portal.classList.remove('active');
+            }, 800);
+        }
+
+        // Parallax Effect
+        document.addEventListener('mousemove', (e) => {
+            const x = (window.innerWidth / 2 - e.clientX) / 40;
+            const y = (window.innerHeight / 2 - e.clientY) / 40;
+            document.documentElement.style.setProperty('--px', `${x}px`);
+            document.documentElement.style.setProperty('--py', `${y}px`);
+        });
+
         function generateParticles() {
             const container = document.getElementById('particles');
             container.innerHTML = '';
@@ -732,88 +634,53 @@
             }
         }
 
-        // =========================================
-        // UNIVERSE SWITCHING
-        // =========================================
-        function switchUniverse(newUniverse) {
-            if (newUniverse === currentUniverse) return;
-            
-            const portal = document.getElementById('portal-overlay');
-            const body = document.body;
-            
-            portal.classList.add('active');
-            
-            setTimeout(() => {
-                body.classList.remove('theme-lom', 'theme-mt');
-                body.classList.add(`theme-${newUniverse}`);
-                currentUniverse = newUniverse;
-                updateAllUI();
-                generateParticles();
-                applyBackground(newUniverse);
-            }, 400);
-            
-            setTimeout(() => {
-                portal.classList.remove('active');
-            }, 800);
-        }
-
-        // =========================================
-        // UI UPDATES
-        // =========================================
-        function updateAllUI() {
-            const config = siteConfig[currentUniverse];
-            const modeConfig = config[currentAudience];
-            
-            // Update menu button icon
-            const menuBtn = document.getElementById('menu-btn');
-            menuBtn.textContent = currentUniverse === 'lom' ? '🃏' : '🗡️';
-            
-            // Update menu title
-            document.getElementById('menu-title').textContent = config.diegeticText.modalTitle;
-            
-            // Update menu links
-            document.getElementById('menu-donate-text').textContent = 
-                currentUniverse === 'lom' ? 'Offer a Sacrifice' : 'Buy a Potion';
-            document.getElementById('menu-feedback-text').textContent = 
-                currentUniverse === 'lom' ? 'Report an Anomaly' : 'Suggest a Quest';
-            
-            // Update suggestions
-            const suggestionsContainer = document.getElementById('suggestions');
-            suggestionsContainer.innerHTML = '';
-            modeConfig.suggestions.forEach(suggestion => {
-                const chip = document.createElement('button');
-                chip.className = 'chip';
-                chip.textContent = suggestion;
-                chip.onclick = () => {
-                    document.getElementById('user-input').value = suggestion;
-                    sendMessage();
-                };
-                suggestionsContainer.appendChild(chip);
+        // Event Listeners for Toggles
+        document.querySelectorAll('#universe-toggle .toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#universe-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                switchUniverse(btn.dataset.universe);
             });
-            
-            // Update payment modal
-            document.getElementById('payment-modal-title').textContent = config.diegeticText.modalTitle;
-            document.getElementById('payment-modal-description').textContent = config.diegeticText.modalDescription;
+        });
+
+        document.querySelectorAll('#audience-toggle .toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#audience-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentAudience = btn.dataset.audience;
+                
+                // Reset chat and UI for the new audience mode
+                resetChatForCurrentMode();
+            });
+        });
+
+        // Side Menu Logic
+        const menuToggle = document.getElementById('menu-toggle');
+        const menuOverlay = document.getElementById('menu-overlay');
+        const sideMenu = document.getElementById('side-menu');
+
+        menuToggle.addEventListener('click', () => {
+            menuOverlay.classList.add('active');
+            sideMenu.classList.add('active');
+        });
+
+        menuOverlay.addEventListener('click', () => {
+            menuOverlay.classList.remove('active');
+            sideMenu.classList.remove('active');
+        });
+
+        // Chat Logic
+        function scrollToBottom() {
+            const container = document.getElementById('chat-container');
+            if(container) container.scrollTop = container.scrollHeight;
         }
 
-        // =========================================
-        // MENU SYSTEM
-        // =========================================
-        function toggleMenu() {
-            const menu = document.getElementById('side-menu');
-            const overlay = document.getElementById('menu-overlay');
-            menu.classList.toggle('active');
-            overlay.classList.toggle('active');
+        function formatText(text) {
+            return text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--menu-accent);">$1</strong>');
         }
 
-        document.getElementById('menu-btn').addEventListener('click', toggleMenu);
-        document.getElementById('menu-overlay').addEventListener('click', toggleMenu);
-
-        // =========================================
-        // CHAT LOGIC
-        // =========================================
-        async function sendMessage(e) {
-            if (e) e.preventDefault();
+        async function handleSend(e) {
+            e.preventDefault();
             if (isGenerating) return;
             
             const input = document.getElementById('user-input');
@@ -823,32 +690,33 @@
             isGenerating = true;
             input.value = '';
             
-            const chatArea = document.getElementById('chat-area');
+            const chatContainer = document.getElementById('chat-container');
             
-            // Append User Message with inline styles
+            // User Message
             const userDiv = document.createElement('div');
-            userDiv.className = 'message msg-user';
-            userDiv.innerHTML = `<div class="chat-bubble" style="max-width: 90%; width: 90%; border-radius: 18px 18px 4px 18px;"><p class="text-sm leading-relaxed">${msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p></div>`;
-            chatArea.appendChild(userDiv);
+            userDiv.className = 'msg-user';
+            userDiv.style.maxWidth = '90%';
+            userDiv.style.width = '90%';
+            userDiv.innerHTML = `<p>${msg.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</p>`;
+            chatContainer.appendChild(userDiv);
             
-            // Append AI Placeholder with inline styles
+            // AI Placeholder
             const aiId = 'msg-' + Date.now();
             const aiDiv = document.createElement('div');
             aiDiv.id = aiId;
-            aiDiv.className = 'message msg-ai';
+            aiDiv.className = 'msg-ai';
+            aiDiv.style.maxWidth = '95%';
+            aiDiv.style.width = '95%';
             aiDiv.innerHTML = `
-                <div class="chat-bubble" style="max-width: 95%; width: 95%; border-radius: 18px 18px 18px 4px;">
-                    <div class="typing-indicator">
-                        <span></span>
-                        <span></span>
-                        <span></span>
+                <p>
+                    <div class="typing-indicator" style="display: flex; gap: 4px;">
+                        <span style="width: 8px; height: 8px; background: var(--menu-accent); border-radius: 50%; display: inline-block;"></span>
+                        <span style="width: 8px; height: 8px; background: var(--menu-accent); border-radius: 50%; display: inline-block;"></span>
+                        <span style="width: 8px; height: 8px; background: var(--menu-accent); border-radius: 50%; display: inline-block;"></span>
                     </div>
-                </div>`;
-            chatArea.appendChild(aiDiv);
+                </p>`;
+            chatContainer.appendChild(aiDiv);
             scrollToBottom();
-
-            const audienceToggle = document.getElementById('audience-toggle');
-            const currentAudienceMode = (audienceToggle && audienceToggle.querySelector('.active')?.dataset.audience === 'reader') ? 'reader' : 'watcher';
 
             try {
                 const res = await fetch('/api/chat', {
@@ -857,7 +725,7 @@
                     body: JSON.stringify({ 
                         message: msg, 
                         series: currentUniverse, 
-                        audience: currentAudienceMode 
+                        audience: currentAudience 
                     })
                 });
 
@@ -885,12 +753,11 @@
                             
                             const currentAiDiv = document.getElementById(aiId);
                             if (currentAiDiv) {
-                                const bubble = currentAiDiv.querySelector('.chat-bubble');
                                 if (isFirstChunk) {
-                                    bubble.innerHTML = `<p class="text-sm leading-relaxed whitespace-pre-wrap">${formatText(aiResponse)}</p>`;
+                                    currentAiDiv.innerHTML = `<p style="white-space: pre-wrap;">${formatText(aiResponse)}</p>`;
                                     isFirstChunk = false;
                                 } else {
-                                    bubble.querySelector('p').innerHTML = formatText(aiResponse);
+                                    currentAiDiv.querySelector('p').innerHTML = formatText(aiResponse);
                                 }
                                 scrollToBottom();
                             }
@@ -900,116 +767,24 @@
             } catch (err) {
                 const currentAiDiv = document.getElementById(aiId);
                 if(currentAiDiv) {
-                    currentAiDiv.querySelector('.chat-bubble').innerHTML = `<p class="text-sm" style="color: #ff6b6b;">Connection lost or API limit hit. Try again in a few seconds.</p>`;
+                    currentAiDiv.innerHTML = `<p style="color: #ff6b6b;">Connection lost or API limit hit. Try again in a few seconds.</p>`;
                 }
             }
 
             isGenerating = false;
         }
 
-        function formatText(text) {
-            return text.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\*\*(.*?)\*\*/g, '<strong style="color: var(--primary);">$1</strong>');
-        }
+        document.getElementById('chat-form').addEventListener('submit', handleSend);
 
-        function scrollToBottom() {
-            const container = document.getElementById('chat-area');
-            if(container) container.scrollTop = container.scrollHeight;
-        }
-
-        // =========================================
-        // MODALS
-        // =========================================
-        window.openAboutModal = function() {
-            const about = siteConfig.about;
-            const content = document.getElementById('about-content');
-            content.innerHTML = `
-                <p style="margin-bottom: 16px; line-height: 1.6;">${about.description}</p>
-                <h2>✨ Features</h2>
-                <ul>
-                    ${about.features.map(f => `<li>${f}</li>`).join('')}
-                </ul>
-                <h2>🛠️ Built With</h2>
-                <ul>
-                    ${about.techStack.map(t => `<li>${t}</li>`).join('')}
-                </ul>
-            `;
-            document.getElementById('about-modal').classList.add('active');
-            toggleMenu();
+        window.showAbout = function() {
+            alert('About the Oracle\n\nLore Bridge is an AI-powered companion for fans of Lord of the Mysteries and Mushoku Tensei. Select your universe and whether you are an Anime Watcher or Novel Reader to get tailored, spoiler-free lore!');
+            menuOverlay.classList.remove('active');
+            sideMenu.classList.remove('active');
         };
 
-        window.openPaymentModal = function() {
-            const personal = siteConfig.personal;
-            const paymentOptions = document.getElementById('payment-options');
-            paymentOptions.innerHTML = '';
-            
-            if (personal.paymentMethods.buyMeACoffee) {
-                paymentOptions.appendChild(createPaymentOption('☕', 'Buy Me a Coffee', personal.paymentMethods.buyMeACoffee));
-            }
-            if (personal.paymentMethods.kofi) {
-                paymentOptions.appendChild(createPaymentOption('💜', 'Ko-fi', personal.paymentMethods.kofi));
-            }
-            if (personal.paymentMethods.paypal) {
-                paymentOptions.appendChild(createPaymentOption('💳', 'PayPal', personal.paymentMethods.paypal));
-            }
-            if (personal.paymentMethods.patreon) {
-                paymentOptions.appendChild(createPaymentOption('🎭', 'Patreon', personal.paymentMethods.patreon));
-            }
-            
-            document.getElementById('payment-modal').classList.add('active');
-            toggleMenu();
-        };
-
-        function createPaymentOption(icon, text, url) {
-            const a = document.createElement('a');
-            a.href = url;
-            a.target = '_blank';
-            a.className = 'payment-option';
-            a.innerHTML = `
-                <span class="payment-icon">${icon}</span>
-                <div>
-                    <div style="font-weight: 600;">${text}</div>
-                    <div style="font-size: 0.85rem; color: var(--text-muted);">Click to support</div>
-                </div>
-            `;
-            return a;
-        }
-
-        window.closeModal = function(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        };
-
-        // =========================================
-        // EVENT LISTENERS
-        // =========================================
-        document.querySelectorAll('#universe-toggle .toggle-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('#universe-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                switchUniverse(btn.dataset.universe);
-            });
-        });
-
-        document.getElementById('send-btn').addEventListener('click', (e) => sendMessage(e));
-        document.getElementById('user-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') sendMessage(e);
-        });
-
-        document.querySelectorAll('.modal').forEach(modal => {
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                }
-            });
-        });
-
-        // Update GitHub link
-        if (siteConfig.personal && siteConfig.personal.github) {
-            document.getElementById('github-link').href = siteConfig.personal.github;
-        }
-
-        // Initialize
+        // Initialize App
         generateParticles();
-        updateAllUI();
+        resetChatForCurrentMode(); // Sets the correct initial welcome message and chips
         applyBackground('lom');
     </script>
 </body>
