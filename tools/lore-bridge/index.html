@@ -18,8 +18,13 @@
             --transition-speed: 0.3s;
         }
 
-        body {
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
             font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background: #0a0a0a;
             color: #fff;
@@ -34,7 +39,7 @@
             --bg-color: #0d0812;
             --surface: #1a1124;
             --border: #3d2b4f;
-            --primary: #8a2be2; /* Deep Purple */
+            --primary: #8a2be2;
             --primary-glow: rgba(138, 43, 226, 0.4);
             --text-main: #d4c5d9;
             --text-muted: #9a8c9e;
@@ -44,12 +49,12 @@
             --particle-color: rgba(138, 43, 226, 0.6);
         }
 
-        /* Mushoku Tensei (MT) Theme */
+        /* Mushoku Tensei (MT) Theme - FIXED BLUR */
         .theme-mt {
             --bg-color: #08120a;
             --surface: #112415;
             --border: #2b4f35;
-            --primary: #32cd32; /* Lime Green */
+            --primary: #32cd32;
             --primary-glow: rgba(50, 205, 50, 0.4);
             --text-main: #c5d9c7;
             --text-muted: #8c9e8e;
@@ -66,12 +71,78 @@
             transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        h1, h2, h3, .oracle-name, .chip, .diegetic-btn {
+        h1, h2, h3, .oracle-name, .chip, .diegetic-btn, .nav-link, .about-title {
             font-family: var(--font-heading);
         }
 
         /* =========================================
-           2. ATMOSPHERIC BACKGROUNDS & PARALLAX
+           2. NAVIGATION
+           ========================================= */
+        .main-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-glow);
+            letter-spacing: 2px;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .nav-link:hover {
+            color: var(--primary);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            color: var(--text-muted);
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        /* =========================================
+           3. ATMOSPHERIC BACKGROUNDS & PARALLAX
            ========================================= */
         .parallax-container {
             position: fixed;
@@ -83,7 +154,7 @@
 
         .parallax-layer {
             position: absolute;
-            inset: -50px; /* Extra space for parallax movement */
+            inset: -50px;
             transform: translate3d(var(--px), var(--py), 0);
             transition: transform 0.2s ease-out;
             opacity: 0;
@@ -118,7 +189,7 @@
         }
 
         /* =========================================
-           3. THE "WOW" FACTOR OVERLAYS
+           4. THE "WOW" FACTOR OVERLAYS - FIXED MT BLUR
            ========================================= */
         /* LoM: CRT Scanlines */
         .theme-lom::after {
@@ -137,19 +208,19 @@
             mix-blend-mode: overlay;
         }
 
-        /* MT: Volumetric Fog Glow */
+        /* MT: Volumetric Fog Glow - REDUCED BLUR */
         .theme-mt::after {
             content: '';
             position: fixed;
             inset: 0;
-            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 70%);
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
             pointer-events: none;
             z-index: 9998;
-            backdrop-filter: blur(1.5px);
+            /* Removed backdrop-filter blur that was causing the issue */
         }
 
         /* =========================================
-           4. DIMENSIONAL SHIFT (PORTAL TRANSITION)
+           5. DIMENSIONAL SHIFT (PORTAL TRANSITION)
            ========================================= */
         #portal-overlay {
             position: fixed;
@@ -166,14 +237,21 @@
         }
 
         /* =========================================
-           5. LAYOUT & COMPONENTS
+           6. PAGE SECTIONS
            ========================================= */
-        .app-container {
+        .page {
+            display: none;
             position: relative;
             z-index: 10;
-            display: flex;
-            flex-direction: column;
             min-height: 100vh;
+            padding-top: 80px; /* Account for fixed nav */
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .app-container {
             max-width: 1000px;
             margin: 0 auto;
             width: 100%;
@@ -181,8 +259,100 @@
             box-sizing: border-box;
         }
 
-        /* Header */
-        header {
+        /* About Page Styles */
+        .about-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .about-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .about-title {
+            font-size: 3rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px var(--primary-glow);
+        }
+
+        .about-description {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        .about-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .about-section h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .feature-list, .tech-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .feature-list li, .tech-list li {
+            padding: 12px 18px;
+            background: var(--bg-color);
+            border-radius: 8px;
+            border-left: 3px solid var(--primary);
+            font-size: 1rem;
+            color: var(--text-main);
+        }
+
+        .payment-section {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .payment-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .payment-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 25px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            color: var(--text-main);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .payment-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px var(--primary-glow);
+        }
+
+        /* =========================================
+           7. CHAT INTERFACE COMPONENTS
+           ========================================= */
+        .header-controls {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -191,14 +361,6 @@
             margin-bottom: 20px;
             flex-wrap: wrap;
             gap: 15px;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            text-shadow: 0 0 10px var(--primary-glow);
-            letter-spacing: 2px;
         }
 
         .toggles {
@@ -236,7 +398,7 @@
         .status-bar {
             background: var(--surface);
             border: 1px solid var(--border);
-            padding: 10px 20px;
+            padding: 12px 20px;
             border-radius: 8px;
             text-align: center;
             font-size: 0.85rem;
@@ -265,7 +427,6 @@
 
         /* Chat Container */
         .chat-container {
-            flex: 1;
             display: flex;
             flex-direction: column;
             background: rgba(0, 0, 0, 0.3);
@@ -458,6 +619,21 @@
             gap: 15px;
         }
 
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
         .diegetic-btn {
             background: transparent;
             border: 1px dashed var(--primary);
@@ -504,6 +680,45 @@
         .modal-title {
             margin-top: 0;
             color: var(--primary);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .modal-description {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .payment-option {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+
+        .payment-option:hover {
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: translateX(5px);
+        }
+
+        .payment-icon {
+            font-size: 1.5rem;
         }
 
         textarea {
@@ -535,12 +750,47 @@
 
         .btn-cancel { background: transparent; color: var(--text-muted); }
         .btn-submit { background: var(--primary); color: #fff; border: none; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 15px;
+            }
+            
+            .about-title {
+                font-size: 2rem;
+            }
+            
+            .header-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .toggles {
+                justify-content: center;
+            }
+        }
     </style>
 </head>
 <body class="theme-lom">
 
     <!-- Portal Overlay for Dimensional Shift -->
     <div id="portal-overlay"></div>
+
+    <!-- Navigation -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="#" class="logo" onclick="showPage('chat'); return false;">LORE BRIDGE</a>
+            <div class="nav-links">
+                <a href="#" class="nav-link" onclick="showPage('chat'); return false;">Chat</a>
+                <a href="#" class="nav-link" onclick="showPage('about'); return false;">About</a>
+                <div class="social-links">
+                    <a href="#" class="social-link" id="github-link" target="_blank" title="GitHub">📦</a>
+                    <a href="#" class="social-link" id="twitter-link" target="_blank" title="X/Twitter">🐦</a>
+                </div>
+            </div>
+        </div>
+    </nav>
 
     <!-- Parallax Backgrounds -->
     <div class="parallax-container">
@@ -562,70 +812,130 @@
     <!-- Floating Particles -->
     <div class="particles-container" id="particles"></div>
 
-    <!-- Main App Container -->
-    <div class="app-container">
-        <!-- Header -->
-        <header>
-            <div class="logo">LORE BRIDGE</div>
-            <div class="toggles">
-                <div class="toggle-group" id="universe-toggle">
-                    <button class="toggle-btn active" data-universe="lom">🃏 LoM</button>
-                    <button class="toggle-btn" data-universe="mt">🗡️ MT</button>
-                </div>
-                <div class="toggle-group" id="audience-toggle">
-                    <button class="toggle-btn active" data-audience="watcher">👁️ Watcher</button>
-                    <button class="toggle-btn" data-audience="reader">📖 Reader</button>
-                </div>
-            </div>
-        </header>
-
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="status-dot"></div>
-            <span id="status-text">Mode: LoM Watcher • Locked to end of Vol 1 • No Spoilers</span>
-        </div>
-
-        <!-- Chat Interface -->
-        <div class="chat-container">
-            <div class="oracle-header">
-                <div class="oracle-avatar" id="oracle-icon">👁️</div>
-                <div>
-                    <h3 class="oracle-name" id="oracle-name">The Gray Fog Oracle</h3>
-                    <p class="oracle-status">Spoiler-free • Up to current anime</p>
-                </div>
-            </div>
-
-            <div class="chat-messages" id="chat-messages">
-                <div class="message oracle-msg">
-                    <div class="chat-bubble">
-                        Welcome, seeker. The gray fog swirls with your questions. What lore shall we unravel today without spoiling your journey?
+    <!-- CHAT PAGE -->
+    <div id="chat-page" class="page active">
+        <div class="app-container">
+            <!-- Header Controls -->
+            <div class="header-controls">
+                <div class="toggles">
+                    <div class="toggle-group" id="universe-toggle">
+                        <button class="toggle-btn active" data-universe="lom">🃏 LoM</button>
+                        <button class="toggle-btn" data-universe="mt">🗡️ MT</button>
+                    </div>
+                    <div class="toggle-group" id="audience-toggle">
+                        <button class="toggle-btn active" data-audience="watcher">👁️ Watcher</button>
+                        <button class="toggle-btn" data-audience="reader">📖 Reader</button>
                     </div>
                 </div>
             </div>
 
-            <div class="suggestions" id="suggestions">
-                <button class="chip">Who is The Fool?</button>
-                <button class="chip">Explain the Pathways</button>
-                <button class="chip">Mystery of the Gray Fog</button>
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-dot"></div>
+                <span id="status-text">Mode: LoM Watcher • Locked to end of Vol 1 • No Spoilers</span>
             </div>
 
-            <div class="input-area">
-                <input type="text" id="user-input" placeholder="Consult the Oracle..." />
-                <button class="send-btn" id="send-btn">Send</button>
+            <!-- Chat Interface -->
+            <div class="chat-container">
+                <div class="oracle-header">
+                    <div class="oracle-avatar" id="oracle-icon">👁️</div>
+                    <div>
+                        <h3 class="oracle-name" id="oracle-name">The Gray Fog Oracle</h3>
+                        <p class="oracle-status" id="oracle-status">Spoiler-free • Up to current anime</p>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message oracle-msg">
+                        <div class="chat-bubble" id="welcome-message">
+                            Welcome, seeker. The gray fog swirls with your questions. What lore shall we unravel today without spoiling your journey?
+                        </div>
+                    </div>
+                </div>
+
+                <div class="suggestions" id="suggestions">
+                    <button class="chip">Who is The Fool?</button>
+                    <button class="chip">Explain the Pathways</button>
+                    <button class="chip">Mystery of the Gray Fog</button>
+                </div>
+
+                <div class="input-area">
+                    <input type="text" id="user-input" placeholder="Consult the Oracle..." />
+                    <button class="send-btn" id="send-btn">Send</button>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer>
+                <div class="footer-links">
+                    <a href="#" onclick="showPage('about'); return false;">About</a>
+                    <a href="#" onclick="openFeedbackModal(); return false;">Feedback</a>
+                </div>
+                <button class="diegetic-btn" id="tip-jar-btn">
+                    <span class="icon">🃏</span>
+                    <span class="text">Offer a Sacrifice to The Fool</span>
+                </button>
+            </footer>
+        </div>
+    </div>
+
+    <!-- ABOUT PAGE -->
+    <div id="about-page" class="page">
+        <div class="about-container">
+            <div class="about-header">
+                <h1 class="about-title" id="about-title">About Lore Bridge</h1>
+                <p class="about-description" id="about-description">
+                    Lore Bridge is an AI-powered companion for fans of Lord of the Mysteries and Mushoku Tensei.
+                </p>
+            </div>
+
+            <div class="about-section">
+                <h2>✨ Features</h2>
+                <ul class="feature-list" id="feature-list">
+                    <li>🎭 Spoiler-Free Mode: Safe for anime-only viewers</li>
+                    <li>📚 Full Lore Mode: Deep dive for novel readers</li>
+                    <li>🤖 AI-Powered: Powered by Grok for accurate lore</li>
+                    <li>🌉 Two Universes: Switch between LoM and MT instantly</li>
+                    <li>💬 Smart Suggestions: Get answers to common questions</li>
+                </ul>
+            </div>
+
+            <div class="about-section">
+                <h2>🛠️ Built With</h2>
+                <ul class="tech-list" id="tech-list">
+                    <li>Built with Next.js</li>
+                    <li>Hosted on Vercel</li>
+                    <li>AI by xAI Grok</li>
+                    <li>Styled with pure CSS</li>
+                </ul>
+            </div>
+
+            <div class="about-section payment-section">
+                <h2>☕ Support the Project</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">
+                    If Lore Bridge has helped you on your journey, consider supporting its maintenance!
+                </p>
+                <div class="payment-buttons" id="payment-buttons">
+                    <!-- Populated by JS -->
+                </div>
             </div>
         </div>
+    </div>
 
-        <!-- Footer & Diegetic Tip Jar -->
-        <footer>
-            <div>
-                <a href="#" style="color: var(--text-muted); text-decoration: none; margin-right: 15px;">Help improve the Bridge</a>
-                <a href="#" style="color: var(--text-muted); text-decoration: none;">Built with @grok</a>
+    <!-- Payment/Support Modal -->
+    <div id="payment-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title" id="modal-title">Support the Bridge</h3>
+            <p class="modal-description" id="modal-description">
+                Your offering strengthens the veil between worlds.
+            </p>
+            <div class="payment-options" id="payment-options">
+                <!-- Populated by JS -->
             </div>
-            <button class="diegetic-btn" id="tip-jar-btn">
-                <span class="icon">🃏</span>
-                <span class="text">Offer a Sacrifice to The Fool</span>
-            </button>
-        </footer>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('payment-modal')">Close</button>
+            </div>
+        </div>
     </div>
 
     <!-- Feedback Modal -->
@@ -634,18 +944,26 @@
             <h3 class="modal-title">What would make Lore Bridge better?</h3>
             <textarea placeholder="Share your thoughts..."></textarea>
             <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-                <button class="btn-submit">Submit Feedback</button>
+                <button class="btn-cancel" onclick="closeModal('feedback-modal')">Cancel</button>
+                <button class="btn-submit" onclick="submitFeedback()">Submit Feedback</button>
             </div>
         </div>
     </div>
 
-    <script>
+    <script type="module">
+        // Import config
+        import { siteConfig } from './config.js';
+
         // =========================================
         // STATE MANAGEMENT
         // =========================================
         let currentUniverse = 'lom';
         let currentAudience = 'watcher';
+
+        // =========================================
+        // MAKE CONFIG GLOBALLY ACCESSIBLE
+        // =========================================
+        window.siteConfig = siteConfig;
 
         // =========================================
         // 1. DIMENSIONAL SHIFT (PORTAL TRANSITION)
@@ -664,8 +982,7 @@
                 body.classList.remove('theme-lom', 'theme-mt');
                 body.classList.add(`theme-${newUniverse}`);
                 currentUniverse = newUniverse;
-                updateDiegeticText();
-                updateOraclePersona();
+                updateAllUI();
                 generateParticles(); // Regenerate particles for new theme color
             }, 400); // Half of 0.8s transition
             
@@ -676,50 +993,42 @@
         }
 
         // =========================================
-        // 2. DIEGETIC TEXT UPDATES
+        // 2. UPDATE ALL UI ELEMENTS FROM CONFIG
         // =========================================
-        function updateDiegeticText() {
-            const btn = document.getElementById('tip-jar-btn');
-            const icon = btn.querySelector('.icon');
-            const text = btn.querySelector('.text');
-            const status = document.getElementById('status-text');
-
-            if (currentUniverse === 'lom') {
-                icon.textContent = '🃏';
-                text.textContent = 'Offer a Sacrifice to The Fool';
-                status.textContent = `Mode: LoM ${currentAudience.charAt(0).toUpperCase() + currentAudience.slice(1)} • Locked to end of Vol 1 • No Spoilers`;
-            } else {
-                icon.textContent = '🧪';
-                text.textContent = 'Purchase a Healing Potion from the Guild';
-                status.textContent = `Mode: MT ${currentAudience.charAt(0).toUpperCase() + currentAudience.slice(1)} • Locked to end of Season 2 • No Spoilers`;
-            }
-        }
-
-        function updateOraclePersona() {
-            const name = document.getElementById('oracle-name');
-            const icon = document.getElementById('oracle-icon');
-            const input = document.getElementById('user-input');
-            const suggestions = document.getElementById('suggestions');
-
-            if (currentUniverse === 'lom') {
-                name.textContent = 'The Gray Fog Oracle';
-                icon.textContent = '👁️';
-                input.placeholder = 'Consult the Oracle...';
-                suggestions.innerHTML = `
-                    <button class="chip">Who is The Fool?</button>
-                    <button class="chip">Explain the Pathways</button>
-                    <button class="chip">Mystery of the Gray Fog</button>
-                `;
-            } else {
-                name.textContent = 'Guild Receptionist';
-                icon.textContent = '📜';
-                input.placeholder = 'Ask the Guild...';
-                suggestions.innerHTML = `
-                    <button class="chip">How does Magic Work?</button>
-                    <button class="chip">Rudeus's Power Level</button>
-                    <button class="chip">The Teleportation Incident</button>
-                `;
-            }
+        function updateAllUI() {
+            const config = siteConfig[currentUniverse];
+            const modeConfig = config[currentAudience];
+            
+            // Update Oracle Info
+            document.getElementById('oracle-name').textContent = config.oracleName;
+            document.getElementById('oracle-icon').textContent = config.oracleIcon;
+            document.getElementById('oracle-status').textContent = modeConfig.oracleStatus;
+            document.getElementById('welcome-message').textContent = modeConfig.welcomeMessage;
+            document.getElementById('status-text').textContent = modeConfig.modeStatus;
+            document.getElementById('user-input').placeholder = modeConfig.inputPlaceholder;
+            
+            // Update Suggestions
+            const suggestionsContainer = document.getElementById('suggestions');
+            suggestionsContainer.innerHTML = '';
+            modeConfig.suggestions.forEach(suggestion => {
+                const chip = document.createElement('button');
+                chip.className = 'chip';
+                chip.textContent = suggestion;
+                chip.onclick = () => {
+                    document.getElementById('user-input').value = suggestion;
+                    sendMessage();
+                };
+                suggestionsContainer.appendChild(chip);
+            });
+            
+            // Update Diegetic Button
+            const tipBtn = document.getElementById('tip-jar-btn');
+            tipBtn.querySelector('.icon').textContent = config.diegeticText.buttonIcon;
+            tipBtn.querySelector('.text').textContent = config.diegeticText.buttonText;
+            
+            // Update Modal Content
+            document.getElementById('modal-title').textContent = config.diegeticText.modalTitle;
+            document.getElementById('modal-description').textContent = config.diegeticText.modalDescription;
         }
 
         // =========================================
@@ -747,7 +1056,134 @@
         }
 
         // =========================================
-        // 4. EVENT LISTENERS
+        // 4. PAGE NAVIGATION
+        // =========================================
+        window.showPage = function(pageName) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(`${pageName}-page`).classList.add('active');
+            
+            if (pageName === 'about') {
+                loadAboutPage();
+            }
+        };
+
+        // =========================================
+        // 5. LOAD ABOUT PAGE FROM CONFIG
+        // =========================================
+        function loadAboutPage() {
+            const about = siteConfig.about;
+            const personal = siteConfig.personal;
+            
+            document.getElementById('about-title').textContent = about.title;
+            document.getElementById('about-description').textContent = about.description;
+            
+            // Features
+            const featureList = document.getElementById('feature-list');
+            featureList.innerHTML = '';
+            about.features.forEach(feature => {
+                const li = document.createElement('li');
+                li.textContent = feature;
+                featureList.appendChild(li);
+            });
+            
+            // Tech Stack
+            const techList = document.getElementById('tech-list');
+            techList.innerHTML = '';
+            about.techStack.forEach(tech => {
+                const li = document.createElement('li');
+                li.textContent = tech;
+                techList.appendChild(li);
+            });
+            
+            // Payment Buttons
+            const paymentButtons = document.getElementById('payment-buttons');
+            paymentButtons.innerHTML = '';
+            
+            if (personal.paymentMethods.buyMeACoffee) {
+                paymentButtons.appendChild(createPaymentBtn('☕', 'Buy Me a Coffee', personal.paymentMethods.buyMeACoffee));
+            }
+            if (personal.paymentMethods.kofi) {
+                paymentButtons.appendChild(createPaymentBtn('💜', 'Ko-fi', personal.paymentMethods.kofi));
+            }
+            if (personal.paymentMethods.paypal) {
+                paymentButtons.appendChild(createPaymentBtn('💳', 'PayPal', personal.paymentMethods.paypal));
+            }
+            if (personal.paymentMethods.patreon) {
+                paymentButtons.appendChild(createPaymentBtn('🎭', 'Patreon', personal.paymentMethods.patreon));
+            }
+            
+            // Update Social Links in Nav
+            document.getElementById('github-link').href = personal.github;
+            document.getElementById('twitter-link').href = personal.twitter;
+        }
+
+        function createPaymentBtn(icon, text, url) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = '_blank';
+            a.className = 'payment-btn';
+            a.innerHTML = `<span>${icon}</span><span>${text}</span>`;
+            return a;
+        }
+
+        // =========================================
+        // 6. MODAL FUNCTIONS
+        // =========================================
+        window.openPaymentModal = function() {
+            const config = siteConfig[currentUniverse];
+            const personal = siteConfig.personal;
+            
+            const paymentOptions = document.getElementById('payment-options');
+            paymentOptions.innerHTML = '';
+            
+            if (personal.paymentMethods.buyMeACoffee) {
+                paymentOptions.appendChild(createPaymentOption('☕', 'Buy Me a Coffee', personal.paymentMethods.buyMeACoffee));
+            }
+            if (personal.paymentMethods.kofi) {
+                paymentOptions.appendChild(createPaymentOption('💜', 'Ko-fi', personal.paymentMethods.kofi));
+            }
+            if (personal.paymentMethods.paypal) {
+                paymentOptions.appendChild(createPaymentOption('💳', 'PayPal', personal.paymentMethods.paypal));
+            }
+            if (personal.paymentMethods.patreon) {
+                paymentOptions.appendChild(createPaymentOption('🎭', 'Patreon', personal.paymentMethods.patreon));
+            }
+            
+            document.getElementById('payment-modal').classList.add('active');
+        };
+
+        function createPaymentOption(icon, text, url) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.target = '_blank';
+            a.className = 'payment-option';
+            a.innerHTML = `
+                <span class="payment-icon">${icon}</span>
+                <div>
+                    <div style="font-weight: 600;">${text}</div>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">Click to support</div>
+                </div>
+            `;
+            return a;
+        }
+
+        window.openFeedbackModal = function() {
+            document.getElementById('feedback-modal').classList.add('active');
+        };
+
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        };
+
+        window.submitFeedback = function() {
+            alert('Thank you for your feedback! (Implement actual submission here)');
+            closeModal('feedback-modal');
+        };
+
+        // =========================================
+        // 7. EVENT LISTENERS
         // =========================================
         // Universe Toggle
         document.querySelectorAll('#universe-toggle .toggle-btn').forEach(btn => {
@@ -764,11 +1200,14 @@
                 document.querySelectorAll('#audience-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 currentAudience = btn.dataset.audience;
-                updateDiegeticText();
+                updateAllUI();
             });
         });
 
-        // Chat Logic (Mockup - Connect to your chat.js here)
+        // Tip Jar Button
+        document.getElementById('tip-jar-btn').addEventListener('click', openPaymentModal);
+
+        // Chat Logic
         document.getElementById('send-btn').addEventListener('click', sendMessage);
         document.getElementById('user-input').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') sendMessage();
@@ -800,18 +1239,18 @@
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        // Tip Jar Modal
-        document.getElementById('tip-jar-btn').addEventListener('click', () => {
-            document.getElementById('feedback-modal').classList.add('active');
+        // Close modals on outside click
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
         });
-
-        function closeModal() {
-            document.getElementById('feedback-modal').classList.remove('active');
-        }
 
         // Initialize
         generateParticles();
-        updateDiegeticText();
+        updateAllUI();
     </script>
 </body>
 </html>
