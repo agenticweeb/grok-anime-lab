@@ -7,7 +7,7 @@ export const siteConfig = {
   // 1. YOUR PERSONAL INFO & LINKS
   personal: {
     name: "agenticweeb",
-    github: "https://github.com/agenticweeb/grok-anime-lab",
+    github: "https://github.com/agenticweeb",
     twitter: "https://x.com/agenticweeb",
     paymentMethods: {
       buyMeACoffee: "https://www.buymeacoffee.com/YOUR_LINK", // Add your link here
