@@ -562,7 +562,7 @@
             box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
         }
 
-        .msg-actions { margin-top: 10px; }
+        .msg-actions { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; }
         .share-btn {
             background: transparent;
             border: 1px solid var(--border);
@@ -571,8 +571,22 @@
             border-radius: 8px;
             font-size: 0.75rem;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
-        .share-btn:hover { border-color: var(--menu-accent); }
+        .share-btn:hover { border-color: var(--menu-accent); background: rgba(0,0,0,0.2); }
+        .share-btn-primary {
+            border-color: var(--primary);
+            color: #fff;
+            background: color-mix(in srgb, var(--primary) 35%, transparent);
+        }
+        .share-btn-primary:hover { background: color-mix(in srgb, var(--primary) 55%, transparent); }
+        .share-hint {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 4px 16px 0;
+            opacity: 0.85;
+        }
 
         .spoiler-veil-active #bg-scrim {
             animation: fog-roll 2.5s ease;
@@ -681,6 +695,7 @@
         <div class="suggestions" id="suggestions">
             <!-- Chips injected by JS -->
         </div>
+        <p class="share-hint" id="share-hint">💡 Get a lore take? Download a themed card or share straight to X.</p>
         <form class="input-row" id="chat-form">
             <input type="text" id="user-input" placeholder="Ask the Oracle..." autocomplete="off" />
             <button type="submit" class="send-btn">Send</button>
@@ -698,6 +713,7 @@
             <a href="#" class="menu-link" id="github-link" target="_blank">View the Source Code</a>
             <a href="#" class="menu-link" id="support-link" target="_blank">Offer a Sacrifice</a>
             <a href="mailto:angazadesk@zohomail.com?subject=Lore Bridge Feedback" class="menu-link">Report an Anomaly</a>
+            <a href="#" class="menu-link" id="share-app-link">Spread the Word on X</a>
         </div>
         <div class="menu-footer">Built with @grok · Memory: this device only</div>
     </div>
@@ -712,7 +728,8 @@
             loadSession, saveSession, loadProgress, saveProgress,
             getNickname, trimHistory, parseMetadata, checkEasterEgg,
             playUniverseSound, triggerSpoilerVeil, triggerEggEffect,
-            generateTheoryCard, getMessageStyleClass, getPersonaLabel
+            shareOracleTake, downloadBlob, generateShareCard, buildXIntentUrl,
+            getMessageStyleClass, getPersonaLabel
         } from './immersion.js';
 
         let currentUniverse = 'lom';
@@ -777,24 +794,47 @@
                 meta.receipts.forEach((r) => { html += `<li>${formatText(r)}</li>`; });
                 html += `</ul></details>`;
             }
-            if (currentAudience === 'reader' && text.length > 80 && !isVeil) {
-                const icon = currentUniverse === 'lom' ? '🃏' : '🗡️';
-                html += `<div class="msg-actions"><button type="button" class="share-btn" data-share="${encodeURIComponent(text.slice(0, 280))}">Share this take ${icon}</button></div>`;
+            if (text.length > 50 && !isVeil) {
+                const enc = encodeURIComponent(text.slice(0, 400));
+                html += `<div class="msg-actions">
+                    <button type="button" class="share-btn share-btn-download" data-share="${enc}">⬇️ Download card</button>
+                    <button type="button" class="share-btn share-btn-primary share-btn-x" data-share="${enc}">𝕏 Share on X</button>
+                </div>`;
             }
 
             return { html, styleClass: styleClass + (isVeil ? ' msg-veil' : '') };
         }
 
+        async function handleShareAction(text, mode, btn) {
+            if (btn) { btn.disabled = true; btn.textContent = 'Creating card…'; }
+            try {
+                if (mode === 'download') {
+                    const blob = await generateShareCard({
+                        text, universe: currentUniverse, audience: currentAudience, siteConfig
+                    });
+                    const prefix = currentUniverse === 'lom' ? 'lom' : 'mt';
+                    downloadBlob(blob, `lore-bridge-${prefix}-take.png`);
+                } else {
+                    await shareOracleTake({
+                        text, universe: currentUniverse, audience: currentAudience, siteConfig
+                    });
+                }
+            } catch (err) {
+                alert('Could not create share card. Try again.');
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.textContent = mode === 'download' ? '⬇️ Download card' : '𝕏 Share on X';
+                }
+            }
+        }
+
         function attachShareHandlers(container) {
-            container.querySelectorAll('.share-btn').forEach((btn) => {
-                btn.onclick = () => {
-                    const text = decodeURIComponent(btn.dataset.share || '');
-                    const dataUrl = generateTheoryCard(text, currentUniverse, siteConfig);
-                    const a = document.createElement('a');
-                    a.href = dataUrl;
-                    a.download = 'lore-bridge-theory.png';
-                    a.click();
-                };
+            container.querySelectorAll('.share-btn-download').forEach((btn) => {
+                btn.onclick = () => handleShareAction(decodeURIComponent(btn.dataset.share || ''), 'download', btn);
+            });
+            container.querySelectorAll('.share-btn-x').forEach((btn) => {
+                btn.onclick = () => handleShareAction(decodeURIComponent(btn.dataset.share || ''), 'x', btn);
             });
         }
 
@@ -1190,6 +1230,16 @@
 
         document.getElementById('progress-select')?.addEventListener('change', (e) => {
             saveProgress(currentUniverse, currentAudience, e.target.value);
+        });
+
+        document.getElementById('share-app-link')?.addEventListener('click', (e) => {
+            e.preventDefault();
+            const url = siteConfig.share?.siteUrl || siteConfig.personal?.siteUrl;
+            const text = siteConfig.share?.appTweet || 'Spoiler-safe AI lore chat for LoM & Mushoku Tensei';
+            const tags = (siteConfig.share?.hashtags || '').replace(/#/g, '').trim();
+            window.open(buildXIntentUrl({ text, url, hashtags: tags }), '_blank', 'noopener');
+            menuOverlay.classList.remove('active');
+            sideMenu.classList.remove('active');
         });
 
         const aboutOverlay = document.getElementById('about-overlay');

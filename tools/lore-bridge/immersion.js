@@ -148,43 +148,169 @@ export function triggerEggEffect(effect) {
     }
 }
 
+function loadImage(src) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => resolve(img);
+        img.onerror = () => reject(new Error('Background image failed to load'));
+        img.src = src.split('?')[0];
+    });
+}
+
+function getTheme(universe) {
+    const isLom = universe === 'lom';
+    return {
+        isLom,
+        accent: isLom ? '#C5A059' : '#50C878',
+        primary: isLom ? '#8a2be2' : '#32cd32',
+        fallback: isLom ? '#0d0812' : '#08120a',
+        label: isLom ? 'Lord of the Mysteries' : 'Mushoku Tensei',
+        icon: isLom ? '🃏' : '🗡️',
+        font: isLom ? 'Georgia, serif' : 'ui-sans-serif, system-ui, sans-serif'
+    };
+}
+
+export async function generateShareCard({ text, universe, audience, siteConfig }) {
+    const W = 1200;
+    const H = 675;
+    const canvas = document.createElement('canvas');
+    canvas.width = W;
+    canvas.height = H;
+    const ctx = canvas.getContext('2d');
+    const theme = getTheme(universe);
+    const persona = siteConfig[universe]?.persona?.[audience];
+    const bgPath = siteConfig[universe]?.backgroundImage || '';
+    const maxChars = siteConfig.share?.cardMaxChars || 320;
+    const quote = text.replace(/\s+/g, ' ').trim().slice(0, maxChars);
+
+    ctx.fillStyle = theme.fallback;
+    ctx.fillRect(0, 0, W, H);
+
+    if (bgPath) {
+        try {
+            const img = await loadImage(bgPath);
+            const scale = Math.max(W / img.width, H / img.height);
+            const sw = img.width * scale;
+            const sh = img.height * scale;
+            ctx.drawImage(img, (W - sw) / 2, (H - sh) / 2, sw, sh);
+        } catch {
+            // solid fallback already drawn
+        }
+    }
+
+    const grad = ctx.createLinearGradient(0, 0, 0, H);
+    grad.addColorStop(0, 'rgba(0,0,0,0.72)');
+    grad.addColorStop(0.45, 'rgba(0,0,0,0.55)');
+    grad.addColorStop(1, 'rgba(0,0,0,0.82)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, W, H);
+
+    ctx.strokeStyle = theme.primary;
+    ctx.lineWidth = 3;
+    ctx.strokeRect(36, 36, W - 72, H - 72);
+
+    ctx.fillStyle = theme.accent;
+    ctx.font = `bold 34px ${theme.font}`;
+    ctx.fillText(`${theme.icon} LORE BRIDGE`, 64, 88);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+    ctx.font = '22px sans-serif';
+    const modeLabel = audience === 'reader' ? '📖 Reader Mode' : '👁️ Watcher · No Spoilers';
+    ctx.fillText(`${theme.label} · ${modeLabel}`, 64, 124);
+
+    if (persona) {
+        ctx.fillStyle = theme.primary;
+        ctx.font = `italic 20px ${theme.font}`;
+        ctx.fillText(`${persona.icon} ${persona.name}`, 64, 158);
+    }
+
+    ctx.fillStyle = '#f2eef5';
+    ctx.font = `32px ${theme.font}`;
+    const lines = wrapText(ctx, `"${quote}"`, W - 128);
+    let y = 220;
+    for (const line of lines.slice(0, 9)) {
+        ctx.fillText(line, 64, y);
+        y += 44;
+    }
+
+    ctx.fillStyle = theme.accent;
+    ctx.font = 'bold 24px sans-serif';
+    ctx.fillText('Ask the oracle →', 64, H - 72);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.65)';
+    ctx.font = '20px sans-serif';
+    const url = siteConfig.share?.siteUrl || siteConfig.personal?.siteUrl || 'lore-bridge.vercel.app';
+    ctx.fillText(url.replace('https://', ''), 64, H - 40);
+
+    return new Promise((resolve) => {
+        canvas.toBlob((blob) => resolve(blob), 'image/png', 0.92);
+    });
+}
+
+export function downloadBlob(blob, filename = 'lore-bridge-share.png') {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+export function buildXIntentUrl({ text, url, hashtags }) {
+    const params = new URLSearchParams();
+    params.set('text', text);
+    if (url) params.set('url', url);
+    if (hashtags) params.set('hashtags', hashtags.replace(/#/g, '').replace(/\s+/g, ','));
+    return `https://twitter.com/intent/tweet?${params.toString()}`;
+}
+
+export async function shareOracleTake({ text, universe, audience, siteConfig }) {
+    const blob = await generateShareCard({ text, universe, audience, siteConfig });
+    const siteUrl = siteConfig.share?.siteUrl || siteConfig.personal?.siteUrl || '';
+    const snippet = text.replace(/\s+/g, ' ').trim().slice(0, 100);
+    const tweetText = `${snippet}…\n\n${siteConfig.share?.appTweet || 'Lore Bridge — spoiler-safe AI lore chat'}`;
+
+    const file = new File([blob], 'lore-bridge.png', { type: 'image/png' });
+    if (navigator.share && navigator.canShare?.({ files: [file] })) {
+        try {
+            await navigator.share({
+                text: tweetText,
+                url: siteUrl,
+                files: [file]
+            });
+            return { method: 'native' };
+        } catch (err) {
+            if (err.name === 'AbortError') return { method: 'cancelled' };
+        }
+    }
+
+    downloadBlob(blob);
+    const tags = (siteConfig.share?.hashtags || '').replace(/#/g, '').trim();
+    window.open(buildXIntentUrl({ text: tweetText, url: siteUrl, hashtags: tags }), '_blank', 'noopener');
+    return { method: 'download+intent' };
+}
+
+/** @deprecated use generateShareCard */
 export function generateTheoryCard(text, universe, siteConfig) {
     const canvas = document.createElement('canvas');
     canvas.width = 1080;
     canvas.height = 1080;
     const ctx = canvas.getContext('2d');
-
-    const isLom = universe === 'lom';
-    const bg = isLom ? '#0d0812' : '#08120a';
-    const accent = isLom ? '#C5A059' : '#50C878';
-    const primary = isLom ? '#8a2be2' : '#32cd32';
-
-    ctx.fillStyle = bg;
+    const theme = getTheme(universe);
+    ctx.fillStyle = theme.fallback;
     ctx.fillRect(0, 0, 1080, 1080);
-
-    ctx.strokeStyle = primary;
-    ctx.lineWidth = 4;
-    ctx.strokeRect(60, 60, 960, 960);
-
-    ctx.fillStyle = accent;
-    ctx.font = 'bold 48px Georgia, serif';
-    ctx.fillText(isLom ? '🃏 LORE BRIDGE' : '🗡️ LORE BRIDGE', 100, 140);
-
+    ctx.fillStyle = theme.accent;
+    ctx.font = `bold 48px ${theme.font}`;
+    ctx.fillText(`${theme.icon} LORE BRIDGE`, 100, 140);
     ctx.fillStyle = '#d4c5d9';
-    ctx.font = '36px Georgia, serif';
-
-    const words = text.replace(/\s+/g, ' ').trim().slice(0, 280);
-    const lines = wrapText(ctx, words, 880);
+    ctx.font = `36px ${theme.font}`;
+    const lines = wrapText(ctx, text.replace(/\s+/g, ' ').trim().slice(0, 280), 880);
     let y = 240;
     for (const line of lines.slice(0, 14)) {
         ctx.fillText(line, 100, y);
         y += 52;
     }
-
-    ctx.fillStyle = '#9a8c9e';
-    ctx.font = '28px sans-serif';
-    ctx.fillText(siteConfig.personal?.siteUrl || 'lore-bridge.vercel.app', 100, 980);
-
     return canvas.toDataURL('image/png');
 }
 

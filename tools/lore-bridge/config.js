@@ -143,6 +143,14 @@ export const siteConfig = {
     ]
   },
 
+  share: {
+    siteUrl: "https://lore-bridge.vercel.app",
+    appTweet:
+      "This AI lore companion morphs between LoM & Mushoku Tensei — and literally refuses to spoil you if you're anime-only.",
+    hashtags: "#MushokuTensei #LordOfTheMysteries #AnimeAI",
+    cardMaxChars: 320
+  },
+
   about: {
     title: "About Lore Bridge",
     description: "An open-source, AI-powered lore companion built for anime-onlys and novel readers. No spoilers, just pure context.",
