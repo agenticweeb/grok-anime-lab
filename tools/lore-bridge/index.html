@@ -77,7 +77,17 @@
             z-index: 0;
             pointer-events: none;
         }
-
+	/* PC Layout Constraint */
+	.app-wrapper {
+	    max-width: 900px;
+	    margin: 0 auto;
+	    width: 100%;
+	    height: 100dvh;
+	    display: flex;
+	    flex-direction: column;
+	    position: relative;
+	    z-index: 1;
+	}
         /* Top Bar */
         .top-bar {
             position: relative;
@@ -454,7 +464,7 @@
 </head>
 <body class="theme-lom">
     <div id="portal-overlay"></div>
-
+<div class="app-wrapper">
     <!-- Top Bar -->
     <div class="top-bar">
         <div class="app-title">Lore Bridge</div>
@@ -501,7 +511,7 @@
             <button type="submit" class="send-btn">Send</button>
         </form>
     </div>
-
+    </div> <!-- End app-wrapper -->	
     <!-- Side Menu Overlay -->
     <div class="menu-overlay" id="menu-overlay"></div>
 
