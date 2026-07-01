@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <title>Lore Bridge — AI Lore Companion for LoM &amp; Mushoku Tensei</title>
@@ -637,6 +637,163 @@
             cursor: pointer;
             width: 100%;
         }
+
+        /* ─── Mobile: more breathing room, less crammed chrome ─── */
+        @media (max-width: 640px) {
+            body {
+                padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            }
+
+            #bg-layer {
+                background-attachment: scroll;
+            }
+
+            .top-bar {
+                padding: 10px 12px;
+            }
+
+            .app-title {
+                font-size: 1.05rem;
+            }
+
+            .menu-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 1rem;
+            }
+
+            .mode-bar {
+                flex-direction: column;
+                gap: 8px;
+                padding: 8px 12px;
+            }
+
+            .toggle-group {
+                width: 100%;
+                justify-content: stretch;
+            }
+
+            .toggle-btn {
+                flex: 1;
+                padding: 10px 8px;
+                font-size: 0.78rem;
+                text-align: center;
+                min-height: 40px;
+            }
+
+            .status-bar {
+                padding: 5px 12px;
+                font-size: 0.68rem;
+            }
+
+            #mode-status {
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                padding-right: 8px;
+            }
+
+            .warmth-dots { flex-shrink: 0; }
+
+            .progress-bar {
+                padding: 0;
+                border: none;
+                background: transparent;
+            }
+
+            .progress-bar details {
+                width: 100%;
+                background: rgba(0, 0, 0, 0.25);
+                border-bottom: 1px solid var(--border);
+            }
+
+            .progress-bar summary {
+                padding: 8px 12px;
+                font-size: 0.75rem;
+                color: var(--text-muted);
+                cursor: pointer;
+                list-style: none;
+            }
+
+            .progress-bar summary::-webkit-details-marker { display: none; }
+
+            .progress-bar .progress-inner {
+                padding: 0 12px 10px;
+            }
+
+            .progress-bar label { display: none; }
+
+            .progress-bar select {
+                width: 100%;
+                font-size: 0.85rem;
+                padding: 10px 12px;
+            }
+
+            .chat-container {
+                padding: 12px 10px;
+                gap: 10px;
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .msg-user, .msg-ai {
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+
+            .msg-user p, .msg-ai p {
+                padding: 10px 12px;
+                font-size: 0.92rem;
+                line-height: 1.55;
+            }
+
+            .input-area {
+                padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+            }
+
+            .share-hint {
+                display: none;
+            }
+
+            .chip {
+                padding: 10px 12px;
+                font-size: 0.8rem;
+            }
+
+            .input-row input {
+                padding: 12px 14px;
+                font-size: 16px;
+                min-height: 44px;
+            }
+
+            .send-btn {
+                min-height: 44px;
+                padding: 0 16px;
+            }
+
+            .msg-actions {
+                flex-direction: column;
+            }
+
+            .share-btn {
+                width: 100%;
+                padding: 10px;
+                font-size: 0.8rem;
+            }
+
+            .side-menu {
+                width: min(88vw, 320px);
+            }
+
+            .parallax-container {
+                display: none;
+            }
+        }
+
+        @media (min-width: 641px) {
+            .progress-bar details summary { display: none; }
+            .progress-bar .progress-inner { display: contents; }
+        }
     </style>
 </head>
 <body class="theme-lom">
@@ -646,7 +803,7 @@
 <div class="app-wrapper">
     <!-- Top Bar -->
     <div class="top-bar">
-        <div class="app-title">Lore Bridge</div>
+        <div class="app-title" id="app-title">Lore Bridge</div>
         <button class="menu-btn" id="menu-toggle">🃏</button>
     </div>
 
@@ -668,8 +825,13 @@
     </div>
 
     <div class="progress-bar">
-        <label for="progress-select">Where are you?</label>
-        <select id="progress-select" aria-label="Your progress in the story"></select>
+        <details id="progress-details">
+            <summary id="progress-summary">📍 Your progress</summary>
+            <div class="progress-inner">
+                <label for="progress-select" id="progress-label">Where are you?</label>
+                <select id="progress-select" aria-label="Your progress in the story"></select>
+            </div>
+        </details>
     </div>
 
     <!-- Parallax & Particles -->
@@ -714,8 +876,9 @@
             <a href="#" class="menu-link" id="support-link" target="_blank">Offer a Sacrifice</a>
             <a href="mailto:angazadesk@zohomail.com?subject=Lore Bridge Feedback" class="menu-link">Report an Anomaly</a>
             <a href="#" class="menu-link" id="share-app-link">Spread the Word on X</a>
+            <a href="#" class="menu-link" id="edit-config-link" target="_blank">✏️ Edit Site Content (config.js)</a>
         </div>
-        <div class="menu-footer">Built with @grok · Memory: this device only</div>
+        <div class="menu-footer" id="menu-footer">Built with @grok</div>
     </div>
 
     <div class="about-overlay" id="about-overlay">
@@ -738,6 +901,22 @@
         let session = loadSession('lom', 'watcher');
 
         window.siteConfig = siteConfig;
+
+        function applyUiFromConfig() {
+            const ui = siteConfig.ui || {};
+            const el = (id, text) => { const n = document.getElementById(id); if (n && text) n.textContent = text; };
+            el('app-title', ui.appTitle);
+            el('progress-label', ui.progressLabel);
+            el('progress-summary', `📍 ${ui.progressLabel || 'Your progress'}`);
+            el('share-hint', ui.shareHint);
+            el('menu-footer', ui.menuFooter);
+            const sendBtn = document.querySelector('.send-btn');
+            if (sendBtn && ui.sendButton) sendBtn.textContent = ui.sendButton;
+            const editLink = document.getElementById('edit-config-link');
+            if (editLink && siteConfig.personal?.configEditUrl) {
+                editLink.href = siteConfig.personal.configEditUrl;
+            }
+        }
 
         function updateWarmthUI() {
             const dots = document.getElementById('warmth-dots');
@@ -762,7 +941,8 @@
             if (!sel) return;
             const options = siteConfig[currentUniverse]?.progressOptions?.[currentAudience] || [];
             const saved = loadProgress(currentUniverse, currentAudience);
-            sel.innerHTML = '<option value="">— Set your progress —</option>';
+            const placeholder = siteConfig.ui?.progressPlaceholder || '— Set your progress —';
+            sel.innerHTML = `<option value="">${placeholder}</option>`;
             options.forEach((opt) => {
                 const o = document.createElement('option');
                 o.value = opt;
@@ -932,9 +1112,10 @@
         }
 
         function updateMenuText() {
+            const uni = siteConfig[currentUniverse] || {};
             document.getElementById('menu-toggle').textContent = currentUniverse === 'lom' ? '🃏' : '🗡️';
-            document.getElementById('menu-header').textContent = currentUniverse === 'lom' ? 'The Gray Fog' : 'The Adventurer\'s Guild';
-            document.getElementById('support-link').textContent = currentUniverse === 'lom' ? 'Offer a Sacrifice' : 'Buy a Potion';
+            document.getElementById('menu-header').textContent = uni.menuHeader || (currentUniverse === 'lom' ? 'The Gray Fog' : "The Adventurer's Guild");
+            document.getElementById('support-link').textContent = uni.supportLinkText || uni.diegeticText?.buttonText || 'Support';
             
             if (siteConfig.personal) {
                 document.getElementById('github-link').href = siteConfig.personal.github || '#';
@@ -977,7 +1158,8 @@
         function generateParticles() {
             const container = document.getElementById('particles');
             container.innerHTML = '';
-            for (let i = 0; i < 15; i++) {
+            const count = window.matchMedia('(max-width: 640px)').matches ? 6 : 15;
+            for (let i = 0; i < count; i++) {
                 const p = document.createElement('div');
                 p.className = 'particle';
                 p.style.left = `${Math.random() * 100}%`;
@@ -1253,6 +1435,7 @@
                 <p><strong>Features</strong></p><ul>${a.features.map((f) => `<li>${f}</li>`).join('')}</ul>
                 <p><strong>Tech</strong></p><ul>${a.techStack.map((t) => `<li>${t}</li>`).join('')}</ul>
                 <p style="font-size:0.8rem;color:var(--text-muted)">Memory uses your browser only (sessionStorage + localStorage). No account. Clears when you close the tab — except your progress stamp.</p>
+                <p style="font-size:0.8rem;color:var(--menu-accent)">${siteConfig.about?.editNote || ''}</p>
                 <button type="button" id="about-close">Close</button>`;
             aboutOverlay.classList.add('active');
             document.getElementById('about-close').onclick = () => aboutOverlay.classList.remove('active');
@@ -1263,9 +1446,14 @@
             if (e.target === aboutOverlay) aboutOverlay.classList.remove('active');
         });
 
+        applyUiFromConfig();
         generateParticles();
         resetChatForCurrentMode();
         applyBackground('lom');
+
+        if (window.matchMedia('(max-width: 640px)').matches) {
+            document.getElementById('progress-details')?.removeAttribute('open');
+        }
     </script>
 </body>
 </html>

@@ -1,13 +1,59 @@
-// ==========================================
-// LORE BRIDGE CMS - EDIT EVERYTHING HERE
-// ==========================================
+// ╔══════════════════════════════════════════════════════════════════════════╗
+// ║  LORE BRIDGE CMS — EDIT EVERYTHING HERE (no AI needed for most changes)   ║
+// ╠══════════════════════════════════════════════════════════════════════════╣
+// ║  QUICK REFERENCE                                                         ║
+// ║  • Text, personas, suggestions     → edit sections below, save, git push ║
+// ║  • Background images               → see assets.images + HOW TO below     ║
+// ║  • Share tweet / hashtags          → share { ... }                      ║
+// ║  • Easter eggs                     → lom.easterEggs / mt.easterEggs       ║
+// ║                                                                          ║
+// ║  HOW TO UPDATE BACKGROUND IMAGES                                       ║
+// ║  1. Replace JPG files in: tools/lore-bridge/public/images/              ║
+// ║     - lom-bg.jpg  (Lord of the Mysteries)                              ║
+// ║     - mt-bg.jpg   (Mushoku Tensei)                                     ║
+// ║  2. Bump assets.imageVersion below (e.g. 2 → 3)                          ║
+// ║  3. In terminal:                                                         ║
+// ║     cd /home/thierry/grok-anime-lab                                    ║
+// ║     git add tools/lore-bridge/public/images/ tools/lore-bridge/config.js║
+// ║     git commit -m "update backgrounds"                                   ║
+// ║     git push origin main                                                 ║
+// ║  4. Wait ~1 min for Vercel, hard-refresh on phone                        ║
+// ╚══════════════════════════════════════════════════════════════════════════╝
+
+/** Bump this number whenever you change any image file (clears CDN cache). */
+const IMAGE_VERSION = 3;
+
+function imagePath(filename) {
+  return `/public/images/${filename}?v=${IMAGE_VERSION}`;
+}
 
 export const siteConfig = {
+
+  // ─── Site-wide UI labels (edit freely) ───────────────────────────────────
+  ui: {
+    appTitle: "Lore Bridge",
+    progressLabel: "Your progress",
+    progressPlaceholder: "— Tap to set —",
+    shareHint: "💡 Tap Download or Share on any oracle reply",
+    inputPlaceholderDefault: "Ask the Oracle...",
+    sendButton: "Send",
+    menuFooter: "Built with @grok · Edit config.js on GitHub"
+  },
+
+  // ─── Images (change filename OR replace file in public/images/) ───────────
+  assets: {
+    imageVersion: IMAGE_VERSION,
+    images: {
+      lom: "lom-bg.jpg",
+      mt: "mt-bg.jpg"
+    }
+  },
 
   personal: {
     name: "agenticweeb",
     siteUrl: "https://lore-bridge.vercel.app",
     github: "https://github.com/agenticweeb/grok-anime-lab",
+    configEditUrl: "https://github.com/agenticweeb/grok-anime-lab/edit/main/tools/lore-bridge/config.js",
     twitter: "https://x.com/agenticweeb",
     paymentMethods: {
       buyMeACoffee: "https://github.com/agenticweeb/grok-anime-lab",
@@ -17,9 +63,6 @@ export const siteConfig = {
   },
 
   memory: {
-    // How "remembering" works without login:
-    // - sessionStorage: chat history + warmth (clears when browser tab closes)
-    // - localStorage: progress stamp (survives refresh, same device/browser only)
     maxHistoryTurns: 8,
     warmthPerMessage: 1,
     warmthLevels: [
@@ -31,7 +74,7 @@ export const siteConfig = {
   },
 
   lom: {
-    backgroundImage: "/public/images/lom-bg.jpg?v=2",
+    backgroundImage: imagePath("lom-bg.jpg"),
     persona: {
       watcher: { name: "Daly", title: "Nighthawk Regular", icon: "🃏" },
       reader: { name: "The Archivist", title: "Tarot Club Scholar", icon: "🔮" }
@@ -45,12 +88,7 @@ export const siteConfig = {
         "Finished Season 1",
         "Finished S1 + Specials"
       ],
-      reader: [
-        "Volume 1",
-        "Volume 2",
-        "Volume 3",
-        "Volume 4+"
-      ]
+      reader: ["Volume 1", "Volume 2", "Volume 3", "Volume 4+"]
     },
     watcher: {
       welcomeMessage: "Hey — I'm Daly. I haunt the Nighthawk like it's my job (it basically is). Ask me about watch order, Beyonders, or what the anime skipped. I won't spoil past what you've seen. 🃏",
@@ -80,6 +118,8 @@ export const siteConfig = {
       modalTitle: "Strengthen the Veil",
       modalDescription: "Your offering fuels the gray fog and keeps the Lore Bridge standing."
     },
+    menuHeader: "The Gray Fog",
+    supportLinkText: "Offer a Sacrifice",
     easterEggs: [
       { phrase: "amen", response: "Amen. 🌫️ The fog recognizes a fellow believer. Ask your question, seeker.", effect: "fog" },
       { phrase: "above the fog", response: "You speak like someone who's read the later volumes... or like someone who's about to. Careful. 🔮", effect: "fog" },
@@ -88,7 +128,7 @@ export const siteConfig = {
   },
 
   mt: {
-    backgroundImage: "/public/images/mt-bg.jpg?v=2",
+    backgroundImage: imagePath("mt-bg.jpg"),
     persona: {
       watcher: { name: "Rui", title: "Guild Counter Clerk", icon: "🗡️" },
       reader: { name: "Elinalise", title: "Veteran Adventurer", icon: "🐉" }
@@ -101,12 +141,7 @@ export const siteConfig = {
         "Finished Season 2",
         "Preparing for Season 3"
       ],
-      reader: [
-        "Volume 1-3",
-        "Volume 4-7",
-        "Volume 8-12",
-        "Volume 13+"
-      ]
+      reader: ["Volume 1-3", "Volume 4-7", "Volume 8-12", "Volume 13+"]
     },
     watcher: {
       welcomeMessage: "Yo! Rui at the guild counter. S2 hype is REAL. Ask what got skipped, magic basics, whatever — zero S3 spoilers. 🗡️",
@@ -136,6 +171,8 @@ export const siteConfig = {
       modalTitle: "Replenish the Wellspring",
       modalDescription: "Donate Guild Marks to keep the lore flowing."
     },
+    menuHeader: "The Adventurer's Guild",
+    supportLinkText: "Buy a Potion",
     easterEggs: [
       { phrase: "muru muru", response: "Muru Muru! Roxy-sensei would be proud you're studying. ✨", effect: "warm" },
       { phrase: "sylphietta", response: "Ah, a person of culture. Let's talk — respectfully, no fan wars. 💚", effect: "warm" },
@@ -145,8 +182,7 @@ export const siteConfig = {
 
   share: {
     siteUrl: "https://lore-bridge.vercel.app",
-    appTweet:
-      "This AI lore companion morphs between LoM & Mushoku Tensei — and literally refuses to spoil you if you're anime-only.",
+    appTweet: "This AI lore companion morphs between LoM & Mushoku Tensei — and literally refuses to spoil you if you're anime-only.",
     hashtags: "#MushokuTensei #LordOfTheMysteries #AnimeAI",
     cardMaxChars: 320
   },
@@ -164,6 +200,7 @@ export const siteConfig = {
       "Frontend: HTML / Vanilla JS",
       "AI: xAI Grok + Groq fallback",
       "Hosting: Vercel"
-    ]
+    ],
+    editNote: "Want to change text, images, or suggestions? Edit config.js on GitHub — link in the side menu."
   }
 };
