@@ -3,692 +3,815 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lore Bridge • Premium Fandom Hub</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&amp;family=Abril+Fatface&amp;display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <title>Lore Bridge • Immersive Fandom Hub</title>
+    
+    <!-- Premium Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Abril+Fatface&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@700&amp;family=Abril+Fatface&amp;display=swap');
-
+        /* =========================================
+           1. CORE VARIABLES & THEMES
+           ========================================= */
         :root {
-            --accent: #C5A059;
+            --px: 0px;
+            --py: 0px;
+            --transition-speed: 0.3s;
         }
 
         body {
-            font-family: ui-serif, "Times New Roman", Georgia, serif;
-            transition: background-color 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
 
+        /* Lord of the Mysteries (LoM) Theme */
         .theme-lom {
-            --accent: #C5A059;
-            --accent2: #4A5568;
-            background-color: #0f051d;
-            color: #F5F5F0;
+            --bg-color: #0d0812;
+            --surface: #1a1124;
+            --border: #3d2b4f;
+            --primary: #8a2be2; /* Deep Purple */
+            --primary-glow: rgba(138, 43, 226, 0.4);
+            --text-main: #d4c5d9;
+            --text-muted: #9a8c9e;
+            --font-heading: 'Cormorant Garamond', ui-serif, Georgia, serif;
+            --font-body: ui-serif, Georgia, 'Times New Roman', serif;
+            --portal-bg: #1a0b2e;
+            --particle-color: rgba(138, 43, 226, 0.6);
         }
 
+        /* Mushoku Tensei (MT) Theme */
         .theme-mt {
-            --accent: #D4AF37;
-            --accent2: #10B981;
-            background-color: #0a1f0a;
-            color: #F5F5F0;
-            font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --bg-color: #08120a;
+            --surface: #112415;
+            --border: #2b4f35;
+            --primary: #32cd32; /* Lime Green */
+            --primary-glow: rgba(50, 205, 50, 0.4);
+            --text-main: #c5d9c7;
+            --text-muted: #8c9e8e;
+            --font-heading: 'Abril Fatface', ui-sans-serif, system-ui, sans-serif;
+            --font-body: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --portal-bg: #0b2e1a;
+            --particle-color: rgba(50, 205, 50, 0.6);
         }
 
-        .theme-lom .heading { font-family: 'Cormorant Garamond', ui-serif, "Times New Roman", Georgia, serif; }
-        .theme-mt .heading { font-family: 'Abril Fatface', ui-sans-serif, system-ui, sans-serif; }
-
-        .glass {
-            background: rgba(15, 5, 29, 0.65);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(197, 160, 89, 0.15);
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            transition: background-color 0.5s ease, color 0.5s ease;
         }
 
-        .theme-mt .glass {
-            background: rgba(10, 31, 10, 0.65);
-            border: 1px solid rgba(212, 175, 55, 0.15);
+        h1, h2, h3, .oracle-name, .chip, .diegetic-btn {
+            font-family: var(--font-heading);
         }
 
-        .portal-container {
-            transition: clip-path 0.65s cubic-bezier(0.23, 1.0, 0.32, 1);
-            will-change: clip-path;
+        /* =========================================
+           2. ATMOSPHERIC BACKGROUNDS & PARALLAX
+           ========================================= */
+        .parallax-container {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
         }
 
-        .chat-bubble {
-            max-width: 78%;
-            padding: 14px 18px;
-            border-radius: 20px;
-            line-height: 1.55;
-            position: relative;
-            transition: box-shadow 0.3s ease, transform 0.2s ease;
+        .parallax-layer {
+            position: absolute;
+            inset: -50px; /* Extra space for parallax movement */
+            transform: translate3d(var(--px), var(--py), 0);
+            transition: transform 0.2s ease-out;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.2s ease-out;
         }
 
-        .theme-lom .chat-bubble {
-            background: #F8F1E3;
-            color: #2C2522;
-            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.18),
-                        0 4px 15px rgba(0, 0, 0, 0.2);
-            border: 1px solid #C5A05933;
+        .theme-lom .lom-bg { opacity: 1; }
+        .theme-mt .mt-bg { opacity: 1; }
+
+        /* Floating Particles */
+        .particles-container {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
         }
 
-        .theme-lom .chat-bubble:hover {
-            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.18),
-                        0 0 0 1px #C5A05955,
-                        0 10px 30px rgba(76, 29, 149, 0.15);
+        .particle {
+            position: absolute;
+            background: var(--particle-color);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--particle-color);
+            animation: float-up linear infinite;
+            opacity: 0;
         }
 
-        .theme-mt .chat-bubble {
-            background: #3C2F2F;
-            color: #F5F5F0;
-            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.35),
-                        0 4px 15px rgba(0, 0, 0, 0.3);
-            border: 1px solid #D4AF3733;
+        @keyframes float-up {
+            0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            100% { transform: translateY(-10vh) translateX(50px); opacity: 0; }
         }
 
-        .theme-mt .chat-bubble:hover {
-            box-shadow: inset 0 0 25px rgba(212, 175, 55, 0.25),
-                        0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-
-        .suggestion-chip {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            font-size: 0.875rem;
-            padding: 8px 14px;
-            border-radius: 9999px;
-            white-space: nowrap;
-        }
-
-        .theme-lom .suggestion-chip {
-            background: rgba(197, 160, 89, 0.08);
-            border: 1px solid rgba(197, 160, 89, 0.25);
-            color: #F5F5F0;
-        }
-
-        .theme-lom .suggestion-chip:hover {
-            background: rgba(197, 160, 89, 0.15);
-            text-shadow: 0 0 12px rgba(76, 29, 149, 0.6);
-            border-color: #C5A059;
-        }
-
-        .theme-mt .suggestion-chip {
-            background: rgba(16, 185, 129, 0.08);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            color: #F5F5F0;
-        }
-
-        .theme-mt .suggestion-chip:hover {
-            transform: scale(1.05);
-            background: rgba(212, 175, 55, 0.15);
-            border-color: #D4AF37;
-            box-shadow: 0 0 0 1px #D4AF37;
-        }
-
-        .floating-tarot {
-            animation: tarot-drift 18s linear infinite;
-            opacity: 0.12;
-        }
-
-        .floating-mote {
-            animation: mote-drift 12s ease-in-out infinite;
-            box-shadow: 0 0 8px #D4AF37,
-                        0 0 16px #10B981;
-        }
-
-        @keyframes tarot-drift {
-            0% { transform: translateY(120px) rotate(0deg); }
-            100% { transform: translateY(-120px) rotate(25deg); }
-        }
-
-        @keyframes mote-drift {
-            0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
-            50% { transform: translateY(-80px) scale(0.8); opacity: 0.9; }
-        }
-
-        .lore-response {
-            font-size: 0.95rem;
-            line-height: 1.65;
-        }
-
-        body::after {
+        /* =========================================
+           3. THE "WOW" FACTOR OVERLAYS
+           ========================================= */
+        /* LoM: CRT Scanlines */
+        .theme-lom::after {
             content: '';
             position: fixed;
             inset: 0;
-            pointer-events: none;
-            z-index: 9999;
-            transition: all 0.6s ease;
-        }
-
-        .theme-lom body::after {
             background: repeating-linear-gradient(
                 0deg,
-                rgba(255,255,255,0.035) 0px,
-                rgba(255,255,255,0.035) 1px,
+                rgba(255, 255, 255, 0.02) 0px,
+                rgba(255, 255, 255, 0.02) 1px,
                 transparent 1px,
-                transparent 2.5px
+                transparent 2px
             );
+            pointer-events: none;
+            z-index: 9998;
             mix-blend-mode: overlay;
         }
 
-        .theme-mt body::after {
-            background: radial-gradient(circle at 50% 30%, transparent 35%, rgba(16, 185, 129, 0.06) 100%);
-            backdrop-filter: blur(1px);
+        /* MT: Volumetric Fog Glow */
+        .theme-mt::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.04) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 9998;
+            backdrop-filter: blur(1.5px);
         }
 
-        .context-shield {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        /* =========================================
+           4. DIMENSIONAL SHIFT (PORTAL TRANSITION)
+           ========================================= */
+        #portal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 99999;
+            pointer-events: none;
+            background: var(--portal-bg);
+            clip-path: circle(0% at 50% 50%);
+            transition: clip-path 0.8s cubic-bezier(0.77, 0, 0.175, 1);
         }
 
-        .main-portal {
-            transition: clip-path 0.65s cubic-bezier(0.23, 1.0, 0.32, 1);
+        #portal-overlay.active {
+            clip-path: circle(150% at 50% 50%);
         }
+
+        /* =========================================
+           5. LAYOUT & COMPONENTS
+           ========================================= */
+        .app-container {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-glow);
+            letter-spacing: 2px;
+        }
+
+        .toggles {
+            display: flex;
+            gap: 10px;
+        }
+
+        .toggle-group {
+            display: flex;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 30px;
+            padding: 4px;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--primary);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Chat Container */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .oracle-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .oracle-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--surface);
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .oracle-name {
+            margin: 0;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .oracle-status {
+            margin: 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Chat Messages & Bubbles */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 50vh;
+        }
+
+        .chat-bubble {
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 18px;
+            position: relative;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+        }
+
+        .oracle-msg .chat-bubble {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        /* Thematic Bubble Tails */
+        .oracle-msg .chat-bubble::before {
+            position: absolute;
+            bottom: -12px;
+            left: 20px;
+            font-size: 18px;
+            filter: drop-shadow(0 0 5px var(--primary-glow));
+        }
+
+        .theme-lom .oracle-msg .chat-bubble::before { content: '🃏'; }
+        .theme-mt .oracle-msg .chat-bubble::before { content: '✨'; }
+
+        .user-msg .chat-bubble {
+            background: var(--primary);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 4px 15px var(--primary-glow);
+        }
+
+        /* Smart Suggestion Chips */
+        .suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .chip {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 10px 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* LoM Chip Hover: Pulsing Runes */
+        .theme-lom .chip:hover {
+            text-shadow: 0 0 8px var(--primary), 0 0 15px var(--primary);
+            border-color: var(--primary);
+            background: rgba(138, 43, 226, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* MT Chip Hover: Glowing Slash */
+        .theme-mt .chip::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(50, 205, 50, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        .theme-mt .chip:hover::after { left: 100%; }
+        .theme-mt .chip:hover {
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        /* Input Area */
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-area input {
+            flex: 1;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 15px 20px;
+            border-radius: 30px;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-area input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        .send-btn {
+            background: var(--primary);
+            border: none;
+            color: #fff;
+            padding: 0 25px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            box-shadow: 0 0 15px var(--primary-glow);
+            transition: transform 0.2s ease;
+        }
+
+        .send-btn:hover { transform: scale(1.05); }
+
+        /* Footer & Diegetic Tip Jar */
+        footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-top: 1px solid var(--border);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .diegetic-btn {
+            background: transparent;
+            border: 1px dashed var(--primary);
+            color: var(--primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .diegetic-btn:hover {
+            background: var(--surface);
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.active { display: flex; }
+
+        .modal-content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 0 30px var(--primary-glow);
+        }
+
+        .modal-title {
+            margin-top: 0;
+            color: var(--primary);
+        }
+
+        textarea {
+            width: 100%;
+            background: var(--bg-color);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: var(--font-body);
+            margin-bottom: 20px;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-cancel, .btn-submit {
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            border: 1px solid var(--border);
+        }
+
+        .btn-cancel { background: transparent; color: var(--text-muted); }
+        .btn-submit { background: var(--primary); color: #fff; border: none; }
     </style>
 </head>
-<body class="theme-lom min-h-screen overflow-x-hidden">
+<body class="theme-lom">
 
-    <!-- Atmospheric Background Effects -->
-    <div id="bg-effects" class="fixed inset-0 pointer-events-none z-0"></div>
+    <!-- Portal Overlay for Dimensional Shift -->
+    <div id="portal-overlay"></div>
 
-    <!-- Top Navigation -->
-    <nav class="sticky top-0 z-50 glass border-b border-white/10">
-        <div class="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-            <!-- Logo -->
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-2xl flex items-center justify-center" 
-                     style="background: linear-gradient(135deg, #C5A059, #D4AF37);">
-                    <span class="text-[#0f051d] text-2xl font-bold tracking-tighter">LB</span>
-                </div>
-                <div class="heading text-3xl font-bold tracking-tighter">Lore Bridge</div>
-            </div>
-
-            <!-- Portal Toggle Buttons -->
-            <div class="flex items-center gap-1.5 bg-black/40 p-1 rounded-3xl border border-white/10">
-                <button onclick="switchTheme('lom')"
-                        id="btn-lom"
-                        class="portal-btn flex items-center gap-2 px-6 py-2 rounded-3xl text-sm font-semibold bg-[#C5A059] text-[#0f051d] active">
-                    <span>🃏</span>
-                    <span class="font-medium">Lord of the Mysteries</span>
-                </button>
-                <button onclick="switchTheme('mt')"
-                        id="btn-mt"
-                        class="portal-btn flex items-center gap-2 px-6 py-2 rounded-3xl text-sm font-semibold hover:bg-white/5 transition-colors">
-                    <span>🗡️</span>
-                    <span class="font-medium">Mushoku Tensei</span>
-                </button>
-            </div>
-
-            <!-- Audience Toggle -->
-            <div class="flex items-center gap-1 bg-black/40 rounded-3xl p-1 border border-white/10">
-                <button onclick="setAudience('watcher')"
-                        id="aud-watcher"
-                        class="px-4 py-1.5 text-xs font-medium rounded-3xl flex items-center gap-1.5 bg-white/10">
-                    <span>👁️</span>
-                    <span>Watcher</span>
-                </button>
-                <button onclick="setAudience('reader')"
-                        id="aud-reader"
-                        class="px-4 py-1.5 text-xs font-medium rounded-3xl flex items-center gap-1.5 hover:bg-white/5 transition-colors">
-                    <span>📖</span>
-                    <span>Reader</span>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <!-- Context Shield -->
-    <div class="max-w-5xl mx-auto px-6 pt-5">
-        <div id="context-shield"
-             class="context-shield inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl text-sm border border-white/10 bg-black/30">
-            <span id="shield-text">🌫️ Mode: LoM Watcher • Locked to end of Vol 1 • No Spoilers</span>
-        </div>
+    <!-- Parallax Backgrounds -->
+    <div class="parallax-container">
+        <!-- LoM: Gothic Clocktower Silhouette -->
+        <svg class="parallax-layer lom-bg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMax slice">
+            <path d="M450,1000 L450,600 L400,550 L400,400 L480,200 L500,100 L520,200 L600,400 L600,550 L550,600 L550,1000 Z" fill="rgba(138, 43, 226, 0.05)" />
+            <circle cx="500" cy="350" r="40" fill="none" stroke="rgba(138, 43, 226, 0.1)" stroke-width="2" />
+            <path d="M500,310 L500,350 L530,350" fill="none" stroke="rgba(138, 43, 226, 0.1)" stroke-width="2" />
+        </svg>
+        
+        <!-- MT: Forest & Magic Circle Silhouette -->
+        <svg class="parallax-layer mt-bg" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMax slice">
+            <path d="M0,1000 L200,700 L300,850 L500,500 L700,800 L800,650 L1000,1000 Z" fill="rgba(50, 205, 50, 0.05)" />
+            <circle cx="500" cy="400" r="150" fill="none" stroke="rgba(50, 205, 50, 0.08)" stroke-width="2" stroke-dasharray="10 5" />
+            <circle cx="500" cy="400" r="100" fill="none" stroke="rgba(50, 205, 50, 0.05)" stroke-width="1" />
+        </svg>
     </div>
 
-    <!-- Main Content with Portal Effect -->
-    <div class="max-w-5xl mx-auto px-6 pt-6 pb-8">
-        <div id="main-portal" 
-             class="main-portal rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-[#12071F] theme-lom:bg-[#12071F] theme-mt:bg-[#0F1A0F]">
-            
-            <!-- Chat Header -->
-            <div class="px-6 py-4 border-b border-white/10 flex items-center justify-between bg-black/20">
-                <div class="flex items-center gap-3">
-                    <div id="chat-avatar" 
-                         class="w-9 h-9 rounded-2xl flex items-center justify-center text-2xl"
-                         style="background: linear-gradient(135deg, #C5A059, #D4AF37);">
-                        🃏
+    <!-- Floating Particles -->
+    <div class="particles-container" id="particles"></div>
+
+    <!-- Main App Container -->
+    <div class="app-container">
+        <!-- Header -->
+        <header>
+            <div class="logo">LORE BRIDGE</div>
+            <div class="toggles">
+                <div class="toggle-group" id="universe-toggle">
+                    <button class="toggle-btn active" data-universe="lom">🃏 LoM</button>
+                    <button class="toggle-btn" data-universe="mt">🗡️ MT</button>
+                </div>
+                <div class="toggle-group" id="audience-toggle">
+                    <button class="toggle-btn active" data-audience="watcher">👁️ Watcher</button>
+                    <button class="toggle-btn" data-audience="reader">📖 Reader</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-dot"></div>
+            <span id="status-text">Mode: LoM Watcher • Locked to end of Vol 1 • No Spoilers</span>
+        </div>
+
+        <!-- Chat Interface -->
+        <div class="chat-container">
+            <div class="oracle-header">
+                <div class="oracle-avatar" id="oracle-icon">👁️</div>
+                <div>
+                    <h3 class="oracle-name" id="oracle-name">The Gray Fog Oracle</h3>
+                    <p class="oracle-status">Spoiler-free • Up to current anime</p>
+                </div>
+            </div>
+
+            <div class="chat-messages" id="chat-messages">
+                <div class="message oracle-msg">
+                    <div class="chat-bubble">
+                        Welcome, seeker. The gray fog swirls with your questions. What lore shall we unravel today without spoiling your journey?
                     </div>
-                    <div>
-                        <div id="chat-title" class="heading text-xl font-semibold tracking-tight">The Gray Fog Oracle</div>
-                        <div class="text-xs text-white/50">Spoiler-free • Up to current anime</div>
-                    </div>
-                </div>
-                <div class="px-3 py-1 text-xs rounded-full border border-white/20 text-white/60 tracking-widest">LIVE CONTEXT</div>
-            </div>
-
-            <!-- Messages Area -->
-            <div id="chat-messages" 
-                 class="h-[460px] overflow-y-auto p-6 space-y-6 bg-black/10"
-                 style="scrollbar-width: thin; scrollbar-color: #C5A05933 transparent;">
-            </div>
-
-            <!-- Suggestion Chips -->
-            <div class="px-6 pt-4 pb-4 border-t border-white/10 bg-black/30">
-                <div class="text-[10px] tracking-[1.5px] text-white/50 mb-2.5 px-1 font-medium">SMART SUGGESTIONS</div>
-                <div id="suggestion-chips" class="flex flex-wrap gap-2">
                 </div>
             </div>
 
-            <!-- Input Area -->
-            <div class="p-4 border-t border-white/10 bg-black/40">
-                <div class="flex gap-3 items-center">
-                    <input id="chat-input" 
-                           type="text" 
-                           placeholder="Ask anything about the story so far..."
-                           class="flex-1 bg-black/40 border border-white/20 focus:border-[var(--accent)] rounded-3xl px-6 py-3.5 text-sm outline-none placeholder:text-white/40 transition-all"
-                           onkeypress="if (event.key === 'Enter') sendMessage()">
-                    <button onclick="sendMessage()"
-                            class="px-8 py-3.5 rounded-3xl font-semibold flex items-center gap-2 transition-all active:scale-[0.985] text-[#0f051d]"
-                            style="background: var(--accent);">
-                        <span class="font-medium">Send</span>
-                        <i class="fa-solid fa-paper-plane text-sm"></i>
-                    </button>
-                </div>
+            <div class="suggestions" id="suggestions">
+                <button class="chip">Who is The Fool?</button>
+                <button class="chip">Explain the Pathways</button>
+                <button class="chip">Mystery of the Gray Fog</button>
+            </div>
+
+            <div class="input-area">
+                <input type="text" id="user-input" placeholder="Consult the Oracle..." />
+                <button class="send-btn" id="send-btn">Send</button>
             </div>
         </div>
+
+        <!-- Footer & Diegetic Tip Jar -->
+        <footer>
+            <div>
+                <a href="#" style="color: var(--text-muted); text-decoration: none; margin-right: 15px;">Help improve the Bridge</a>
+                <a href="#" style="color: var(--text-muted); text-decoration: none;">Built with @grok</a>
+            </div>
+            <button class="diegetic-btn" id="tip-jar-btn">
+                <span class="icon">🃏</span>
+                <span class="text">Offer a Sacrifice to The Fool</span>
+            </button>
+        </footer>
     </div>
 
-    <!-- Diegetic Tip Jar Footer -->
-    <div class="max-w-5xl mx-auto px-6">
-        <div class="flex items-center justify-between text-xs text-white/60 border-t border-white/10 pt-5">
-            <div>Built with <span class="font-semibold text-white/80">@grok</span></div>
-            
-            <a id="tip-jar" href="#" 
-               class="flex items-center gap-2 px-4 py-2 rounded-2xl hover:bg-white/5 transition-all text-sm font-medium border border-white/10">
-                <span id="tip-text">🃏 Offer a Sacrifice to The Fool</span>
-            </a>
+    <!-- Feedback Modal -->
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content">
+            <h3 class="modal-title">What would make Lore Bridge better?</h3>
+            <textarea placeholder="Share your thoughts..."></textarea>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-submit">Submit Feedback</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // === STATE ===
-        let currentTheme = 'lom';
+        // =========================================
+        // STATE MANAGEMENT
+        // =========================================
+        let currentUniverse = 'lom';
         let currentAudience = 'watcher';
-        let currentSeries = 'Lord of the Mysteries';
 
-        // Smart Chips Data (exact as specified)
-        const chipsData = {
-            lom: {
-                watcher: [
-                    "Explain the Beyonder system simply",
-                    "Why is the watch order confusing?",
-                    "Who is The Fool?"
-                ],
-                reader: [
-                    "Analyze Klein's acting method",
-                    "Theorycraft: City of Silver's purpose",
-                    "Foreshadowing in Vol 1"
-                ]
-            },
-            mt: {
-                watcher: [
-                    "What did S2 skip about Sylphie?",
-                    "Explain the Superd tribe stigma",
-                    "Magic system basics for S3"
-                ],
-                reader: [
-                    "Rudeus's psychological growth",
-                    "Laplace factor in S3",
-                    "Orsted's true motives"
-                ]
-            }
-        };
-
-        // === ATMOSPHERIC BACKGROUNDS ===
-        function createAtmosphericEffects(theme) {
-            const container = document.getElementById('bg-effects');
-            container.innerHTML = '';
-
-            if (theme === 'lom') {
-                // Floating tarot cards / sigils using inline SVG
-                const positions = [
-                    { left: '12%', top: '18%' },
-                    { left: '78%', top: '32%' },
-                    { left: '25%', top: '72%' },
-                    { left: '85%', top: '65%' }
-                ];
-
-                positions.forEach((pos, i) => {
-                    const el = document.createElement('div');
-                    el.className = `floating-tarot absolute w-8 h-8`;
-                    el.style.left = pos.left;
-                    el.style.top = pos.top;
-                    el.style.animationDelay = `-${i * 4.5}s`;
-                    
-                    el.innerHTML = `
-                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <rect x="4" y="4" width="24" height="24" rx="3" stroke="#C5A059" stroke-width="1.5" opacity="0.6"/>
-                            <path d="M10 12L16 8L22 12" stroke="#C5A059" stroke-width="1.2" opacity="0.7"/>
-                            <circle cx="16" cy="18" r="3.5" stroke="#C5A059" stroke-width="1.2" opacity="0.6"/>
-                        </svg>
-                    `;
-                    container.appendChild(el);
-                });
-            } else {
-                // Glowing magical motes
-                for (let i = 0; i < 5; i++) {
-                    const el = document.createElement('div');
-                    el.className = `floating-mote absolute rounded-full`;
-                    el.style.left = Math.random() * 100 + '%';
-                    el.style.top = Math.random() * 100 + '%';
-                    el.style.width = (3 + Math.random() * 4) + 'px';
-                    el.style.height = el.style.width;
-                    el.style.animationDuration = (9 + Math.random() * 7) + 's';
-                    el.style.animationDelay = `-${Math.random() * 8}s`;
-                    container.appendChild(el);
-                }
-            }
-        }
-
-        // === DIMENSIONAL SHIFT / PORTAL EFFECT ===
-        function triggerPortalShift() {
-            const portal = document.getElementById('main-portal');
-            portal.style.transition = 'none';
-            portal.style.clipPath = 'circle(0% at 50% 50%)';
+        // =========================================
+        // 1. DIMENSIONAL SHIFT (PORTAL TRANSITION)
+        // =========================================
+        function switchUniverse(newUniverse) {
+            if (newUniverse === currentUniverse) return;
             
-            // Force reflow
-            void portal.offsetWidth;
-            
-            portal.style.transition = 'clip-path 0.65s cubic-bezier(0.23, 1.0, 0.32, 1)';
-            portal.style.clipPath = 'circle(150% at 50% 50%)';
-            
-            // Reset after animation
-            setTimeout(() => {
-                portal.style.transition = 'clip-path 0.65s cubic-bezier(0.23, 1.0, 0.32, 1)';
-            }, 700);
-        }
-
-        // === THEME SWITCHING ===
-        function switchTheme(theme) {
-            if (theme === currentTheme) return;
-
+            const portal = document.getElementById('portal-overlay');
             const body = document.body;
-            const btnLom = document.getElementById('btn-lom');
-            const btnMt = document.getElementById('btn-mt');
-            const portal = document.getElementById('main-portal');
-
-            // Trigger portal animation
-            triggerPortalShift();
-
-            // Update body class
-            body.classList.remove('theme-lom', 'theme-mt');
-            body.classList.add(`theme-${theme}`);
-            currentTheme = theme;
-
-            // Update button styles
-            if (theme === 'lom') {
-                btnLom.classList.add('active', 'bg-[#C5A059]', 'text-[#0f051d]');
-                btnLom.classList.remove('hover:bg-white/5');
-                btnMt.classList.remove('active', 'bg-[#C5A059]', 'text-[#0f051d]');
-                btnMt.classList.add('hover:bg-white/5');
-                
-                currentSeries = 'Lord of the Mysteries';
-                document.getElementById('chat-avatar').innerHTML = '🃏';
-                document.getElementById('chat-title').innerHTML = 'The Gray Fog Oracle';
-            } else {
-                btnMt.classList.add('active', 'bg-[#D4AF37]', 'text-[#0a1f0a]');
-                btnMt.classList.remove('hover:bg-white/5');
-                btnLom.classList.remove('active', 'bg-[#C5A059]', 'text-[#0f051d]');
-                btnLom.classList.add('hover:bg-white/5');
-                
-                currentSeries = 'Mushoku Tensei';
-                document.getElementById('chat-avatar').innerHTML = '🗡️';
-                document.getElementById('chat-title').innerHTML = 'The Six-Faced Oracle';
-            }
-
-            // Refresh atmospheric effects
-            createAtmosphericEffects(theme);
             
-            // Update dynamic UI
-            updateContextShield();
-            updateSuggestionChips();
-            updateTipJar();
-
-            // Add subtle welcome if chat empty
+            // 1. Open Portal (Expand to cover screen)
+            portal.classList.add('active');
+            
+            // 2. Wait for portal to cover screen, then swap theme
             setTimeout(() => {
-                const messages = document.getElementById('chat-messages');
-                if (messages.children.length < 1) {
-                    addAIMessage(getWelcomeMessage());
-                }
+                body.classList.remove('theme-lom', 'theme-mt');
+                body.classList.add(`theme-${newUniverse}`);
+                currentUniverse = newUniverse;
+                updateDiegeticText();
+                updateOraclePersona();
+                generateParticles(); // Regenerate particles for new theme color
+            }, 400); // Half of 0.8s transition
+            
+            // 3. Close Portal (Shrink to reveal new theme)
+            setTimeout(() => {
+                portal.classList.remove('active');
             }, 800);
         }
 
-        function getWelcomeMessage() {
-            if (currentTheme === 'lom') {
-                return "The gray fog listens. Ask me anything about the story so far. I will answer without revealing what lies beyond.";
+        // =========================================
+        // 2. DIEGETIC TEXT UPDATES
+        // =========================================
+        function updateDiegeticText() {
+            const btn = document.getElementById('tip-jar-btn');
+            const icon = btn.querySelector('.icon');
+            const text = btn.querySelector('.text');
+            const status = document.getElementById('status-text');
+
+            if (currentUniverse === 'lom') {
+                icon.textContent = '🃏';
+                text.textContent = 'Offer a Sacrifice to The Fool';
+                status.textContent = `Mode: LoM ${currentAudience.charAt(0).toUpperCase() + currentAudience.slice(1)} • Locked to end of Vol 1 • No Spoilers`;
             } else {
-                return "The Six Faces welcome you. I can share context the anime left behind — without spoiling what comes next in Season 3.";
+                icon.textContent = '🧪';
+                text.textContent = 'Purchase a Healing Potion from the Guild';
+                status.textContent = `Mode: MT ${currentAudience.charAt(0).toUpperCase() + currentAudience.slice(1)} • Locked to end of Season 2 • No Spoilers`;
             }
         }
 
-        // === AUDIENCE TOGGLE ===
-        function setAudience(audience) {
-            currentAudience = audience;
-            
-            const watcherBtn = document.getElementById('aud-watcher');
-            const readerBtn = document.getElementById('aud-reader');
+        function updateOraclePersona() {
+            const name = document.getElementById('oracle-name');
+            const icon = document.getElementById('oracle-icon');
+            const input = document.getElementById('user-input');
+            const suggestions = document.getElementById('suggestions');
 
-            if (audience === 'watcher') {
-                watcherBtn.classList.add('bg-white/10', 'font-semibold');
-                readerBtn.classList.remove('bg-white/10', 'font-semibold');
+            if (currentUniverse === 'lom') {
+                name.textContent = 'The Gray Fog Oracle';
+                icon.textContent = '👁️';
+                input.placeholder = 'Consult the Oracle...';
+                suggestions.innerHTML = `
+                    <button class="chip">Who is The Fool?</button>
+                    <button class="chip">Explain the Pathways</button>
+                    <button class="chip">Mystery of the Gray Fog</button>
+                `;
             } else {
-                readerBtn.classList.add('bg-white/10', 'font-semibold');
-                watcherBtn.classList.remove('bg-white/10', 'font-semibold');
+                name.textContent = 'Guild Receptionist';
+                icon.textContent = '📜';
+                input.placeholder = 'Ask the Guild...';
+                suggestions.innerHTML = `
+                    <button class="chip">How does Magic Work?</button>
+                    <button class="chip">Rudeus's Power Level</button>
+                    <button class="chip">The Teleportation Incident</button>
+                `;
             }
-
-            updateContextShield();
-            updateSuggestionChips();
         }
 
-        // === CONTEXT SHIELD ===
-        function updateContextShield() {
-            const shield = document.getElementById('shield-text');
-            const mode = currentAudience === 'watcher' ? 'Watcher' : 'Reader';
-            let text = '';
+        // =========================================
+        // 3. PARALLAX & PARTICLES
+        // =========================================
+        document.addEventListener('mousemove', (e) => {
+            const x = (window.innerWidth / 2 - e.clientX) / 40;
+            const y = (window.innerHeight / 2 - e.clientY) / 40;
+            document.documentElement.style.setProperty('--px', `${x}px`);
+            document.documentElement.style.setProperty('--py', `${y}px`);
+        });
 
-            if (currentTheme === 'lom') {
-                text = `🌫️ Mode: LoM ${mode} • Locked to end of Vol 1 • No Spoilers`;
-            } else {
-                text = `🗡️ Mode: MT ${mode} • Pre-S3 context • Light novel gaps filled safely`;
-            }
-            shield.innerHTML = text;
-        }
-
-        // === SMART SUGGESTION CHIPS ===
-        function updateSuggestionChips() {
-            const container = document.getElementById('suggestion-chips');
+        function generateParticles() {
+            const container = document.getElementById('particles');
             container.innerHTML = '';
-
-            const themeKey = currentTheme;
-            const audienceKey = currentAudience;
-            const chips = chipsData[themeKey][audienceKey];
-
-            chips.forEach(text => {
-                const chip = document.createElement('button');
-                chip.className = `suggestion-chip px-4 py-2 text-sm border`;
-                chip.innerHTML = text;
-                
-                chip.onclick = () => {
-                    addUserMessage(text);
-                    setTimeout(() => {
-                        generateAIResponse(text);
-                    }, 420);
-                };
-                
-                container.appendChild(chip);
-            });
-        }
-
-        // === CHAT LOGIC (with simulated streaming) ===
-        function addUserMessage(text) {
-            const container = document.getElementById('chat-messages');
-            const msg = document.createElement('div');
-            msg.className = `flex justify-end`;
-            msg.innerHTML = `
-                <div class="chat-bubble user">
-                    <div class="text-sm">${text}</div>
-                </div>
-            `;
-            container.appendChild(msg);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function addAIMessage(text) {
-            const container = document.getElementById('chat-messages');
-            const msg = document.createElement('div');
-            msg.className = `flex justify-start`;
-            msg.innerHTML = `
-                <div class="chat-bubble ai">
-                    <div class="lore-response">${text}</div>
-                </div>
-            `;
-            container.appendChild(msg);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function streamAIResponse(fullText) {
-            const container = document.getElementById('chat-messages');
-            
-            const wrapper = document.createElement('div');
-            wrapper.className = `flex justify-start`;
-            
-            const bubble = document.createElement('div');
-            bubble.className = `chat-bubble ai`;
-            
-            const content = document.createElement('div');
-            content.className = `lore-response`;
-            bubble.appendChild(content);
-            wrapper.appendChild(bubble);
-            container.appendChild(wrapper);
-            
-            container.scrollTop = container.scrollHeight;
-
-            let i = 0;
-            const speed = 22; // ms per character for smooth streaming feel
-            
-            const interval = setInterval(() => {
-                if (i < fullText.length) {
-                    content.innerHTML = fullText.substring(0, i + 1) + `<span class="opacity-70">▌</span>`;
-                    i++;
-                    container.scrollTop = container.scrollHeight;
-                } else {
-                    clearInterval(interval);
-                    content.innerHTML = fullText;
-                }
-            }, speed);
-        }
-
-        function generateAIResponse(userMessage) {
-            const msg = userMessage.toLowerCase();
-            let response = '';
-
-            // LoM responses (spoiler-free)
-            if (currentTheme === 'lom') {
-                if (msg.includes('beyonder')) {
-                    response = "The Beyonder system is built on Pathways and Sequences. Individuals advance by drinking potions tied to a specific Pathway. To progress safely, they must 'Act' according to the nature of their current Sequence. This process helps them digest the power without losing control.";
-                } else if (msg.includes('fool')) {
-                    response = "The Fool is the enigmatic leader of the Tarot Club. He appears as a figure cloaked in gray fog and has demonstrated the ability to guide members and grant certain powers during their gatherings.";
-                } else if (msg.includes('watch order') || msg.includes('confusing')) {
-                    response = "The clearest path is: Season 1 Episodes 1–10, followed by the two Specials (City of Silver + Marked Hunt), then Season 1 Episodes 11–13. The specials provide essential context that makes the later episodes much more impactful.";
-                } else if (msg.includes('acting') || msg.includes('city of silver')) {
-                    response = "Klein's careful performance as The Fool is one of the most important developments so far. The City of Silver holds ancient connections to the gray fog that are only beginning to surface in the story.";
-                } else {
-                    response = "That's a thoughtful question. Everything I share remains within what has been shown in the anime and specials. The gray fog keeps future events hidden for now.";
-                }
-            } 
-            // MT responses (spoiler-free, focused on skipped content)
-            else {
-                if (msg.includes('sylphie') || msg.includes('skip')) {
-                    response = "The anime condensed much of Sylphie's inner journey and emotional growth. In the light novels, her perspective and quiet development add significant depth to her character and her relationship with Rudeus.";
-                } else if (msg.includes('superd')) {
-                    response = "The Superd tribe carries a deep stigma rooted in historical events. They are renowned warriors with immense physical strength, yet the world views them through layers of old fear and misunderstanding.";
-                } else if (msg.includes('growth') || msg.includes('psychological')) {
-                    response = "Rudeus's internal monologue in the novels reveals layers of healing, doubt, and gradual self-acceptance that the anime can only hint at through his actions. These thoughts provide crucial context for his decisions.";
-                } else if (msg.includes('laplace') || msg.includes('orsted') || msg.includes('motives')) {
-                    response = "There are deeper historical threads and relationships the anime has not yet fully explored. These elements become more relevant as the story moves toward Season 3, but remain carefully unrevealed for now.";
-                } else {
-                    response = "I can provide light novel context that the anime adaptation omitted, while staying strictly before Season 3. What would you like to understand better?";
-                }
+            for (let i = 0; i < 20; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                p.style.left = `${Math.random() * 100}%`;
+                p.style.animationDuration = `${15 + Math.random() * 25}s`;
+                p.style.animationDelay = `${Math.random() * 10}s`;
+                p.style.width = p.style.height = `${2 + Math.random() * 4}px`;
+                container.appendChild(p);
             }
-
-            // Use streaming effect
-            setTimeout(() => {
-                streamAIResponse(response);
-            }, 180);
         }
+
+        // =========================================
+        // 4. EVENT LISTENERS
+        // =========================================
+        // Universe Toggle
+        document.querySelectorAll('#universe-toggle .toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#universe-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                switchUniverse(btn.dataset.universe);
+            });
+        });
+
+        // Audience Toggle
+        document.querySelectorAll('#audience-toggle .toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('#audience-toggle .toggle-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentAudience = btn.dataset.audience;
+                updateDiegeticText();
+            });
+        });
+
+        // Chat Logic (Mockup - Connect to your chat.js here)
+        document.getElementById('send-btn').addEventListener('click', sendMessage);
+        document.getElementById('user-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
 
         function sendMessage() {
-            const input = document.getElementById('chat-input');
-            const text = input.value.trim();
-            if (!text) return;
+            const input = document.getElementById('user-input');
+            const msg = input.value.trim();
+            if (!msg) return;
 
-            addUserMessage(text);
+            const messagesContainer = document.getElementById('chat-messages');
+            
+            // Add User Message
+            const userDiv = document.createElement('div');
+            userDiv.className = 'message user-msg';
+            userDiv.innerHTML = `<div class="chat-bubble">${msg}</div>`;
+            messagesContainer.appendChild(userDiv);
             input.value = '';
 
+            // Mock Oracle Response (Replace with fetch to your chat.js API)
             setTimeout(() => {
-                generateAIResponse(text);
-            }, 650);
+                const oracleDiv = document.createElement('div');
+                oracleDiv.className = 'message oracle-msg';
+                oracleDiv.innerHTML = `<div class="chat-bubble">The fog clears... (Connect this to your /api/chat.js endpoint for real Grok responses!)</div>`;
+                messagesContainer.appendChild(oracleDiv);
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 1000);
+
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
-        // === DIEGETIC TIP JAR ===
-        function updateTipJar() {
-            const tipText = document.getElementById('tip-text');
-            
-            if (currentTheme === 'lom') {
-                tipText.innerHTML = `🃏 Offer a Sacrifice to The Fool`;
-            } else {
-                tipText.innerHTML = `🧪 Purchase a Healing Potion from the Guild`;
-            }
+        // Tip Jar Modal
+        document.getElementById('tip-jar-btn').addEventListener('click', () => {
+            document.getElementById('feedback-modal').classList.add('active');
+        });
+
+        function closeModal() {
+            document.getElementById('feedback-modal').classList.remove('active');
         }
 
-        // === INITIALIZATION ===
-        function initializeApp() {
-            const body = document.body;
-            
-            // Set initial theme
-            body.classList.add('theme-lom');
-            
-            // Initial button states
-            document.getElementById('btn-lom').classList.add('active', 'bg-[#C5A059]', 'text-[#0f051d]');
-            document.getElementById('aud-watcher').classList.add('bg-white/10', 'font-semibold');
-
-            // Create atmospheric effects
-            createAtmosphericEffects('lom');
-
-            // Initial welcome message
-            const messages = document.getElementById('chat-messages');
-            messages.innerHTML = `
-                <div class="flex justify-start">
-                    <div class="chat-bubble ai">
-                        <div class="lore-response">The gray fog listens. Ask me anything about the story so far. I will answer without revealing what lies beyond.</div>
-                    </div>
-                </div>
-            `;
-
-            // Load dynamic content
-            updateContextShield();
-            updateSuggestionChips();
-            updateTipJar();
-
-            // Keyboard accessibility
-            document.addEventListener('keydown', function(e) {
-                if (e.key === '/' && document.activeElement.tagName === 'BODY') {
-                    e.preventDefault();
-                    document.getElementById('chat-input').focus();
-                }
-            });
-
-            console.log('%c[Lore Bridge] Premium dimensional hub initialized. Portal effects + streaming ready.', 'color:#C5A059');
-        }
-
-        // Boot the application
-        window.onload = initializeApp;
+        // Initialize
+        generateParticles();
+        updateDiegeticText();
     </script>
 </body>
 </html>
