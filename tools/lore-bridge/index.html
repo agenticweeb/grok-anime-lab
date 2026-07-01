@@ -75,6 +75,33 @@
             font-family: var(--font-heading);
         }
 
+        /* 4K Background Images */
+        body {
+            background-size: cover !important;
+            background-position: center center !important;
+            background-repeat: no-repeat !important;
+            background-attachment: fixed !important;
+        }
+
+        /* Dark overlay so text is readable over 4K images */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6); /* Adjust 0.6 to make it darker/lighter */
+            z-index: 0;
+            pointer-events: none; /* Prevents blocking clicks */
+        }
+
+        /* Make sure all content sits ABOVE the background image */
+        header, main, footer, #chat-container, .suggestion-chips, .page, .main-nav {
+            position: relative;
+            z-index: 1;
+        }
+
         /* =========================================
            2. NAVIGATION
            ========================================= */
@@ -966,6 +993,24 @@
         window.siteConfig = siteConfig;
 
         // =========================================
+        // APPLY BACKGROUNDS FROM CONFIG
+        // =========================================
+        function applyBackgrounds() {
+            if (window.siteConfig) {
+                const lomBg = window.siteConfig.lom.backgroundImage || (window.siteConfig.lom.images && window.siteConfig.lom.images.background);
+                const mtBg = window.siteConfig.mt.backgroundImage || (window.siteConfig.mt.images && window.siteConfig.mt.images.background);
+                
+                if (currentUniverse === 'lom' && lomBg) {
+                    document.body.style.backgroundImage = `url(${lomBg})`;
+                } else if (currentUniverse === 'mt' && mtBg) {
+                    document.body.style.backgroundImage = `url(${mtBg})`;
+                } else {
+                    document.body.style.backgroundImage = 'none';
+                }
+            }
+        }
+
+        // =========================================
         // 1. DIMENSIONAL SHIFT (PORTAL TRANSITION)
         // =========================================
         function switchUniverse(newUniverse) {
@@ -984,6 +1029,7 @@
                 currentUniverse = newUniverse;
                 updateAllUI();
                 generateParticles(); // Regenerate particles for new theme color
+                applyBackgrounds(); // Update background image
             }, 400); // Half of 0.8s transition
             
             // 3. Close Portal (Shrink to reveal new theme)
@@ -1251,6 +1297,7 @@
         // Initialize
         generateParticles();
         updateAllUI();
+        applyBackgrounds();
     </script>
 </body>
 </html>
