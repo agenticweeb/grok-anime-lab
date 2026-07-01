@@ -906,6 +906,23 @@
 	    margin-top: 0.5rem !important;
 	}
 
+	/* MODERN CHAT BUBBLE STRETCH */
+	@media (max-width: 768px) {
+	    .msg-user, .msg-ai, [class*="msg-"] {
+		max-width: 95% !important; /* Forces bubbles to use almost the whole screen */
+		border-radius: 1.25rem !important; /* Nice, fat rounded corners */
+	    }
+	    /* Classic chat "tail" effect for User (right side) */
+	    .msg-user {
+		border-bottom-right-radius: 0.25rem !important;
+		margin-right: 0 !important;
+	    }
+	    /* Classic chat "tail" effect for AI (left side) */
+	    .msg-ai {
+		border-bottom-left-radius: 0.25rem !important;
+		margin-left: 0 !important;
+	    }
+	}
 	/* About Modal/Page */
 	.about-page, .modal-content, [class*="modal"] {
 	    margin: 1rem !important;
