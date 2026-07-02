@@ -59,7 +59,7 @@ export function trimHistory(history, maxTurns = 8) {
 }
 
 export function parseMetadata(raw) {
-    const result = { text: raw, receipts: [], skipped: '', veil: '' };
+    const result = { text: raw, receipts: [], skipped: '', veil: '', image: null };
 
     const veilMatch = raw.match(/⟦veil:(.+?)⟧/s);
     if (veilMatch) {
@@ -77,6 +77,12 @@ export function parseMetadata(raw) {
     if (skippedMatch) {
         result.skipped = skippedMatch[1].trim();
         result.text = result.text.replace(/⟦skipped:.+?⟧/, '').trim();
+    }
+
+    const imageMatch = raw.match(/⟦image:(.+?)\|(.+?)⟧/);
+    if (imageMatch) {
+        result.image = { url: imageMatch[1].trim(), caption: imageMatch[2].trim() };
+        result.text = result.text.replace(/⟦image:.+?⟧/, '').trim();
     }
 
     return result;

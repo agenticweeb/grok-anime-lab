@@ -106,9 +106,8 @@
         .theme-mt #bg-scrim {
             background: linear-gradient(180deg, rgba(8, 18, 10, 0.55) 0%, rgba(0, 0, 0, 0.35) 45%, rgba(0, 0, 0, 0.5) 100%);
         }
-	/* PC Layout Constraint */
 	.app-wrapper {
-	    max-width: 900px;
+	    max-width: 720px;
 	    margin: 0 auto;
 	    width: 100%;
 	    height: 100dvh;
@@ -116,19 +115,51 @@
 	    flex-direction: column;
 	    position: relative;
 	    z-index: 1;
+	    box-shadow: 0 0 80px rgba(0,0,0,0.4);
 	}
-        /* Top Bar */
-        .top-bar {
+
+        .app-header {
             position: relative;
             z-index: 100;
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 12px 16px;
-            background: rgba(0, 0, 0, 0.45);
-            backdrop-filter: blur(16px);
+            gap: 8px;
+            padding: 10px 12px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
             flex-shrink: 0;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-left: auto;
+            flex-wrap: nowrap;
+        }
+
+        .icon-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--menu-accent);
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .desktop-meta {
+            flex-shrink: 0;
+        }
+
+        .toggle-group.compact .toggle-btn {
+            padding: 6px 10px;
+            font-size: 0.72rem;
+            min-height: 34px;
         }
 
         .app-title {
@@ -157,21 +188,6 @@
         .menu-btn:hover {
             box-shadow: 0 0 15px var(--primary-glow);
             transform: scale(1.05);
-        }
-
-        /* Mode Control Bar (Universe & Audience) */
-        .mode-bar {
-            position: relative;
-            z-index: 99;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            padding: 10px 16px;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border);
-            gap: 10px;
-            flex-shrink: 0;
         }
 
         .toggle-group {
@@ -638,7 +654,105 @@
             width: 100%;
         }
 
-        /* ─── Mobile: more breathing room, less crammed chrome ─── */
+        .faq-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0,0,0,0.65);
+            z-index: 10002;
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .faq-overlay.active { display: flex; }
+        .faq-sheet {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px 20px 0 0;
+            width: 100%;
+            max-width: 720px;
+            max-height: 75dvh;
+            overflow-y: auto;
+            padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+        }
+        .faq-sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        .faq-sheet-header h3 {
+            font-family: var(--font-heading);
+            color: var(--primary);
+            font-size: 1rem;
+        }
+        .faq-close {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .faq-category { margin-bottom: 14px; }
+        .faq-category h4 {
+            font-size: 0.8rem;
+            color: var(--menu-accent);
+            margin-bottom: 8px;
+        }
+        .faq-item {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: rgba(0,0,0,0.25);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 12px 14px;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            font-family: var(--font-body);
+        }
+        .faq-item:active { border-color: var(--primary); }
+
+        .msg-ref-image {
+            margin-top: 10px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .msg-ref-image img {
+            width: 100%;
+            display: block;
+            max-height: 220px;
+            object-fit: cover;
+        }
+        .msg-ref-image figcaption {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            padding: 6px 10px;
+            background: rgba(0,0,0,0.3);
+        }
+
+        .suggestions-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .faq-chip-btn {
+            flex-shrink: 0;
+            background: var(--surface);
+            border: 1px solid var(--menu-accent);
+            color: var(--menu-accent);
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* ─── Mobile: premium chat layout ─── */
         @media (max-width: 640px) {
             body {
                 padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
@@ -648,86 +762,40 @@
                 background-attachment: scroll;
             }
 
-            .top-bar {
-                padding: 10px 12px;
+            .app-wrapper {
+                max-width: 100%;
+                box-shadow: none;
+            }
+
+            .app-header {
+                padding: 8px 10px;
+                gap: 6px;
             }
 
             .app-title {
-                font-size: 1.05rem;
-            }
-
-            .menu-btn {
-                width: 36px;
-                height: 36px;
-                font-size: 1rem;
-            }
-
-            .mode-bar {
-                flex-direction: column;
-                gap: 8px;
-                padding: 8px 12px;
-            }
-
-            .toggle-group {
-                width: 100%;
-                justify-content: stretch;
-            }
-
-            .toggle-btn {
-                flex: 1;
-                padding: 10px 8px;
-                font-size: 0.78rem;
-                text-align: center;
-                min-height: 40px;
-            }
-
-            .status-bar {
-                padding: 5px 12px;
-                font-size: 0.68rem;
-            }
-
-            #mode-status {
-                flex: 1;
+                font-size: 0.95rem;
+                max-width: 28vw;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
-                padding-right: 8px;
             }
 
-            .warmth-dots { flex-shrink: 0; }
+            .header-controls { gap: 4px; }
 
-            .progress-bar {
-                padding: 0;
-                border: none;
-                background: transparent;
+            .toggle-group.compact .toggle-btn {
+                padding: 8px 7px;
+                font-size: 0.68rem;
+                min-height: 36px;
             }
 
-            .progress-bar details {
-                width: 100%;
-                background: rgba(0, 0, 0, 0.25);
-                border-bottom: 1px solid var(--border);
+            .menu-btn, .icon-btn {
+                width: 34px;
+                height: 34px;
+                font-size: 0.9rem;
             }
 
-            .progress-bar summary {
-                padding: 8px 12px;
-                font-size: 0.75rem;
-                color: var(--text-muted);
-                cursor: pointer;
-                list-style: none;
-            }
-
-            .progress-bar summary::-webkit-details-marker { display: none; }
-
-            .progress-bar .progress-inner {
-                padding: 0 12px 10px;
-            }
-
-            .progress-bar label { display: none; }
-
-            .progress-bar select {
-                width: 100%;
-                font-size: 0.85rem;
-                padding: 10px 12px;
+            .desktop-meta {
+                display: none;
             }
 
             .chat-container {
@@ -793,6 +861,7 @@
         @media (min-width: 641px) {
             .progress-bar details summary { display: none; }
             .progress-bar .progress-inner { display: contents; }
+            .faq-chip-btn { display: none; }
         }
     </style>
 </head>
@@ -801,37 +870,36 @@
     <div id="bg-scrim" aria-hidden="true"></div>
     <div id="portal-overlay"></div>
 <div class="app-wrapper">
-    <!-- Top Bar -->
-    <div class="top-bar">
+    <header class="app-header">
         <div class="app-title" id="app-title">Lore Bridge</div>
-        <button class="menu-btn" id="menu-toggle">🃏</button>
-    </div>
-
-    <!-- Mode Control Bar (Universe & Audience) -->
-    <div class="mode-bar">
-        <div class="toggle-group" id="universe-toggle">
-            <button class="toggle-btn active" data-universe="lom">🃏 LoM</button>
-            <button class="toggle-btn" data-universe="mt">🗡️ MT</button>
-        </div>
-        <div class="toggle-group" id="audience-toggle">
-            <button class="toggle-btn active" data-audience="watcher">👁️ Watcher</button>
-            <button class="toggle-btn" data-audience="reader">📖 Reader</button>
-        </div>
-    </div>
-
-    <div class="status-bar">
-        <span id="mode-status">🌫️ Loading...</span>
-        <span class="warmth-dots" id="warmth-dots" title="Trust grows as you chat (this session only)"></span>
-    </div>
-
-    <div class="progress-bar">
-        <details id="progress-details">
-            <summary id="progress-summary">📍 Your progress</summary>
-            <div class="progress-inner">
-                <label for="progress-select" id="progress-label">Where are you?</label>
-                <select id="progress-select" aria-label="Your progress in the story"></select>
+        <div class="header-controls">
+            <div class="toggle-group compact" id="universe-toggle">
+                <button class="toggle-btn active" data-universe="lom" title="Lord of the Mysteries">🃏</button>
+                <button class="toggle-btn" data-universe="mt" title="Mushoku Tensei">🗡️</button>
             </div>
-        </details>
+            <div class="toggle-group compact" id="audience-toggle">
+                <button class="toggle-btn active" data-audience="watcher" title="Anime Watcher">👁️</button>
+                <button class="toggle-btn" data-audience="reader" title="Novel Reader">📖</button>
+            </div>
+            <button type="button" class="icon-btn" id="faq-btn" title="Common questions">?</button>
+            <button class="menu-btn" id="menu-toggle">🃏</button>
+        </div>
+    </header>
+
+    <div class="desktop-meta">
+        <div class="status-bar">
+            <span id="mode-status">🌫️ Loading...</span>
+            <span class="warmth-dots" id="warmth-dots" title="Trust grows as you chat (this session only)"></span>
+        </div>
+        <div class="progress-bar">
+            <details id="progress-details" open>
+                <summary id="progress-summary">📍 Your progress</summary>
+                <div class="progress-inner">
+                    <label for="progress-select" id="progress-label">Where are you?</label>
+                    <select id="progress-select" aria-label="Your progress in the story"></select>
+                </div>
+            </details>
+        </div>
     </div>
 
     <!-- Parallax & Particles -->
@@ -854,8 +922,9 @@
 
     <!-- Input Area -->
     <div class="input-area">
-        <div class="suggestions" id="suggestions">
-            <!-- Chips injected by JS -->
+        <div class="suggestions-row">
+            <button type="button" class="faq-chip-btn" id="faq-chip-btn">FAQ</button>
+            <div class="suggestions" id="suggestions"></div>
         </div>
         <p class="share-hint" id="share-hint">💡 Get a lore take? Download a themed card or share straight to X.</p>
         <form class="input-row" id="chat-form">
@@ -871,6 +940,10 @@
     <div class="side-menu" id="side-menu">
         <div class="menu-header" id="menu-header">The Gray Fog</div>
         <div class="menu-links">
+            <label class="menu-link" style="cursor:default;display:block;">
+                <span style="font-size:0.75rem;color:var(--text-muted);">Your progress</span>
+                <select id="progress-select-menu" style="width:100%;margin-top:6px;background:var(--bg-color);border:1px solid var(--border);color:var(--text-main);padding:8px;border-radius:8px;"></select>
+            </label>
             <a href="#" class="menu-link" onclick="showAbout(); return false;">About the Oracle</a>
             <a href="#" class="menu-link" id="github-link" target="_blank">View the Source Code</a>
             <a href="#" class="menu-link" id="support-link" target="_blank">Offer a Sacrifice</a>
@@ -883,6 +956,16 @@
 
     <div class="about-overlay" id="about-overlay">
         <div class="about-modal" id="about-modal"></div>
+    </div>
+
+    <div class="faq-overlay" id="faq-overlay">
+        <div class="faq-sheet">
+            <div class="faq-sheet-header">
+                <h3 id="faq-title">Common Questions</h3>
+                <button type="button" class="faq-close" id="faq-close" aria-label="Close">×</button>
+            </div>
+            <div id="faq-content"></div>
+        </div>
     </div>
 
     <script type="module">
@@ -910,6 +993,8 @@
             el('progress-summary', `📍 ${ui.progressLabel || 'Your progress'}`);
             el('share-hint', ui.shareHint);
             el('menu-footer', ui.menuFooter);
+            el('faq-title', ui.faqTitle);
+            el('faq-chip-btn', ui.faqButton);
             const sendBtn = document.querySelector('.send-btn');
             if (sendBtn && ui.sendButton) sendBtn.textContent = ui.sendButton;
             const editLink = document.getElementById('edit-config-link');
@@ -937,19 +1022,61 @@
         }
 
         function populateProgressSelect() {
-            const sel = document.getElementById('progress-select');
-            if (!sel) return;
+            const selects = [
+                document.getElementById('progress-select'),
+                document.getElementById('progress-select-menu')
+            ].filter(Boolean);
+            if (!selects.length) return;
+
             const options = siteConfig[currentUniverse]?.progressOptions?.[currentAudience] || [];
             const saved = loadProgress(currentUniverse, currentAudience);
             const placeholder = siteConfig.ui?.progressPlaceholder || '— Set your progress —';
-            sel.innerHTML = `<option value="">${placeholder}</option>`;
-            options.forEach((opt) => {
-                const o = document.createElement('option');
-                o.value = opt;
-                o.textContent = opt;
-                if (opt === saved) o.selected = true;
-                sel.appendChild(o);
+
+            selects.forEach((sel) => {
+                sel.innerHTML = `<option value="">${placeholder}</option>`;
+                options.forEach((opt) => {
+                    const o = document.createElement('option');
+                    o.value = opt;
+                    o.textContent = opt;
+                    if (opt === saved) o.selected = true;
+                    sel.appendChild(o);
+                });
             });
+        }
+
+        function renderFaqSheet() {
+            const container = document.getElementById('faq-content');
+            if (!container) return;
+            const faq = siteConfig[currentUniverse]?.[currentAudience]?.faq || [];
+            container.innerHTML = '';
+
+            faq.forEach((cat) => {
+                const section = document.createElement('div');
+                section.className = 'faq-category';
+                section.innerHTML = `<h4>${cat.category}</h4>`;
+                cat.items.forEach((q) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'faq-item';
+                    btn.textContent = q;
+                    btn.onclick = () => {
+                        document.getElementById('faq-overlay')?.classList.remove('active');
+                        document.getElementById('user-input').value = q;
+                        document.getElementById('chat-form').dispatchEvent(new Event('submit'));
+                    };
+                    section.appendChild(btn);
+                });
+                container.appendChild(section);
+            });
+
+            if (!faq.length) {
+                container.innerHTML = '<p style="color:var(--text-muted);font-size:0.85rem;">No FAQ loaded — edit config.js</p>';
+            }
+        }
+
+        function openFaq() {
+            renderFaqSheet();
+            document.getElementById('faq-overlay')?.classList.add('active');
         }
 
         function getProgressStamp() {
@@ -973,6 +1100,9 @@
                 html += `<details class="msg-receipts"><summary>📜 Fan receipts</summary><ul>`;
                 meta.receipts.forEach((r) => { html += `<li>${formatText(r)}</li>`; });
                 html += `</ul></details>`;
+            }
+            if (meta.image?.url) {
+                html += `<figure class="msg-ref-image"><img src="${meta.image.url}" alt="${formatText(meta.image.caption)}" loading="lazy" /><figcaption>${formatText(meta.image.caption)} · Wikimedia reference</figcaption></figure>`;
             }
             if (text.length > 50 && !isVeil) {
                 const enc = encodeURIComponent(text.slice(0, 400));
@@ -1071,7 +1201,8 @@
                         div.style.width = '90%';
                         div.innerHTML = `<p>${turn.content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`;
                     } else {
-                        const { html, styleClass } = buildAiMessageHtml(parseMetadata(turn.content).text, parseMetadata(turn.content));
+                        const parsed = parseMetadata(turn.content);
+                        const { html, styleClass } = buildAiMessageHtml(parsed.text, parsed);
                         div.className = `msg-ai ${styleClass}`;
                         div.style.maxWidth = '95%';
                         div.style.width = '95%';
@@ -1093,7 +1224,8 @@
             // 3. Update suggestion chips
             const suggestionsContainer = document.getElementById('suggestions');
             suggestionsContainer.innerHTML = '';
-            modeConfig.suggestions.forEach(suggestion => {
+            const quick = (modeConfig.suggestions || []).slice(0, 2);
+            quick.forEach(suggestion => {
                 const chip = document.createElement('button');
                 chip.className = 'chip';
                 chip.textContent = suggestion;
@@ -1410,8 +1542,24 @@
 
         document.getElementById('chat-form').addEventListener('submit', handleSend);
 
-        document.getElementById('progress-select')?.addEventListener('change', (e) => {
-            saveProgress(currentUniverse, currentAudience, e.target.value);
+        function onProgressChange(value) {
+            saveProgress(currentUniverse, currentAudience, value);
+            const sel = document.getElementById('progress-select');
+            const menuSel = document.getElementById('progress-select-menu');
+            if (sel) sel.value = value;
+            if (menuSel) menuSel.value = value;
+        }
+
+        document.getElementById('progress-select')?.addEventListener('change', (e) => onProgressChange(e.target.value));
+        document.getElementById('progress-select-menu')?.addEventListener('change', (e) => onProgressChange(e.target.value));
+
+        document.getElementById('faq-btn')?.addEventListener('click', openFaq);
+        document.getElementById('faq-chip-btn')?.addEventListener('click', openFaq);
+        document.getElementById('faq-close')?.addEventListener('click', () => {
+            document.getElementById('faq-overlay')?.classList.remove('active');
+        });
+        document.getElementById('faq-overlay')?.addEventListener('click', (e) => {
+            if (e.target.id === 'faq-overlay') e.target.classList.remove('active');
         });
 
         document.getElementById('share-app-link')?.addEventListener('click', (e) => {
@@ -1451,9 +1599,7 @@
         resetChatForCurrentMode();
         applyBackground('lom');
 
-        if (window.matchMedia('(max-width: 640px)').matches) {
-            document.getElementById('progress-details')?.removeAttribute('open');
-        }
+        renderFaqSheet();
     </script>
 </body>
 </html>

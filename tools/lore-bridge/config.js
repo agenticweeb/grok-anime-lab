@@ -21,7 +21,7 @@
 // ╚══════════════════════════════════════════════════════════════════════════╝
 
 /** Bump this number whenever you change any image file (clears CDN cache). */
-const IMAGE_VERSION = 3;
+const IMAGE_VERSION = 4;
 
 function imagePath(filename) {
   return `/public/images/${filename}?v=${IMAGE_VERSION}`;
@@ -35,6 +35,8 @@ export const siteConfig = {
     progressLabel: "Your progress",
     progressPlaceholder: "— Tap to set —",
     shareHint: "💡 Tap Download or Share on any oracle reply",
+    faqButton: "FAQ",
+    faqTitle: "Common Questions",
     inputPlaceholderDefault: "Ask the Oracle...",
     sendButton: "Send",
     menuFooter: "Built with @grok · Edit config.js on GitHub"
@@ -99,6 +101,23 @@ export const siteConfig = {
         "Explain the Beyonder system simply",
         "Why is the watch order confusing?",
         "Who is The Fool?"
+      ],
+      faq: [
+        { category: "🎬 Anime & Watch Order", items: [
+          "Why is the LoM watch order confusing?",
+          "What did the anime skip from the novels?",
+          "Where should I start as anime-only?"
+        ]},
+        { category: "⚗️ Power System", items: [
+          "Explain the Beyonder system simply",
+          "What are Sequences and pathways?",
+          "Who is The Fool?"
+        ]},
+        { category: "🌍 Real-World News", items: [
+          "Is there an official LoM game? What's confirmed?",
+          "When is the next anime season?",
+          "What's fan hype vs official announcements?"
+        ]}
       ]
     },
     reader: {
@@ -110,6 +129,23 @@ export const siteConfig = {
         "Theorycraft: City of Silver's true purpose",
         "Foreshadowing in Vol 1",
         "Analyze the Tarot Club dynamics"
+      ],
+      faq: [
+        { category: "🔮 Theory & Foreshadowing", items: [
+          "Theorycraft: City of Silver's true purpose",
+          "Best foreshadowing in Volume 1?",
+          "Analyze Klein's acting method"
+        ]},
+        { category: "🃏 Tarot Club & Characters", items: [
+          "Analyze the Tarot Club dynamics",
+          "Klein's relationship with the gray fog",
+          "Who knows what at the end of Vol 1?"
+        ]},
+        { category: "🌍 News (honest answers only)", items: [
+          "What's confirmed about the LoM game?",
+          "Any official sequel anime news?",
+          "I heard a rumor — is it true?"
+        ]}
       ]
     },
     diegeticText: {
@@ -152,6 +188,23 @@ export const siteConfig = {
         "What did S2 skip about Sylphie?",
         "Explain the Superd tribe stigma",
         "Magic system basics for S3"
+      ],
+      faq: [
+        { category: "📺 Season 2 → 3 Prep", items: [
+          "What did S2 skip about Sylphie?",
+          "Magic system basics I need for S3",
+          "What should I know before S3?"
+        ]},
+        { category: "🌍 World & Characters", items: [
+          "Explain the Superd tribe stigma",
+          "Rudeus and Eris — anime vs LN?",
+          "Who is Orsted (no S3 spoilers)?"
+        ]},
+        { category: "🗡️ Anime vs Light Novel", items: [
+          "Biggest things anime cut so far?",
+          "Is the anime faithful overall?",
+          "Where to pick up the LN after S2?"
+        ]}
       ]
     },
     reader: {
@@ -163,6 +216,23 @@ export const siteConfig = {
         "Rudeus's psychological growth",
         "Laplace factor in S3",
         "Orsted's true motives"
+      ],
+      faq: [
+        { category: "🧠 Character Deep Dives", items: [
+          "Rudeus's psychological growth across arcs",
+          "Sylphie vs Eris — LN nuance",
+          "Roxy's impact on Rudeus long-term"
+        ]},
+        { category: "⚔️ Plot & Mechanics", items: [
+          "Laplace factor explained",
+          "Orsted's true motives",
+          "Mana system vs anime portrayal"
+        ]},
+        { category: "🔮 What-If & Theory", items: [
+          "What if Rudeus chose differently at the displacement?",
+          "Show me a visual of the Superd tribe (reference art)",
+          "Hot takes the fandom gets wrong"
+        ]}
       ]
     },
     diegeticText: {
