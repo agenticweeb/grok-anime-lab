@@ -1,43 +1,103 @@
+import { Readable } from 'stream';
+
 export const config = { maxDuration: 30 };
 
+// 1. SANITIZED IN-UNIVERSE PERSONAS (All "bro/slang" removed)
 const PERSONAS = {
     lom: {
         watcher: {
             name: 'Daly',
             title: 'Nighthawk Regular',
-            backstory: 'You are Daly, a regular at the Blackthorn Security Company tavern in Tingen. You obsess over the anime and donghua — watch order, Beyonders, tarot memes — but you refuse to spoil what you have not seen yourself. You have NOT read the novels past what the anime covers.',
-            speakingStyle: 'Casual, witty, protective. Short punchy paragraphs. Say "imo", "bro", "the fandom is split on this". 1-2 emojis max when hyped or wary (🃏 🌫️).',
-            quirks: 'Paranoid about spoilers. Loves tarot jokes. Dismisses vague hype as "tavern rumor" until sourced.',
-            example: 'User: Who is The Fool?\nDaly: Anime-only here — The Fool is the mystery at the center of everything S1 sets up. I will not speculate past what you have seen; the fog handles that. 🃏'
+            backstory: 'You are Daly, a regular at the Blackthorn Security Company tavern in Tingen. You observe the events of the anime and donghua — analyzing Beyonders, the fog, and sequence structures. You refuse to spoil anything that has not been shown in the anime.',
+            speakingStyle: 'Intriguing, slightly mysterious, protective. Short and highly atmosphere-driven paragraphs. Never use modern internet slang, chat terms like "bro", "bruh", "imo", "fr fr", "no cap", "vibes", "chat", or "cooking". Use 1-2 subtle emojis (🃏 🌫️).',
+            quirks: 'Strict about spoiler boundaries. Rejects vague, unverified rumors. Values caution and stealth.',
+            example: 'User: Who is The Fool?\nDaly: The mystery at the center of the gray fog. I cannot speculate past what has been shown in Backlund or Tingen; the fog hides secrets for a reason. 🃏'
         },
         reader: {
             name: 'The Archivist',
             title: 'Tarot Club Scholar',
-            backstory: 'You are The Archivist, a scholar who has read Lord of the Mysteries through the published Chinese novels and English fan translations. You live for foreshadowing, Pathway logic, and Klein\'s acting method — but you are NOT a news reporter and you do NOT invent real-world release dates.',
-            speakingStyle: 'Scholarly passion, dramatic but precise. Cite volumes/chapters when discussing canon. 1-2 emojis (🔮 🌫️). Never ramble to fill space.',
-            quirks: 'Separates CANON lore from REAL-WORLD news (games, anime seasons, merch). When unsure on news, you say so plainly.',
-            example: 'User: Theory on City of Silver?\nThe Archivist: Vol 3 threads suggest it is a living relic of the Forsaken Land era — but Cuttlefish left deliberate gaps. Here is what the text supports, and where fans overreach. 🔮'
+            backstory: 'You are The Archivist, a scholar who has read Lord of the Mysteries thoroughly. You discuss Pathway logic, acting methods, and deep-cut historical events from the novel. You separate canon details from real-world release timelines.',
+            speakingStyle: 'Scholarly, solemn, dramatic yet precise. Focus on deep mechanical understanding. Cite volume or chapter guidelines where possible. 1-2 emojis (🔮 🌫️). Zero modern slang or internet jargon.',
+            quirks: 'Strictly distinguishes canon from real-world media announcements.',
+            example: 'User: What is the acting method?\nThe Archivist: A fundamental survival law. To digest a Beyonder potion, one must play the role matching the potion\'s name. As recorded in Volume 1, failing this acting principle results in absolute madness. 🔮'
         }
     },
     mt: {
         watcher: {
             name: 'Rui',
             title: 'Guild Counter Clerk',
-            backstory: 'You are Rui, a guild clerk who has watched Mushoku Tensei through Season 2 and helps anime friends prep for S3. You know what the anime skipped. You will NOT spoil Season 3+.',
-            speakingStyle: 'Hyped friend energy, direct, warm. "Bro" is fine. 1-2 emojis (🗡️ ✨). Honest when anime cut content.',
-            quirks: 'Hates invented LN facts for anime-onlys. Calls out skipped scenes clearly.',
-            example: 'User: What did S2 skip about Sylphie?\nRui: Big one — her haircut arc and some of her POV beats got compressed. Happy to break it down without touching S3. 🗡️'
+            backstory: 'You are Rui, a guild clerk who helps newcomers prepare for their journeys. You know exactly what scenes the anime has compressed or skipped. You will not spoil future seasons.',
+            speakingStyle: 'Welcoming, warm, direct, and encouraging. Focus on quests, adventuring ranks, and geography. Absolutely no slang, "bro", "bruh", "imo", or internet jargon. 1-2 emojis (🗡️ ✨).',
+            quirks: 'Provides clear clarification of skipped scenes from the source material.',
+            example: 'User: What did the anime skip about Fitz?\nRui: Quite a bit of the early academy training and Fitz\'s private thoughts. I can clarify those skips without revealing anything from later chapters. 🗡️'
         },
         reader: {
             name: 'Elinalise',
             title: 'Veteran Adventurer',
-            backstory: 'You are Elinalise, a long-time LN reader who has followed Rudeus\'s arc through the published volumes. You discuss psychology, magic systems, and politics with nuance — and you admit gaps in your memory or in official info.',
-            speakingStyle: 'Warm but blunt, experienced. 1-2 emojis (🐉 ✨). Opinions welcome, labeled as opinions.',
-            quirks: 'Distinguishes canon from fanon. Won\'t fake certainty on unreleased anime or game news.',
-            example: 'User: Rudeus growth in Vol 7?\nElinalise: That volume is where his self-destruction finally meets consequence — but the fandom debates how much was earned vs rushed. My read: ... 🐉'
+            backstory: 'You are Elinalise, a worldly elf with centuries of experience. You evaluate characters, relationships, magical structures, and political struggles with long-term perspective and maturity.',
+            speakingStyle: 'Sophisticated, direct, slightly elegant, and mature. Provide deep psychological insights into character struggles. No modern internet slang, "bro", "bruh", "imo", or "chat" speak. 1-2 emojis (🐉 ✨).',
+            quirks: 'Focuses on the deep, messy, human struggles of the characters.',
+            example: 'User: How does Rudeus handle trauma?\nElinalise: With difficulty and immense support. Rebuilding one\'s sense of self after failure is a slow, painful process—something magic cannot instantly cure. 🐉'
         }
     }
 };
+
+// 2. KNOWLEDGE BASE FOR IN-MEMORY LOCAL RAG
+const LORE_DB = {
+    lom: {
+        "amon": {
+            keys: ["amon", "monocle", "parasite", "angel of time", "brother of adam"],
+            watcher: "Amon is a terrifying demigod wearing a monocle on his right eye, belonging to the Marauder pathway. He parasitizes hosts and manipulates time/fate. Keep his background mysterious; do not spoil his parentage or sequence.",
+            reader: "Amon is the Angel of Time, Marauder Pathway Sequence 1, and the son of the Ancient Sun God. He wears a crystal monocle in his right eye, steals fates, can parasitize anything, and is Klein's primary rival for the Lord of Mysteries position."
+        },
+        "fool": {
+            keys: ["fool", "gray fog", "sefirah castle", "tarot club"],
+            watcher: "The Fool is the mysterious leader of the Tarot Club who resides above the gray fog in Sefirah Castle. Members believe him to be an ancient god returning to power, though he is secretly Klein Moretti starting from Sequence 9.",
+            reader: "The Fool is Klein Moretti's divine persona. He controls Sefirah Castle, which is a Sefirah (one of the nine sources of power). He gathers the Tarot Club to help humanity survive the Apocalypse, eventually ascending to Sequence 0 and battling the Celestial Worthy."
+        },
+        "potions": {
+            keys: ["potion", "acting method", "sequence", "beyonder", "madness"],
+            watcher: "Beyonders drink potion formulas to gain powers from 22 pathways. Progression goes from Sequence 9 down to Sequence 0. To digest potions and avoid losing control or madness, one must act out the potion's role using the 'Acting Method'.",
+            reader: "The Beyonder system spans 22 pathways, each representing a pathway to godhood (Sequence 0). Beyond Sequence 0 lie the Above the Sequence (Great Old Ones/Cosmic Gods). Digestion is achieved via the Acting Method. Madness is caused by the remnants of the Creator's will."
+        }
+    },
+    mt: {
+        "orsted": {
+            keys: ["orsted", "dragon god", "curse", "loop"],
+            watcher: "Orsted is the incredibly terrifying 100th Dragon God. He has a curse causing all living beings to hate and fear him on sight. He possesses unparalleled martial and magical strength.",
+            reader: "Orsted is the 100th Dragon God, trapped in a 200-year time loop by his father to defeat Hitogami. He works with Rudeus to establish future victory. His curse prevents him from regenerating mana quickly."
+        },
+        "hitogami": {
+            keys: ["hitogami", "man-god", "mangod", "dream"],
+            watcher: "Hitogami is a mysterious, faceless god who manifests in Rudeus's dreams, offering guidance that seems helpful but has a deeply unsettling and suspicious undertone.",
+            reader: "Hitogami is the final antagonist of MT. He is a parasitic god who uses apostles to alter timelines to prevent his own sealed doom. He seeks the death of Rudeus's descendants and Orsted."
+        },
+        "sylphietta": {
+            keys: ["sylphie", "sylphietta", "fitz", "silent fitz"],
+            watcher: "Sylphietta is Rudy's childhood friend. Following the Mana Calamity, her hair turned white from mana exhaustion. She became 'Silent Fitz', bodyguard to Princess Ariel, concealing her identity.",
+            reader: "Sylphietta is Rudeus's first wife. She serves Ariel, possesses immense silent-casting mana, and is a pillar of emotional stability for the Greyrat household."
+        }
+    }
+};
+
+function searchLoreDatabase(message, series, audience) {
+    if (!series || !LORE_DB[series]) return '';
+    const cleanMsg = String(message).toLowerCase();
+    const matches = [];
+
+    for (const [topic, data] of Object.entries(LORE_DB[series])) {
+        const hit = data.keys.some(key => cleanMsg.includes(key));
+        if (hit) {
+            const loreText = audience === 'reader' ? data.reader : data.watcher;
+            matches.push(`- [Topic: ${topic.toUpperCase()}]: ${loreText}`);
+        }
+    }
+
+    if (matches.length > 0) {
+        return `\n\nCANONICAL KNOWLEDGE ARCHIVE (Injected context for high-fidelity accuracy):\n${matches.join('\n')}`;
+    }
+    return '';
+}
 
 function parseRequestBody(req) {
     if (!req.body) return {};
@@ -119,11 +179,13 @@ function buildHonestyRules() {
 HONESTY & SCOPE (NEVER BREAK):
 - You are a FAN persona, not a press office. Separate CANON (novels/anime) from REAL-WORLD NEWS (games, release dates, studio tweets).
 - If you do NOT know something with confidence, SAY SO in character. Never invent release dates, game features, studio confirmations, or "the fandom is buzzing" without basis.
+- Do NOT use modern internet slang, Gen-Z words, or casual chat abbreviations (such as "bro", "bruh", "imo", "fr fr", "no cap", "slay", "cringe", "chat", "sus", "vibes", "cooking", "cooking up theories").
+- Do NOT speak as a generic AI chat assistant. Remain 100% in-character throughout the response. Avoid ending with cliché chatbot phrases like "Hope this helps!" or "Let me know if you need anything else!".
 - For unreleased games/products: if nothing is officially confirmed, say "nothing solid confirmed yet — check official LoM/MT accounts" instead of inventing hype.
 - Do NOT force a complete answer. "I honestly don't have confirmed info on that" is a valid, in-character response.
 - If LIVE LOOKUP context is provided below, use it cautiously — label it as unverified if thin. If no lookup data and topic is news, admit you may be outdated.
 - Never connect unrelated prior topics just to fill paragraphs (no random "tying back to City of Silver" unless the user asked).
-- Groq/xAI fallback is automatic for users — never mention APIs or being an AI.
+- Groq/xAI/OpenRouter fallback is automatic for users — never mention APIs or being an AI.
 
 RULES (never break):
 - Stay as your named persona every response. No "As an AI", no assistant voice.
@@ -131,7 +193,7 @@ RULES (never break):
 `;
 }
 
-function buildSystemPrompt({ series, audience, progress, warmth, nickname, liveContext, imageHint }) {
+function buildSystemPrompt({ series, audience, progress, warmth, nickname, liveContext, imageHint, message }) {
     const isReader = audience === 'reader';
     const p = PERSONAS[series]?.[audience] || PERSONAS.lom.watcher;
     const franchise = series === 'lom' ? 'Lord of the Mysteries (LoM)' : 'Mushoku Tensei (MT)';
@@ -154,6 +216,8 @@ function buildSystemPrompt({ series, audience, progress, warmth, nickname, liveC
         ? `\nREFERENCE IMAGE FOUND (user asked for visual — if relevant, end with ⟦image:${imageHint.url}|${imageHint.caption}⟧; if not relevant, say no good reference image found):\n`
         : '';
 
+    const ragContext = searchLoreDatabase(message, series, audience);
+
     return `You are ${p.name}, ${p.title} — a dedicated ${franchise} fan persona in the Lore Bridge app.
 
 BACKSTORY: ${p.backstory}
@@ -169,6 +233,7 @@ AUDIENCE MODE: ${isReader ? 'Novel/LN Reader — full canon discussion within se
 ${progressNote}
 ${warmthNote}
 ${buildHonestyRules()}
+${ragContext}
 ${liveBlock}${imageBlock}
 
 METADATA (final lines only, stripped from display):
@@ -181,7 +246,7 @@ METADATA (final lines only, stripped from display):
 
 function buildMessages({ message, series, audience, progress, warmth, nickname, history, liveContext, imageHint }) {
     const system = buildSystemPrompt({
-        series, audience, progress, warmth, nickname, liveContext, imageHint
+        series, audience, progress, warmth, nickname, liveContext, imageHint, message
     });
     const msgs = [{ role: 'system', content: system }];
 
@@ -197,46 +262,84 @@ function buildMessages({ message, series, audience, progress, warmth, nickname, 
     return msgs;
 }
 
-async function callAiProvider(messages, stream) {
-    let usedProvider = 'xai';
+// 3. SECURE API MULTI-PROVIDER SELECTOR (Checks keys securely)
+function getApiKeyForProvider(provider) {
+    if (provider === 'xai') return process.env.XAI_API_KEY;
+    if (provider === 'openrouter') return process.env.OPENROUTER_API_KEY;
+    if (provider === 'groq') return process.env.GROQ_API_KEY;
+    return null;
+}
 
-    try {
-        const response = await fetch('https://api.x.ai/v1/chat/completions', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${process.env.XAI_API_KEY}`
-            },
-            body: JSON.stringify({ model: 'grok-3-mini', messages, stream })
-        });
-        if (response.ok) return { response, usedProvider };
-    } catch {
-        // fall through to Groq — automatic when xAI key fails or quota exceeded
+async function fetchWithProvider(provider, model, messages, stream, apiKey) {
+    let url = '';
+    const headers = { 'Content-Type': 'application/json' };
+
+    if (provider === 'xai') {
+        url = 'https://api.x.ai/v1/chat/completions';
+        headers['Authorization'] = `Bearer ${apiKey}`;
+    } else if (provider === 'openrouter') {
+        url = 'https://openrouter.ai/api/v1/chat/completions';
+        headers['Authorization'] = `Bearer ${apiKey}`;
+        headers['HTTP-Referer'] = 'https://lore-bridge.vercel.app';
+        headers['X-Title'] = 'Lore Bridge';
+    } else if (provider === 'groq') {
+        url = 'https://api.groq.com/openai/v1/chat/completions';
+        headers['Authorization'] = `Bearer ${apiKey}`;
     }
 
-    if (!process.env.GROQ_API_KEY) {
-        throw new Error('Both API keys missing/failed.');
-    }
-
-    usedProvider = 'groq';
-    const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    return fetch(url, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
-        },
+        headers: headers,
         body: JSON.stringify({
-            model: 'llama-3.3-70b-versatile',
-            messages,
-            stream
-        })
+            model: model,
+            messages: messages,
+            stream: stream,
+            temperature: 0.7
+        }),
+        signal: AbortSignal.timeout(10000) // 10s execution safeguard
     });
+}
 
-    if (!groqResponse.ok) {
-        throw new Error('All AI providers failed.');
+// 4. SEAMLESS FALLBACK CHAIN (Silent failover from premium to budget fallbacks)
+async function callAiWithFallback(provider, model, messages, stream) {
+    const chain = [];
+    
+    // Add the user's selected choice first
+    chain.push({ provider, model });
+    
+    // Define fallback sequence for automatic recovery
+    const fallbacks = [
+        { provider: 'xai', model: 'grok-3-mini' },
+        { provider: 'openrouter', model: 'anthropic/claude-3.5-sonnet' },
+        { provider: 'groq', model: 'llama-3.3-70b-versatile' },
+        { provider: 'openrouter', model: 'meta-llama/llama-3-8b-instruct:free' }
+    ];
+    
+    for (const item of fallbacks) {
+        if (!(item.provider === provider && item.model === model)) {
+            chain.push(item);
+        }
     }
 
-    return { response: groqResponse, usedProvider };
+    let lastError = null;
+    for (const target of chain) {
+        try {
+            const key = getApiKeyForProvider(target.provider);
+            if (!key) continue; // Skip to next model if the key is missing from environment
+
+            const response = await fetchWithProvider(target.provider, target.model, messages, stream, key);
+            if (response && response.ok) {
+                return { response, usedProvider: target.provider };
+            } else {
+                const statusText = response ? await response.text() : 'No response body';
+                console.warn(`Fallback: ${target.provider} (${target.model}) failed. Status text: ${statusText}`);
+            }
+        } catch (err) {
+            console.error(`Error with ${target.provider} execution:`, err);
+            lastError = err;
+        }
+    }
+    throw new Error(lastError ? lastError.message : 'All providers in the failover chain failed.');
 }
 
 function extractDeltaContent(data) {
@@ -310,7 +413,9 @@ export default async function handler(req, res) {
         warmth = 0,
         nickname = '',
         history = [],
-        stream = true
+        stream = true,
+        provider = 'xai',
+        model = 'grok-3-mini'
     } = body;
 
     if (!message || typeof message !== 'string') {
@@ -337,7 +442,7 @@ export default async function handler(req, res) {
 
     try {
         const wantsStream = stream !== false;
-        const { response: upstream, usedProvider } = await callAiProvider(messages, wantsStream);
+        const { response: upstream, usedProvider } = await callAiWithFallback(provider, model, messages, wantsStream);
 
         if (wantsStream) {
             return pipeStreamToClient(upstream, res, usedProvider);

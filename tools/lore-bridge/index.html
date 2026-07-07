@@ -939,10 +939,15 @@
     <!-- Side Menu -->
     <div class="side-menu" id="side-menu">
         <div class="menu-header" id="menu-header">The Gray Fog</div>
-        <div class="menu-links">
-            <label class="menu-link" style="cursor:default;display:block;">
-                <span style="font-size:0.75rem;color:var(--text-muted);">Your progress</span>
-                <select id="progress-select-menu" style="width:100%;margin-top:6px;background:var(--bg-color);border:1px solid var(--border);color:var(--text-main);padding:8px;border-radius:8px;"></select>
+        <label class="menu-link" style="cursor:default;display:block;">
+                <span style="font-size:0.75rem;color:var(--text-muted);">🔮 Oracle Vessel</span>
+                <select id="engine-select" style="width:100%;margin-top:6px;background:var(--bg-color);border:1px solid var(--border);color:var(--text-main);padding:8px;border-radius:8px;">
+                    <option value="xai:grok-3-mini">Grok 3 Mini (Primary)</option>
+                    <option value="openrouter:anthropic/claude-3.5-sonnet">Claude 3.5 Sonnet (OpenRouter)</option>
+                    <option value="openrouter:meta-llama/llama-3.1-70b-instruct">Llama 3.1 70B (OpenRouter)</option>
+                    <option value="groq:llama-3.3-70b-versatile">Llama 3.3 70B (Groq)</option>
+                    <option value="openrouter:meta-llama/llama-3-8b-instruct:free">Llama 3 Free (Budget Fallback)</option>
+                </select>
             </label>
             <a href="#" class="menu-link" onclick="showAbout(); return false;">About the Oracle</a>
             <a href="#" class="menu-link" id="github-link" target="_blank">View the Source Code</a>
@@ -1497,6 +1502,9 @@
             chatContainer.appendChild(aiDiv);
             scrollToBottom();
 
+            const engineSelect = document.getElementById('engine-select');
+            const [selProvider, selModel] = (engineSelect?.value || 'xai:grok-3-mini').split(':');
+
             const payload = {
                 message: msg,
                 series: currentUniverse,
@@ -1504,7 +1512,9 @@
                 progress: getProgressStamp(),
                 warmth: session.warmth,
                 nickname: getNickname(siteConfig, session.warmth),
-                history: session.history
+                history: session.history,
+                provider: selProvider,
+                model: selModel
             };
 
             let fullResponse = '';
