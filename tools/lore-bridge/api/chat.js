@@ -2,7 +2,7 @@ import { Readable } from 'stream';
 
 export const config = { maxDuration: 30 };
 
-// 1. SANITIZED IN-UNIVERSE PERSONAS (All "bro/slang" removed)
+// 1. SANITIZED IMMERSIVE PERSONAS
 const PERSONAS = {
     lom: {
         watcher: {
@@ -42,18 +42,23 @@ const PERSONAS = {
     }
 };
 
-// 2. KNOWLEDGE BASE FOR IN-MEMORY LOCAL RAG
+// 2. CANON KNOWLEDGE BASE (Local RAG)
 const LORE_DB = {
     lom: {
+        "watch order": {
+            keys: ["watch order", "episodes", "watch", "anime sequence", "donghua order", "how to watch", "released"],
+            watcher: "The chronological and official watch order of the Lord of the Mysteries donghua (anime) is: 1) Season 1: Clown (13 episodes, released in Summer 2025). 2) Special Episode 1: City of Silver (3 episodes, released in June 2026). Season 2: Faceless is slated for release in 2027. Do not invent other seasons.",
+            reader: "The chronological release and watch order for the Lord of the Mysteries donghua (anime) is: 1) Season 1: Clown (13 episodes, adapts Volume 1 of the novel, released June–September 2025). 2) Special Episode 1: City of Silver (3 episodes covering the Qilangos arc and the introduction of the City of Silver, released in June 2026). 3) Season 2: Faceless (adapting Volume 2 of the novel, announced for 2027)."
+        },
+        "sefirah castle": {
+            keys: ["sefirah castle", "grey fog", "gray fog", "residence"],
+            watcher: "Sefirah Castle is the divine, mysterious palace located above the gray fog. It is controlled exclusively by 'The Fool' (Klein Moretti) and acts as the meeting place for the Tarot Club. It is NOT Amon's residence; Amon is actively searching for its location in order to steal it.",
+            reader: "Sefirah Castle is one of the nine legendary Sefirot, a core source of divine power situated above the gray fog. It is the territory of Klein Moretti (The Fool). It is absolutely NOT Amon's residence. Amon is Klein's primary rival who seeks to locate Sefirah Castle to claim the title of Lord of Mysteries."
+        },
         "amon": {
             keys: ["amon", "monocle", "parasite", "angel of time", "brother of adam"],
-            watcher: "Amon is a terrifying demigod wearing a monocle on his right eye, belonging to the Marauder pathway. He parasitizes hosts and manipulates time/fate. Keep his background mysterious; do not spoil his parentage or sequence.",
-            reader: "Amon is the Angel of Time, Marauder Pathway Sequence 1, and the son of the Ancient Sun God. He wears a crystal monocle in his right eye, steals fates, can parasitize anything, and is Klein's primary rival for the Lord of Mysteries position."
-        },
-        "fool": {
-            keys: ["fool", "gray fog", "sefirah castle", "tarot club"],
-            watcher: "The Fool is the mysterious leader of the Tarot Club who resides above the gray fog in Sefirah Castle. Members believe him to be an ancient god returning to power, though he is secretly Klein Moretti starting from Sequence 9.",
-            reader: "The Fool is Klein Moretti's divine persona. He controls Sefirah Castle, which is a Sefirah (one of the nine sources of power). He gathers the Tarot Club to help humanity survive the Apocalypse, eventually ascending to Sequence 0 and battling the Celestial Worthy."
+            watcher: "Amon is a terrifying antagonist known as the 'Angel of Time' of the Marauder pathway. He wears a crystal monocle in his right eye, has the ability to parasitize other living beings, and steals fates. He has no relation to the Solomon Empire's upper echelons, but operates as a roaming, independent cosmic threat.",
+            reader: "Amon is the Angel of Time, Marauder Pathway Sequence 1, and the second son of the Ancient Sun God. He wears a crystal monocle in his right eye, can parasitize anything, steals fates, and is Klein's primary rival for control of Sefirah Castle."
         },
         "potions": {
             keys: ["potion", "acting method", "sequence", "beyonder", "madness"],
@@ -94,7 +99,7 @@ function searchLoreDatabase(message, series, audience) {
     }
 
     if (matches.length > 0) {
-        return `\n\nCANONICAL KNOWLEDGE ARCHIVE (Injected context for high-fidelity accuracy):\n${matches.join('\n')}`;
+        return `\n\nCANONICAL KNOWLEDGE ARCHIVE (Injected context for high-fidelity accuracy - prioritize this over any external training):\n${matches.join('\n')}`;
     }
     return '';
 }
@@ -135,7 +140,7 @@ async function fetchLiveContext(message, series) {
             if (d.AbstractURL) parts.push(`DDG source: ${d.AbstractURL}`);
         }
     } catch {
-        // optional enrichment
+        // optional
     }
 
     try {
@@ -262,7 +267,6 @@ function buildMessages({ message, series, audience, progress, warmth, nickname, 
     return msgs;
 }
 
-// 3. SECURE API MULTI-PROVIDER SELECTOR (Checks keys securely)
 function getApiKeyForProvider(provider) {
     if (provider === 'xai') return process.env.XAI_API_KEY;
     if (provider === 'openrouter') return process.env.OPENROUTER_API_KEY;
@@ -296,18 +300,14 @@ async function fetchWithProvider(provider, model, messages, stream, apiKey) {
             stream: stream,
             temperature: 0.7
         }),
-        signal: AbortSignal.timeout(10000) // 10s execution safeguard
+        signal: AbortSignal.timeout(10000)
     });
 }
 
-// 4. SEAMLESS FALLBACK CHAIN (Silent failover from premium to budget fallbacks)
 async function callAiWithFallback(provider, model, messages, stream) {
     const chain = [];
-    
-    // Add the user's selected choice first
     chain.push({ provider, model });
     
-    // Define fallback sequence for automatic recovery
     const fallbacks = [
         { provider: 'xai', model: 'grok-3-mini' },
         { provider: 'openrouter', model: 'anthropic/claude-3.5-sonnet' },
@@ -325,7 +325,7 @@ async function callAiWithFallback(provider, model, messages, stream) {
     for (const target of chain) {
         try {
             const key = getApiKeyForProvider(target.provider);
-            if (!key) continue; // Skip to next model if the key is missing from environment
+            if (!key) continue;
 
             const response = await fetchWithProvider(target.provider, target.model, messages, stream, key);
             if (response && response.ok) {
