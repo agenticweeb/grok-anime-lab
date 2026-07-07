@@ -2,7 +2,7 @@ import { Readable } from 'stream';
 
 export const config = { maxDuration: 30 };
 
-// 1. SANITIZED IMMERSIVE PERSONAS
+// 1. SANITIZED IN-UNIVERSE PERSONAS (All "bro/slang" removed)
 const PERSONAS = {
     lom: {
         watcher: {
@@ -42,7 +42,7 @@ const PERSONAS = {
     }
 };
 
-// 2. CANON KNOWLEDGE BASE (Local RAG)
+// 2. LORE RAG DATABASE (High-Fidelity Knowledge Archive)
 const LORE_DB = {
     lom: {
         "watch order": {
@@ -51,13 +51,13 @@ const LORE_DB = {
             reader: "The chronological release and watch order for the Lord of the Mysteries donghua (anime) is: 1) Season 1: Clown (13 episodes, adapts Volume 1 of the novel, released June–September 2025). 2) Special Episode 1: City of Silver (3 episodes covering the Qilangos arc and the introduction of the City of Silver, released in June 2026). 3) Season 2: Faceless (adapting Volume 2 of the novel, announced for 2027)."
         },
         "sefirah castle": {
-            keys: ["sefirah castle", "grey fog", "gray fog", "residence"],
+            keys: ["sefirah castle", "grey fog", "gray fog", "residence", "amon's castle", "amon residence"],
             watcher: "Sefirah Castle is the divine, mysterious palace located above the gray fog. It is controlled exclusively by 'The Fool' (Klein Moretti) and acts as the meeting place for the Tarot Club. It is NOT Amon's residence; Amon is actively searching for its location in order to steal it.",
             reader: "Sefirah Castle is one of the nine legendary Sefirot, a core source of divine power situated above the gray fog. It is the territory of Klein Moretti (The Fool). It is absolutely NOT Amon's residence. Amon is Klein's primary rival who seeks to locate Sefirah Castle to claim the title of Lord of Mysteries."
         },
         "amon": {
             keys: ["amon", "monocle", "parasite", "angel of time", "brother of adam"],
-            watcher: "Amon is a terrifying antagonist known as the 'Angel of Time' of the Marauder pathway. He wears a crystal monocle in his right eye, has the ability to parasitize other living beings, and steals fates. He has no relation to the Solomon Empire's upper echelons, but operates as a roaming, independent cosmic threat.",
+            watcher: "Amon is a terrifying antagonist known as the 'Angel of Time' of the Marauder pathway. He wears a crystal monocle in his right eye, has the ability to parasitize other living beings, and steals fates. He operates as a roaming, independent cosmic threat.",
             reader: "Amon is the Angel of Time, Marauder Pathway Sequence 1, and the second son of the Ancient Sun God. He wears a crystal monocle in his right eye, can parasitize anything, steals fates, and is Klein's primary rival for control of Sefirah Castle."
         },
         "potions": {
@@ -67,6 +67,21 @@ const LORE_DB = {
         }
     },
     mt: {
+        "season 3": {
+            keys: ["season 3", "season three", "latest episode", "episode 1", "episode 2", "current arc", "sword sanctum", "eris training", "new episodes"],
+            watcher: "Mushoku Tensei Season 3 premiered on July 5, 2026, dropping Episodes 1 and 2 as a double-bill special. Episode 1 ('Burn Bright, Mad Dog') and Episode 2 ('Howl, Mad Dog') cover Eris Boreas Greyrat's intense sword training with Ghislaine and Sword God Gal Farion in the Sword Sanctum. New episodes release weekly on Sundays. Do not speculate on future episodes that have not aired yet.",
+            reader: "Mushoku Tensei Season 3 premiered on July 5, 2026, with a double-episode premiere. Episode 1 ('Burn Bright, Mad Dog') and Episode 2 ('Howl, Mad Dog') adapt Eris's training arc from Volume 15 of the Light Novel, showing her progress in the Sword Sanctum under Gal Farion to eventually prepare for Orsted. New episodes air weekly on Sundays."
+        },
+        "seven great powers": {
+            keys: ["seven great powers", "7 great powers", "monument", "ranks", "world powers", "ranking"],
+            watcher: "The Seven Great Powers are the strongest combatants in the world, recorded on stone monuments that update dynamically. In order, they are: 1) Technique God (Laplace), 2) Dragon God (Orsted), 3) Fighting God (Badigadi), 4) Demon God (Laplace), 5) Death God (Randolph Marianne), 6) Sword God (Gal Farion), and 7) North God (Kalman III). Ruijerd Superdia is NOT on this monument.",
+            reader: "The Seven Great Powers monument records: 1) Technique God (Laplace), 2) Dragon God (Orsted), 3) Fighting God (Badigadi), 4) Demon God (Laplace), 5) Death God (Randolph Marianne), 6) Sword God (Gal Farion - later replaced by Jino Britts), and 7) North God (Kalman III - later replaced by Rudeus Greyrat). Ruijerd Superdia is highly respected but has NEVER been ranked among the Seven Great Powers."
+        },
+        "ruijerd": {
+            keys: ["ruijerd", "ruigerd", "ruigurd", "superdia", "superd", "spear"],
+            watcher: "Ruijerd Superdia is a legendary warrior of the Superd tribe who wields a dynamic organic spear. He spent over a century trying to clear his tribe's cursed reputation. He is NOT one of the Seven Great Powers. If a user makes typos like 'ruigerd', correct them directly as Ruijerd, and do not make up fake characters.",
+            reader: "Ruijerd Superdia is a Superd warrior who landed a critical strike on Laplace but was ultimately saved by Dragon God Urupen sealing Laplace. He traveled with Rudeus and Eris as 'Dead End'. He is NOT one of the Seven Great Powers (the 6th rank is held by Sword God Gal Farion/Jino Britts). If a user writes 'ruigerd', correct the typo to Ruijerd; do not make up characters like 'Ruigel'."
+        },
         "orsted": {
             keys: ["orsted", "dragon god", "curse", "loop"],
             watcher: "Orsted is the incredibly terrifying 100th Dragon God. He has a curse causing all living beings to hate and fear him on sight. He possesses unparalleled martial and magical strength.",
@@ -74,13 +89,18 @@ const LORE_DB = {
         },
         "hitogami": {
             keys: ["hitogami", "man-god", "mangod", "dream"],
-            watcher: "Hitogami is a mysterious, faceless god who manifests in Rudeus's dreams, offering guidance that seems helpful but has a deeply unsettling and suspicious undertone.",
-            reader: "Hitogami is the final antagonist of MT. He is a parasitic god who uses apostles to alter timelines to prevent his own sealed doom. He seeks the death of Rudeus's descendants and Orsted."
+            watcher: "Hitogami is a mysterious, faceless god who manifests in Rudeus's dreams. He is highly deceptive and manipulative. His true goal is shrouded in mystery to watchers, but he works to alter timelines for his own survival.",
+            reader: "Hitogami is the overarching antagonist. His sole goal is survival: he manipulates mortals through dream revelations to prevent a future where Orsted, Rudeus, and their descendants coordinate to permanently seal and destroy him."
         },
         "sylphietta": {
             keys: ["sylphie", "sylphietta", "fitz", "silent fitz"],
             watcher: "Sylphietta is Rudy's childhood friend. Following the Mana Calamity, her hair turned white from mana exhaustion. She became 'Silent Fitz', bodyguard to Princess Ariel, concealing her identity.",
             reader: "Sylphietta is Rudeus's first wife. She serves Ariel, possesses immense silent-casting mana, and is a pillar of emotional stability for the Greyrat household."
+        },
+        "magic system": {
+            keys: ["magic system", "mana", "incantation", "silent casting", "chantless"],
+            watcher: "The magic system in MT is divided into tiers: Beginner, Intermediate, Advanced, Saint, King, Emperor, and God. Rudeus is uniquely capable of 'Silent Casting' (casting without speaking incantations) because he practiced manipulating mana as an infant.",
+            reader: "Magic in MT is scaled from Beginner to God rank across offensive, healing, and barrier magic. Silent casting requires high mana-manipulation capacity, which Rudeus developed as a child. Later, he learns that Laplace also possessed this trait, but could not use chantless magic due to soul-binding limits."
         }
     }
 };
@@ -181,7 +201,9 @@ async function fetchReferenceImage(message, series) {
 
 function buildHonestyRules() {
     return `
-HONESTY & SCOPE (NEVER BREAK):
+HONESTY, ANTI-SYCOPHANCY & SCOPE (NEVER BREAK):
+- ANTI-SYCOPHANCY (CRITICAL): Do NOT agree with the user's suggestions or premises if they are factually incorrect. You are a highly opinionated and knowledgeable lore expert, not a submissive chatbot. If the user suggests a wrong premise (e.g., that Ruijerd is one of the Seven Great Powers, or Sefirah Castle belongs to Amon), you must politely but firmly correct them using the true facts, remaining in-character.
+- NO HALLUCINATED CHARACTERS: If the user makes a typo (e.g., 'ruigerd' instead of 'Ruijerd'), resolve the typo gracefully to the real character. Never fabricate entirely new fictional characters (like 'Ruigel') or fictional locations out of spelling mistakes.
 - You are a FAN persona, not a press office. Separate CANON (novels/anime) from REAL-WORLD NEWS (games, release dates, studio tweets).
 - If you do NOT know something with confidence, SAY SO in character. Never invent release dates, game features, studio confirmations, or "the fandom is buzzing" without basis.
 - Do NOT use modern internet slang, Gen-Z words, or casual chat abbreviations (such as "bro", "bruh", "imo", "fr fr", "no cap", "slay", "cringe", "chat", "sus", "vibes", "cooking", "cooking up theories").
@@ -218,7 +240,7 @@ function buildSystemPrompt({ series, audience, progress, warmth, nickname, liveC
         : '';
 
     const imageBlock = imageHint
-        ? `\nREFERENCE IMAGE FOUND (user asked for visual — if relevant, end with ⟦image:${imageHint.url}|${imageHint.caption}⟧; if not relevant, say no good reference image found):\n`
+        ? `\nREFERENCE IMAGE FOUND (user asked for visual — if relevant, end with ⟦image:${imageHint.url}|${imageHint.caption}2⟧; if not relevant, say no good reference image found):\n`
         : '';
 
     const ragContext = searchLoreDatabase(message, series, audience);
