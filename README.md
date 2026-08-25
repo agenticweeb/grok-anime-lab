@@ -33,7 +33,6 @@ I vibe-code open-source web tools at the intersection of AI and fictional univer
 
 I partner with AI tools, anime platforms, and dev tool companies to create authentic, built-in-public content. 
 
-**Contact:** angazadesk@zohomail.com
 
 ---
 
