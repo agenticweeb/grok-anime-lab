@@ -378,4 +378,3 @@ git push origin main
 
 ---
 
-*End of PROJECT_CONTEXT.md — another AI can resume from Section 4 (image commit push) or Section 8 (next steps).*
